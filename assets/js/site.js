@@ -16,7 +16,8 @@
   /* ---------------------------------------------------------------------
      1. Reveals — one entrance per element, then it is left alone
      --------------------------------------------------------------------- */
-  var revealSel = '[data-reveal], [data-reveal-group], .lines, .rule, .figure, .wheel-draw';
+  var revealSel = '[data-reveal], [data-reveal-group], .lines, .rule, .figure, .wheel-draw, ' +
+                  '.word-field, .diagram-body, .diagram-cycle';
   var targets = document.querySelectorAll(revealSel);
 
   var showAll = function () {

@@ -79,16 +79,15 @@
         &mdash; <strong>steadiness under pressure</strong>, quicker recovery, and a
         growing capacity through challenge.
       </p>
-      <p class="dim" data-reveal>
-        To understand how I work towards this, it helps to look more closely at
-        life itself. Two qualities shape my exploration of it: <strong>interconnection
-        and movement</strong>.
-      </p>
     </div>
   </section>
 
   <section class="band band--fade-down" aria-labelledby="ic-title">
     <div class="wrap">
+      <p class="threshold" data-reveal>
+        <em>To understand how I work towards this, it helps to look more closely
+        at life itself &mdash; through <strong>interconnection and movement</strong>.</em>
+      </p>
       <hr class="rule">
       <div class="split split--wide-left" style="margin-top: var(--s-6)">
         <div>
@@ -117,13 +116,49 @@
           </div>
         </div>
 
-        <figure class="figure">
-          <img src="assets/images/field-1400.jpg"
-           srcset="assets/images/field-700.jpg 700w, assets/images/field-1400.jpg 1400w"
-           sizes="(min-width: 900px) 34vw, 88vw"
-           alt="Auroville woodland" width="1400" height="1867" loading="lazy" decoding="async">
-        </figure>
+        <!-- ART DIRECTION (final asset): a restrained, non-clinical line
+             illustration of the body's systems in relationship — not a stock
+             photograph of a person meditating. The diagram below is a
+             well-designed placeholder built in SVG; replace the <svg> with a
+             commissioned illustration that keeps the same idea: four systems,
+             one connected whole, a pulse that travels the loop. -->
+        <div class="diagram diagram-body" data-reveal aria-hidden="true">
+          <svg viewBox="0 0 320 240" role="img" aria-label="Four bodily systems connected in one continuous loop">
+            <path class="diagram-body__path" d="M70,60 Q140,10 190,50 Q260,80 250,150 Q190,220 120,190 Q30,150 70,60" />
+            <circle class="diagram-body__pulse" r="4" style="offset-path: path('M70,60 Q140,10 190,50 Q260,80 250,150 Q190,220 120,190 Q30,150 70,60');" />
+
+            <g transform="translate(70,60)">
+              <circle class="diagram-body__organ" r="24"/>
+              <path class="diagram-body__organ" d="M-5,-8 C-11,-3 -11,7 -5,12 M5,-8 C11,-3 11,7 5,12"/>
+              <text class="diagram-body__label" y="42" text-anchor="middle">Lungs</text>
+            </g>
+            <g transform="translate(190,50)">
+              <circle class="diagram-body__organ" r="24"/>
+              <path class="diagram-body__organ" d="M0,9 C-10,1 -10,-9 0,-5 C10,-9 10,1 0,9 Z"/>
+              <text class="diagram-body__label" y="42" text-anchor="middle">Heart</text>
+            </g>
+            <g transform="translate(250,150)">
+              <circle class="diagram-body__organ" r="24"/>
+              <path class="diagram-body__organ" d="M-7,-8 a8,8 0 1 1 10,6"/>
+              <text class="diagram-body__label" y="42" text-anchor="middle">Digestion</text>
+            </g>
+            <g transform="translate(120,190)">
+              <circle class="diagram-body__organ" r="24"/>
+              <path class="diagram-body__organ" d="M0,-9 L0,0 M0,0 L-7,7 M0,0 L7,7 M0,0 L-7,-5"/>
+              <text class="diagram-body__label" y="42" text-anchor="middle">Nervous system</text>
+            </g>
+          </svg>
+        </div>
       </div>
+      <p class="diagram__caption" data-reveal>
+        Each part has its own role. Together, they sustain one continuous
+        whole &mdash; and strain in any one is felt by all the others.
+      </p>
+      <p class="diagram__art-note dev-only-flag" data-reveal>
+        Art direction: a commissioned line illustration of the body&rsquo;s
+        systems in relationship (not literal anatomy) would replace this
+        placeholder diagram before launch.
+      </p>
     </div>
   </section>
 
@@ -133,14 +168,37 @@
         <p class="label" data-reveal>Two</p>
         <h2 id="moves-title" data-reveal style="margin-top: var(--s-2)">Life moves</h2>
         <p class="lede" data-reveal style="margin-top: var(--s-4)">
-          When life is working well, things can move when and where they need to.
+          A plant grows. A river flows. The body breathes, digests, repairs,
+          adapts and rests.
         </p>
-        <p data-reveal style="margin-top: var(--s-5)">When that movement becomes restricted, it may show up as &mdash;</p>
+        <div class="body-text dim" data-reveal>
+          <p>When life is working well, things can move when and where they need to.</p>
+        </div>
+      </div>
+
+      <div class="diagram diagram-cycle" data-reveal style="margin-top: var(--s-6); max-width: 26rem" aria-hidden="true">
+        <svg viewBox="0 0 300 300" role="img" aria-label="Six expressions of life's movement, arranged in a cycle rather than a line">
+          <circle class="diagram-cycle__ring" cx="150" cy="150" r="110"/>
+          <g class="diagram-cycle__mark">
+            <circle cx="150" cy="40" r="4" fill="var(--accent)"/>
+          </g>
+          <g class="diagram-cycle__node" transform="translate(150,40)"><circle r="5"/><text y="-14" text-anchor="middle">Grows</text></g>
+          <g class="diagram-cycle__node" transform="translate(245,95)"><circle r="5"/><text y="-14" text-anchor="middle">Flows</text></g>
+          <g class="diagram-cycle__node" transform="translate(245,205)"><circle r="5"/><text y="24" text-anchor="middle">Breathes</text></g>
+          <g class="diagram-cycle__node" transform="translate(150,260)"><circle r="5"/><text y="24" text-anchor="middle">Digests</text></g>
+          <g class="diagram-cycle__node" transform="translate(55,205)"><circle r="5"/><text y="24" text-anchor="middle">Repairs</text></g>
+          <g class="diagram-cycle__node" transform="translate(55,95)"><circle r="5"/><text y="-14" text-anchor="middle">Rests</text></g>
+        </svg>
+      </div>
+
+      <div class="offset" style="margin-top: var(--s-6)">
+        <p data-reveal>When that movement becomes restricted, it may show up as &mdash;</p>
         <p class="pull" data-reveal style="max-width: 30ch">
           stuckness &middot; procrastination &middot; low energy &middot; burnout &middot;
           indecision &middot; overthinking &middot; emotional overwhelm &middot;
           difficulty following through &middot; loss of direction &middot;
-          relationship troubles
+          relationship troubles &middot; the sense that things should be
+          improving, but somehow aren&rsquo;t
         </p>
         <div class="body-text dim" data-reveal>
           <p>
@@ -224,14 +282,91 @@
             begin carrying more of the load. Over time it wears unevenly and
             becomes less stable. Our lives work in much the same way.
           </p>
-          <p class="pull" data-reveal>Strain travels across the wheel. <strong>So can recovery.</strong></p>
           <p class="dim" data-reveal>
-            The spokes show us <em>where</em> in life something is happening.
-            Within any spoke, I have found four places where we can work
-            directly to create or restore movement: Body, Mind, Emotion and
-            Action.
+            Poor sleep can reduce energy, concentration and patience, making
+            work and relationships harder. Improving sleep can create movement
+            across all three areas.
+          </p>
+          <p class="pull" data-reveal>Strain travels across the wheel. <strong>So can recovery.</strong></p>
+        </div>
+      </div>
+
+      <p class="threshold" data-reveal style="margin-top: var(--s-6)">
+        <em>The spokes show us where in life something is happening.</em>
+      </p>
+
+      <div class="measure-wide" data-reveal>
+        <p class="pull" style="margin-top:0; max-width: 28ch">
+          Within any spoke, I have found four places where we can work
+          directly to create or restore movement.
+        </p>
+      </div>
+
+      <div class="bmea-grid" data-reveal-group>
+        <div class="bmea">
+          <div class="bmea__head">
+            <svg class="bmea__icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M6 22c3-8 8-12 10-12s7 4 10 12"/><line x1="4" y1="24" x2="28" y2="24"/></svg>
+            <h3>Body</h3>
+          </div>
+          <p>The physical body itself. Movement here may come through exertion, settling, release, recovery or rest.</p>
+          <p class="bmea__words"><span>sleep</span><span>nutrition</span><span>movement</span><span>strength</span><span>immunity</span><span>injury</span><span>tension</span><span>recovery</span></p>
+        </div>
+        <div class="bmea">
+          <div class="bmea__head">
+            <svg class="bmea__icon" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="10"/><path d="M16 8a8 8 0 0 1 6.9 4M24 16a8 8 0 0 1-4 6.9M16 24a8 8 0 0 1-6.9-4M8 16a8 8 0 0 1 4-6.9"/></svg>
+            <h3>Mind</h3>
+          </div>
+          <p>How we perceive, interpret and make sense of what is happening. Sometimes we need to think something through, see it differently, or give the mind enough space to process what has happened.</p>
+          <p class="bmea__words"><span>beliefs</span><span>assumptions</span><span>clarity</span><span>confusion</span><span>perspective</span><span>reflection</span></p>
+        </div>
+        <div class="bmea">
+          <div class="bmea__head">
+            <svg class="bmea__icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 18c3-6 6 6 9 0s6-10 9-4 4 8 6 4"/></svg>
+            <h3>Emotion</h3>
+          </div>
+          <p>A distinct layer of human experience to address. Sometimes an emotion needs enough safety to be fully felt; sometimes what has been held back needs to move. When the process completes, perspective can shift and a different response becomes possible.</p>
+          <p class="bmea__words"><span>fear</span><span>anger</span><span>grief</span><span>shame</span><span>guilt</span><span>jealousy</span><span>joy</span><span>love</span><span>gratitude</span></p>
+        </div>
+        <div class="bmea">
+          <div class="bmea__head">
+            <svg class="bmea__icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M8 8l12 8-12 8"/></svg>
+            <h3>Action</h3>
+          </div>
+          <p>How inner change enters the rest of life. Sometimes there is nothing more to understand or feel &mdash; a call needs to be made, a boundary set, a habit changed, a goal given a plan. Something needs to happen.</p>
+          <p class="bmea__words"><span>relationships</span><span>work</span><span>money</span><span>goals</span><span>commitments</span><span>habits</span><span>plans</span><span>boundaries</span><span>discipline</span><span>follow-through</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band--parchment" aria-labelledby="begin-title">
+    <div class="wrap">
+      <div class="measure stack" data-reveal>
+        <p class="label">Finding where to begin</p>
+        <h2 id="begin-title">There is no fixed order.</h2>
+        <div class="body-text dim">
+          <p>
+            A shift in the body may release emotion. Feeling an emotion may
+            change the mind. Clarity may make action possible. Action may
+            change all three.
+          </p>
+          <p>
+            The pattern is different for every person. We begin by
+            understanding where the imbalance is showing, then look across
+            Body, Mind, Emotion and Action for the most useful place to work.
           </p>
         </div>
+      </div>
+
+      <p class="pull" data-reveal style="margin-top: var(--s-6); max-width: 22ch">
+        What needs attention now for the next movement to happen?
+      </p>
+
+      <div class="body-text dim measure" data-reveal>
+        <p>
+          We begin there, allow the change to integrate, and then look again.
+          What has shifted helps reveal the next step.
+        </p>
       </div>
     </div>
   </section>
@@ -286,6 +421,10 @@
                      aria-labelledby="k-focus" tabindex="0" data-stage="focus">
               <h3><span class="glyph-inline" aria-hidden="true">F</span> Focus</h3>
               <p class="lede">Focus on what keeps repeating.</p>
+              <div class="body-text dim">
+                <p>A thought that keeps looping. Someone or something that reliably sets you off. A pattern of tension in the body. A behaviour you repeat even when you do not want to. Something you want to do but cannot seem to begin.</p>
+                <p>You may notice it while it is happening, or only later.</p>
+              </div>
               <p class="pull" style="margin-block: var(--s-4) 0">You cannot change what you cannot see.</p>
             </article>
 
@@ -293,13 +432,21 @@
                      aria-labelledby="k-admit" tabindex="0" data-stage="admit">
               <h3><span class="glyph-inline" aria-hidden="true">A</span> Admit</h3>
               <p class="lede">Admit where you are not free yet.</p>
+              <div class="body-text dim">
+                <p>Seeing a pattern does not mean you can immediately stop it. Be honest about where it overrides your intentions, narrows your choices or keeps costing you.</p>
+                <p>Notice where you minimise it, justify it or mistake understanding it for being free of it. If you can see what is driving it, admit that too. If not, begin with exactly what you know.</p>
+              </div>
               <p class="pull" style="margin-block: var(--s-4) 0">Freedom begins with admitting where you are not free.</p>
             </article>
 
             <article class="face__panel" id="p-connect" role="tabpanel"
                      aria-labelledby="k-connect" tabindex="0" data-stage="connect">
               <h3><span class="glyph-inline" aria-hidden="true">C</span> Connect</h3>
-              <p class="lede">Connect with what is underneath, with enough steadiness to stay.</p>
+              <p class="lede">Connect with what is underneath.</p>
+              <div class="body-text dim">
+                <p>There may be a feeling, memory, body response, fear, need, truth or practical reality that has been difficult to meet. Return to it from a steadier place &mdash; sometimes alone, sometimes with another person or skilled support to help you stay.</p>
+                <p>When you can remain with it without becoming overwhelmed in the same way, its hold can begin to loosen. You may feel what you could not feel, see what you could not see, or respond in a way that was not available before.</p>
+              </div>
               <p class="pull" style="margin-block: var(--s-4) 0">Protection becomes limitation when it outlives the danger.</p>
             </article>
 
@@ -307,15 +454,51 @@
                      aria-labelledby="k-embody" tabindex="0" data-stage="embody">
               <h3><span class="glyph-inline" aria-hidden="true">E</span> Embody</h3>
               <p class="lede">Embody a different response.</p>
+              <div class="body-text dim">
+                <p>Practise what was not available before. Slow down where you would rush. Pause instead of reacting. Speak where you would usually stay silent. Set the boundary you would normally let slide. Act where you would usually freeze.</p>
+                <p>At first, this may take effort. The old response has simply had more practice.</p>
+              </div>
               <p class="pull" style="margin-block: var(--s-4) 0">Practice turns insight into instinct.</p>
             </article>
 
         </div>
       </div>
 
-      <p class="pull" data-reveal style="margin-top: var(--s-6); max-width: 24ch">
-        A pattern returning does not mean the progress is lost. The more we
-        face, the more we can embrace.
+      <div class="measure-wide" style="margin-top: var(--s-6)" data-reveal>
+        <p class="lede">
+          Taken together, FACE is a way of moving from being caught in a
+          pattern toward having more choice in how you respond.
+        </p>
+        <p class="detail" style="margin-top: var(--s-3)">
+          Focus on what keeps repeating &middot; Admit where you are not free
+          yet &middot; Connect with what is underneath, with enough steadiness
+          to stay &middot; Embody a different response.
+        </p>
+        <div class="body-text dim" style="margin-top: var(--s-4)">
+          <p>
+            FACE is a way to orient when you feel caught and know something
+            needs attention. It isn&rsquo;t a system for constantly monitoring
+            or correcting yourself.
+          </p>
+          <p>Some things shift quickly. Others ask for attention, repetition or time.</p>
+        </div>
+      </div>
+
+      <p class="pull" data-reveal style="margin-top: var(--s-5); max-width: 24ch">
+        A pattern returning does not mean the progress is lost.
+      </p>
+
+      <div class="measure-wide body-text dim" data-reveal>
+        <p>
+          Honour your pace. Lean in, ease off, pause or get help. There is no
+          rush and no falling behind. With practice, you begin to notice the
+          flinch sooner, regain your footing more quickly, and carry on
+          without every difficult moment becoming a crisis.
+        </p>
+      </div>
+
+      <p class="pull" data-reveal style="margin-top: var(--s-5); max-width: 22ch">
+        The more we face, the more we can embrace.
       </p>
     </div>
   </section>

@@ -523,9 +523,14 @@ button.cta[disabled] { opacity: 0.55; cursor: progress; }
 }
 .arrival__inner { position: relative; display: grid; justify-items: center; gap: var(--s-2); }
 
-.arrival__welcome { font-family: var(--display); font-size: var(--t-2); color: var(--ink); letter-spacing: -0.01em; }
-.arrival__welcome strong { font-weight: 400; color: #fff; }
-.arrival__glad { font-size: var(--t-0); color: var(--muted); letter-spacing: 0.03em; }
+.arrival__welcome { font-family: var(--ui); font-size: var(--t--1); letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted); }
+.arrival__welcome strong { font-weight: 500; color: var(--ink); letter-spacing: inherit; }
+/* The most human line in the arrival: given room and warmth, not size alone. */
+.arrival__glad {
+  font-family: var(--display); font-style: italic; font-weight: 300;
+  font-size: var(--t-2); color: var(--ink); letter-spacing: -0.005em;
+  max-width: 20ch; line-height: 1.3; margin-top: 0.4rem;
+}
 
 /* The sigil already glows. It only needs a soft aura to seat it in the page. */
 .aperture {
@@ -553,7 +558,10 @@ button.cta[disabled] { opacity: 0.55; cursor: progress; }
   filter: drop-shadow(0 6px 40px rgba(108, 140, 255, 0.28));
 }
 
-.arrival__title { font-size: var(--t-5); font-weight: 300; letter-spacing: -0.022em; }
+.arrival__title {
+  font-size: var(--t-4); font-weight: 300; letter-spacing: -0.018em;
+  margin-top: 0.5rem; color: var(--ink);
+}
 .arrival__title strong { font-weight: 400; color: #fff; }
 .arrival__sub { max-width: 36rem; color: var(--muted); }
 .arrival__sub strong { color: var(--ink-soft); font-weight: 500; }
@@ -612,6 +620,9 @@ button.cta[disabled] { opacity: 0.55; cursor: progress; }
 }
 .page-open__inner { max-width: 48rem; display: grid; gap: var(--s-3); }
 .page-open h1 { margin-block: var(--s-2) var(--s-2); }
+/* For pages whose opener is a label + statement only, with no lede — avoid
+   stranding two short lines in a needlessly tall viewport. */
+.page-open--compact { padding-block: calc(var(--header-h) + clamp(2.25rem, 5vw, 3.5rem)) clamp(1.5rem, 4vw, 2.5rem); }
 
 /* --- Doorways: five thresholds, not five cards ---------------------------- */
 
@@ -689,12 +700,15 @@ button.cta[disabled] { opacity: 0.55; cursor: progress; }
 @media (min-width: 820px) {
   .row { grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); align-items: baseline; }
   .row--three { grid-template-columns: 9rem minmax(0, 13rem) minmax(0, 1fr); }
+  .row--four { grid-template-columns: 3.5rem 9rem minmax(0, 13rem) minmax(0, 1fr); align-items: start; }
+  .row--four .row__thumb { margin-top: 0.2rem; }
 }
 @media (max-width: 819px) {
   /* Stacked rows read as one dense block without a little more air between
      name / meta / body. */
   .row { gap: 0.55rem 2.5rem; }
   .row__body { margin-top: 0.15rem; line-height: 1.6; }
+  .row--four .row__thumb { width: 3.5rem; margin-bottom: 0.3rem; }
 }
 .row__name { font-family: var(--display); font-size: var(--t-2); font-weight: 300; color: var(--ink); }
 .row__meta { font-size: var(--t--1); color: var(--muted); }
@@ -1018,6 +1032,337 @@ fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 0.7rem; }
 }
 
 /* --------------------------------------------------------------------------
+   10. Editorial refinement — thresholds, diagrams, icons, panels
+   Design-language additions from the 2026 refinement pass: composition and
+   imagery carry meaning instead of ever-larger type.
+   -------------------------------------------------------------------------- */
+
+/* --- Threshold: a legible transition between two ideas, not a footnote --- */
+.threshold {
+  display: flex; align-items: center; gap: var(--s-4);
+  margin-block: var(--s-6);
+  color: var(--muted);
+  font-size: var(--t-1);
+  line-height: 1.5;
+  max-width: var(--measure-wide);
+}
+.threshold::before, .threshold::after {
+  content: ""; flex: 1 1 auto; height: 1px;
+  background: linear-gradient(to right, transparent, var(--line));
+}
+.threshold::after { background: linear-gradient(to left, transparent, var(--line)); }
+.threshold em { font-style: normal; color: var(--ink-soft); }
+
+/* --- Spatial word reveal: depth · beauty · intensity · stillness · mystery -- */
+.word-field {
+  display: flex; flex-wrap: wrap; gap: 0.5em 1.4em;
+  list-style: none; margin: var(--s-5) 0; padding: 0;
+  font-family: var(--display); font-weight: 300; font-style: italic;
+  font-size: var(--t-2); color: var(--ink);
+}
+.js.reveal-ready .word-field li {
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 900ms var(--ease-soft), transform 900ms var(--ease-soft);
+  transition-delay: calc(var(--i, 0) * 140ms);
+}
+.js.reveal-ready .word-field.is-in li { opacity: 1; transform: none; }
+.word-field li::after {
+  content: "\00b7"; display: inline-block; margin-left: 1.4em;
+  color: var(--stone); font-style: normal;
+}
+.word-field li:last-child::after { content: ""; margin: 0; }
+
+/* --- Doorway icon: one small visual family, five marks ------------------- */
+.doorway__icon {
+  display: grid; place-items: center;
+  width: 2.75rem; height: 2.75rem;
+}
+@media (min-width: 760px) { .doorway__icon { width: 3rem; height: 3rem; } }
+.doorway__icon svg {
+  width: 100%; height: 100%; overflow: visible;
+  stroke: var(--muted-light); fill: none;
+  stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round;
+  transition: stroke 400ms var(--ease);
+}
+.doorway__icon svg .fill { fill: var(--muted-light); stroke: none; transition: fill 400ms var(--ease); }
+.doorway:hover .doorway__icon svg, .doorway:focus-visible .doorway__icon svg { stroke: var(--accent); }
+.doorway:hover .doorway__icon svg .fill, .doorway:focus-visible .doorway__icon svg .fill { fill: var(--accent); }
+.doorway__icon .draw {
+  stroke-dasharray: 60; stroke-dashoffset: 0;
+  transition: stroke-dashoffset 700ms var(--ease-soft);
+}
+.doorway:hover .doorway__icon .draw, .doorway:focus-visible .doorway__icon .draw {
+  stroke-dashoffset: 60; animation: icon-draw 900ms var(--ease-soft);
+}
+@keyframes icon-draw { from { stroke-dashoffset: 60; } to { stroke-dashoffset: 0; } }
+@media (min-width: 760px) {
+  .doorway { grid-template-columns: 3.4rem 4.5rem minmax(0, 11rem) minmax(0, 1fr) 2rem; }
+}
+@media (max-width: 759px) {
+  .doorway { grid-template-columns: auto auto 1fr; align-items: start; }
+  .doorway__icon { grid-row: 1 / span 2; width: 2.25rem; height: 2.25rem; }
+  .doorway__num { grid-column: 2; }
+  .doorway__name { grid-column: 3; }
+  .doorway__desc { grid-column: 2 / -1; grid-row: 2; }
+}
+
+/* --- Bio panel: a human introduction, not a résumé descent --------------- */
+.bio-panel { display: grid; gap: var(--s-5); }
+@media (min-width: 860px) {
+  .bio-panel { grid-template-columns: minmax(0, 0.86fr) minmax(0, 1fr); gap: clamp(2.5rem, 5vw, 4.5rem); align-items: center; }
+}
+.bio-panel__figure { position: relative; }
+.bio-panel__figure .figure { max-width: 26rem; margin-inline: auto; }
+@media (min-width: 860px) { .bio-panel__figure .figure { margin-inline: 0; } }
+.bio-panel__copy { display: grid; gap: var(--s-3); max-width: 34rem; }
+.bio-panel__copy h1, .bio-panel__copy h2 { font-size: var(--t-3); }
+
+.metrics { display: flex; flex-wrap: wrap; gap: 0.6rem 0.8rem; margin-top: var(--s-2); }
+.metric-chip {
+  display: inline-flex; align-items: baseline; gap: 0.4em;
+  padding: 0.5em 0.95em; border: 1px solid var(--line); border-radius: 999px;
+  font-size: var(--t--1); color: var(--muted);
+}
+.metric-chip strong { font-family: var(--display); font-size: var(--t-0); font-weight: 500; color: var(--ink); }
+
+/* --- Quality trio: Responsive / Well held / Carried into life ------------ */
+.quality-trio {
+  display: grid; gap: var(--s-5);
+  counter-reset: quality;
+  margin-top: var(--s-6);
+}
+@media (min-width: 760px) { .quality-trio { grid-template-columns: repeat(3, 1fr); gap: var(--s-4); } }
+.quality {
+  position: relative; padding-top: var(--s-4);
+  border-top: 1px solid var(--line);
+}
+.quality::before {
+  counter-increment: quality; content: counter(quality, decimal-leading-zero);
+  display: block; font-family: var(--display); font-size: var(--t-1);
+  color: var(--accent); margin-bottom: var(--s-2); font-variant-numeric: tabular-nums;
+}
+.quality h3 { font-size: var(--t-2); margin-bottom: 0.5rem; }
+.quality p { color: var(--muted); max-width: 30ch; }
+/* the connective thread linking the three, visible from tablet up */
+@media (min-width: 760px) {
+  .quality-trio { position: relative; }
+  .quality-trio::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(to right, transparent, var(--accent-glow) 20%, var(--accent-glow) 80%, transparent);
+  }
+}
+
+/* --- Map index: a route into the fuller body of the work ----------------- */
+.map-index { position: relative; border-top: 1px solid var(--line); }
+.map-index::before {
+  content: ""; position: absolute; left: 1.55rem; top: 0; bottom: 0; width: 1px;
+  background: var(--line); display: none;
+}
+@media (min-width: 640px) { .map-index::before { display: block; } }
+.map-item {
+  position: relative;
+  display: grid; grid-template-columns: 2.6rem 1fr; gap: 0.2rem 1.4rem;
+  padding-block: clamp(1.3rem, 2.6vw, 1.9rem);
+  border-bottom: 1px solid var(--line);
+  text-decoration: none; color: var(--ink);
+}
+.map-item__num {
+  font-family: var(--display); font-size: var(--t-1); color: var(--muted-light);
+  font-variant-numeric: tabular-nums; position: relative;
+}
+@media (min-width: 640px) {
+  .map-item__num::after {
+    content: ""; position: absolute; left: 1.5rem; top: 50%; width: 0.7rem; height: 1px;
+    background: var(--line);
+  }
+}
+.map-item__body { display: grid; gap: 0.2rem; }
+.map-item__name { font-family: var(--display); font-size: var(--t-2); font-weight: 300; transition: color 300ms var(--ease); }
+.map-item__desc { color: var(--muted); font-size: var(--t-0); max-width: 42rem; transition: color 300ms var(--ease); }
+.map-item:hover .map-item__name, .map-item:focus-visible .map-item__name { color: var(--accent); }
+.map-item:hover .map-item__desc, .map-item:focus-visible .map-item__desc { color: var(--ink-soft); }
+.map-item:hover .map-item__num, .map-item:focus-visible .map-item__num { color: var(--accent); }
+
+/* --- Diagram frame: shared shell for bespoke SVG diagrams ---------------- */
+.diagram {
+  position: relative; border-radius: 3px;
+  background: color-mix(in srgb, var(--night) 55%, transparent);
+  border: 1px solid var(--line-soft);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+.diagram svg { width: 100%; height: auto; display: block; overflow: visible; }
+.diagram__caption {
+  margin-top: var(--s-3); font-size: var(--t--1); color: var(--muted);
+  max-width: 34rem;
+}
+.diagram__art-note {
+  margin-top: var(--s-2); font-size: var(--t--1); color: var(--clay-text);
+  border-left: 2px solid var(--clay); padding-left: 0.8rem;
+}
+.show-dev .diagram__art-note { display: block; }
+.diagram__art-note { display: none; }
+.show-dev .diagram__art-note.dev-only-flag { display: block; }
+
+/* interconnection diagram: systems pulse */
+.diagram-body__path { fill: none; stroke: var(--line); stroke-width: 1.4; }
+.diagram-body__organ { fill: none; stroke: var(--muted-light); stroke-width: 1.4; transition: stroke 400ms var(--ease); }
+.diagram-body__label { font-family: var(--ui); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; fill: var(--muted); }
+.diagram-body__pulse { fill: var(--accent); opacity: 0; }
+.js.reveal-ready .diagram-body.is-in .diagram-body__pulse {
+  animation: pulse-travel 5.5s var(--ease-soft) infinite;
+}
+@keyframes pulse-travel {
+  0%   { opacity: 0; offset-distance: 0%; }
+  8%   { opacity: 1; }
+  46%  { opacity: 1; }
+  54%  { opacity: 0; offset-distance: 50%; }
+  100% { opacity: 0; offset-distance: 100%; }
+}
+
+/* life-moves cycle diagram */
+.diagram-cycle__ring { fill: none; stroke: var(--line); stroke-width: 1.4; }
+.diagram-cycle__node circle { fill: var(--night); stroke: var(--muted-light); stroke-width: 1.3; }
+.diagram-cycle__node text { font-family: var(--ui); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; fill: var(--muted); }
+.js.reveal-ready .diagram-cycle__mark {
+  opacity: 0; transform-origin: 150px 150px;
+}
+.js.reveal-ready .diagram-cycle.is-in .diagram-cycle__mark {
+  animation: cycle-turn 12s linear infinite;
+}
+@keyframes cycle-turn {
+  0%   { opacity: 0; transform: rotate(0deg); }
+  4%   { opacity: 1; }
+  96%  { opacity: 1; }
+  100% { opacity: 0; transform: rotate(360deg); }
+}
+
+/* --- Row icon: a small mark for editorial rows (group work, etc.) -------- */
+.row__icon {
+  display: inline-grid; place-items: center;
+  width: 1.9rem; height: 1.9rem; margin-bottom: 0.5rem;
+  color: var(--accent);
+}
+.row__icon svg { width: 100%; height: 100%; stroke: currentColor; fill: none; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+
+/* --- BMEA grid: where we work, once the wheel has shown where -------------*/
+.bmea-grid { display: grid; gap: var(--s-5); margin-top: var(--s-6); }
+@media (min-width: 760px) { .bmea-grid { grid-template-columns: repeat(2, 1fr); gap: var(--s-5) var(--s-6); } }
+.bmea {
+  border-top: 2px solid var(--accent);
+  padding-top: var(--s-3);
+}
+.bmea__head { display: flex; align-items: center; gap: 0.85rem; }
+.bmea__icon { width: 2rem; height: 2rem; flex: none; stroke: var(--accent); fill: none; stroke-width: 1.4; }
+.bmea h3 { font-size: var(--t-2); }
+.bmea p { margin-top: 0.6rem; color: var(--ink-soft); max-width: 38rem; }
+.bmea__words {
+  margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.4rem 0.6rem;
+  font-size: var(--t--1); color: var(--muted-light);
+}
+.bmea__words span { padding: 0.25em 0.7em; border: 1px solid var(--line); border-radius: 999px; }
+
+/* --- Art placeholder: intentional, replaceable, never a grey box ---------- */
+.art-placeholder {
+  position: relative; overflow: hidden; border-radius: 3px;
+  aspect-ratio: var(--ar, 4 / 5);
+  background:
+    radial-gradient(120% 90% at 20% 0%, rgba(108, 140, 255, 0.16), transparent 60%),
+    radial-gradient(100% 100% at 100% 100%, rgba(224, 149, 92, 0.10), transparent 55%),
+    linear-gradient(155deg, var(--parchment), var(--night));
+  border: 1px solid var(--line-soft);
+  display: flex; align-items: flex-end;
+}
+.art-placeholder::before {
+  content: ""; position: absolute; inset: 0; opacity: 0.5; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='0.06'/%3E%3C/svg%3E");
+}
+.art-placeholder__note {
+  position: relative; z-index: 1; width: 100%;
+  padding: 0.9rem 1rem; font-size: var(--t--1); line-height: 1.5;
+  color: var(--muted-night-2);
+  background: linear-gradient(to top, rgba(5, 8, 18, 0.75), transparent);
+}
+.art-placeholder__note strong { display: block; color: var(--ink); font-weight: 500; margin-bottom: 0.15em; }
+/* Outside the review build, keep only a quiet mark — no developer text. */
+.art-placeholder__note { display: none; }
+.show-dev .art-placeholder__note { display: block; }
+.art-placeholder__mark {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  color: var(--stone); opacity: 0.5;
+}
+.show-dev .art-placeholder__mark { display: none; }
+
+/* A thumbnail-sized placeholder (training rows) has no room for the dev
+   caption text — show only the quiet mark, at any zoom. The full art
+   direction still lives in the HTML comment beside it. */
+.row__thumb.art-placeholder .art-placeholder__note { display: none !important; }
+.row__thumb.art-placeholder .art-placeholder__mark { display: grid !important; font-size: 0.7rem; }
+
+/* --- Dream progression: the frame quietly widens -------------------------- */
+.dream-steps { list-style: none; margin: var(--s-5) 0; padding: 0; display: grid; gap: 0; }
+.dream-steps li {
+  position: relative; padding: 0.65rem 0 0.65rem 1.6rem;
+  border-left: 1px solid var(--line-night);
+  color: var(--muted-night);
+  font-size: var(--t-0);
+  transition: padding-left 500ms var(--ease), color 400ms var(--ease);
+}
+.dream-steps li:nth-child(1) { padding-left: 1.6rem; }
+.dream-steps li:nth-child(2) { padding-left: 2.3rem; }
+.dream-steps li:nth-child(3) { padding-left: 3rem; }
+.dream-steps li:nth-child(4) { padding-left: 3.7rem; }
+.dream-steps li:last-child {
+  border-left-color: var(--accent-lift); color: var(--ink); font-weight: 500;
+  padding-left: 4.4rem;
+}
+.dream-steps li::before {
+  content: ""; position: absolute; left: -1px; top: 1.15rem; width: 7px; height: 1px;
+  background: var(--line-night);
+}
+
+/* --- Anchored section nav (used on longer pages) -------------------------- */
+.section-nav {
+  display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem;
+  padding-top: var(--s-3); margin-top: var(--s-4);
+  border-top: 1px solid var(--line-soft);
+}
+.section-nav a {
+  font-size: var(--t--1); letter-spacing: 0.04em; color: var(--muted);
+  text-decoration: none; transition: color 250ms var(--ease);
+}
+.section-nav a:hover, .section-nav a:focus-visible { color: var(--accent); }
+
+/* --- Progressive disclosure: native, keyboard- and screen-reader-friendly - */
+details.reveal-more { margin-top: var(--s-3); }
+details.reveal-more summary {
+  cursor: pointer; list-style: none;
+  display: inline-flex; align-items: center; gap: 0.5em;
+  color: var(--accent); font-size: var(--t--1); font-weight: 500;
+  letter-spacing: 0.02em;
+}
+details.reveal-more summary::-webkit-details-marker { display: none; }
+details.reveal-more summary::before {
+  content: "+"; display: inline-grid; place-items: center;
+  width: 1.1em; height: 1.1em; border: 1px solid currentColor; border-radius: 50%;
+  font-size: 0.85em; transition: transform 300ms var(--ease);
+}
+details.reveal-more[open] summary::before { content: "\2212"; }
+details.reveal-more .body-text { margin-top: var(--s-3); }
+
+/* --- Process steps (Alignment Call, What the Work Asks) ------------------- */
+.steps { counter-reset: step; display: grid; gap: var(--s-4); margin-top: var(--s-5); }
+.step { position: relative; padding-left: 3rem; }
+.step::before {
+  counter-increment: step; content: counter(step);
+  position: absolute; left: 0; top: 0;
+  width: 2rem; height: 2rem; display: grid; place-items: center;
+  border: 1px solid var(--accent); border-radius: 50%;
+  color: var(--accent); font-family: var(--display); font-size: var(--t-0);
+}
+.step h3 { font-size: var(--t-1); margin-bottom: 0.35rem; }
+.step p { color: var(--muted); }
+
+/* --------------------------------------------------------------------------
    9. Reduced motion — nothing hides, nothing moves
    -------------------------------------------------------------------------- */
 
@@ -1043,4 +1388,7 @@ fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 0.7rem; }
   .site-head.is-hidden { transform: none; }
   .doorway:hover, .doorway:focus-visible { padding-left: 0; }
   .recall { transition: none !important; }
+  .js.reveal-ready .word-field li { opacity: 1 !important; transform: none !important; }
+  .doorway__icon .draw { animation: none !important; stroke-dashoffset: 0 !important; }
+  .diagram-body__pulse, .diagram-cycle__mark { animation: none !important; opacity: 1 !important; transform: none !important; }
 }
