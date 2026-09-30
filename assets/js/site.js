@@ -141,47 +141,82 @@
       return { days: days, tzLabel: isIST ? 'India (IST)' : city + (off ? ' · ' + off : ''), isIST: isIST };
     }
 
+    var FLEX_VALUE = 'Flexible / later';
+
+    // Dropdown-based picker: a day <select> and a time <select>, rebuilt from
+    // buildDays() so the choices are always the next real days from *today*
+    // (recomputed on every page load — nothing here goes stale) in the
+    // visitor's own time zone.
     function renderSlots() {
       var built = buildDays();
       if (tzNote) {
         tzNote.textContent = 'Shown in your time · ' + built.tzLabel + (built.isIST ? '.' : ', with India time (IST) beneath each.');
       }
       slotsWrap.innerHTML = '';
-      built.days.forEach(function (day) {
-        var row = document.createElement('div');
-        row.setAttribute('role', 'group');
-        row.setAttribute('aria-label', day.label);
-        row.style.cssText = 'display:grid;grid-template-columns:minmax(88px,auto) 1fr;align-items:center;gap:8px 12px;padding:10px 0;border-bottom:1px solid var(--line)';
-        var label = document.createElement('span');
-        label.style.cssText = 'font-weight:500;color:var(--text)';
-        label.textContent = day.label;
-        row.appendChild(label);
-        var opts = document.createElement('div');
-        opts.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px';
-        day.slots.forEach(function (s) {
-          var lbl = document.createElement('label');
-          lbl.className = 'choice';
-          var input = document.createElement('input');
-          input.type = 'radio'; input.name = 'slot-pick'; input.value = s.value;
-          input.addEventListener('change', function () { slotInput.value = s.value; });
-          var span = document.createElement('span');
-          span.style.cssText = 'display:grid;line-height:1.25';
-          span.innerHTML = '<span style="font-weight:500">' + s.local + '</span><span style="color:var(--muted)">' + s.ist + '</span>';
-          lbl.appendChild(input); lbl.appendChild(span);
-          opts.appendChild(lbl);
-        });
-        row.appendChild(opts);
-        slotsWrap.appendChild(row);
+
+      var row = document.createElement('div');
+      row.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px';
+
+      var dayField = document.createElement('div');
+      dayField.className = 'ffield';
+      var dayLabel = document.createElement('label');
+      dayLabel.className = 'flabel'; dayLabel.htmlFor = 'f-call-day'; dayLabel.textContent = 'Day';
+      var daySelect = document.createElement('select');
+      daySelect.className = 'finput'; daySelect.id = 'f-call-day';
+      built.days.forEach(function (day, i) {
+        var opt = document.createElement('option');
+        opt.value = String(i); opt.textContent = day.label;
+        daySelect.appendChild(opt);
       });
-      var flexLbl = document.createElement('label');
-      flexLbl.className = 'choice';
-      flexLbl.style.cssText = 'justify-self:start';
-      var flexInput = document.createElement('input');
-      flexInput.type = 'radio'; flexInput.name = 'slot-pick'; flexInput.value = 'Flexible / later';
-      flexInput.addEventListener('change', function () { slotInput.value = 'Flexible / later'; });
-      flexLbl.appendChild(flexInput);
-      flexLbl.appendChild(document.createTextNode('I’m flexible, or need a later date'));
-      slotsWrap.appendChild(flexLbl);
+      var flexOpt = document.createElement('option');
+      flexOpt.value = 'flex'; flexOpt.textContent = 'I’m flexible, or need a later date';
+      daySelect.appendChild(flexOpt);
+      dayField.appendChild(dayLabel); dayField.appendChild(daySelect);
+
+      var timeField = document.createElement('div');
+      timeField.className = 'ffield';
+      var timeLabel = document.createElement('label');
+      timeLabel.className = 'flabel'; timeLabel.htmlFor = 'f-call-time'; timeLabel.textContent = 'Time';
+      var timeSelect = document.createElement('select');
+      timeSelect.className = 'finput'; timeSelect.id = 'f-call-time';
+      timeField.appendChild(timeLabel); timeField.appendChild(timeSelect);
+
+      function updateSlotValue() {
+        if (daySelect.value === 'flex') {
+          slotInput.value = FLEX_VALUE;
+          return;
+        }
+        var day = built.days[Number(daySelect.value)];
+        var slot = day && day.slots[Number(timeSelect.value)];
+        slotInput.value = slot ? slot.value : '';
+      }
+
+      function populateTimes() {
+        timeSelect.innerHTML = '';
+        if (daySelect.value === 'flex') {
+          timeSelect.disabled = true;
+          var flexTimeOpt = document.createElement('option');
+          flexTimeOpt.textContent = 'Any time';
+          timeSelect.appendChild(flexTimeOpt);
+        } else {
+          timeSelect.disabled = false;
+          var day = built.days[Number(daySelect.value)];
+          (day ? day.slots : []).forEach(function (s, i) {
+            var opt = document.createElement('option');
+            opt.value = String(i);
+            opt.textContent = s.local + ' (' + s.ist + ')';
+            timeSelect.appendChild(opt);
+          });
+        }
+        updateSlotValue();
+      }
+
+      daySelect.addEventListener('change', populateTimes);
+      timeSelect.addEventListener('change', updateSlotValue);
+      populateTimes();
+
+      row.appendChild(dayField); row.appendChild(timeField);
+      slotsWrap.appendChild(row);
     }
     if (slotsWrap) renderSlots();
 
@@ -231,7 +266,10 @@
   if (location.hash) {
     setTimeout(function () {
       var t = document.getElementById(decodeURIComponent(location.hash.slice(1)));
-      if (t) window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - 72, behavior: 'instant' });
+      // scrollIntoView respects the target's `scroll-margin-top` (site.css),
+      // so this always lands below the sticky header regardless of its
+      // rendered height on a given device.
+      if (t) t.scrollIntoView({ block: 'start', behavior: 'instant' });
     }, 90);
   }
 }());

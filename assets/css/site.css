@@ -34,6 +34,14 @@
    UA stylesheet's `[hidden]{display:none}` and the element stays visible. */
 [hidden] { display: none !important; }
 
+/* Anchor targets land below the sticky header, with a little breathing
+   room, on every browser's native hash-jump — no hardcoded JS offset needed. */
+[id] { scroll-margin-top: calc(var(--header-h) + 16px); }
+
+/* Each page's opening section always fills at least one full screen, even
+   on mobile browsers whose address bar changes the viewport height. */
+.page-hero { min-height: 100vh; min-height: 100dvh; }
+
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
@@ -237,7 +245,7 @@ details[open] .chev { transform: rotate(180deg); }
   max-width: 1200px; margin: 0 auto; padding: 40px 20px 28px;
   display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between;
 }
-.site-foot__brand { display: flex; align-items: center; gap: 14px; }
+.site-foot__brand { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; }
 .site-foot__brand img { width: 56px; height: auto; }
 .site-foot__brand p { color: var(--text); margin: 0; }
 .site-foot__nav { display: grid; grid-template-columns: repeat(2, minmax(0,max-content)); column-gap: 32px; }

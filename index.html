@@ -59,12 +59,12 @@
 
 <main id="main">
 
-<section aria-labelledby="hero-title" style="background:var(--ink-1);padding:20px 20px 52px;overflow:hidden;position:relative">
+<section class="page-hero" aria-labelledby="hero-title" style="background:var(--ink-1);padding:20px 20px 52px;overflow:hidden;position:relative;display:flex;align-items:center">
   <div aria-hidden="true" style="position:absolute;left:50%;top:10px;width:min(720px,130vw);aspect-ratio:1/1;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(93,184,240,.16),rgba(42,68,184,.08) 60%,transparent);pointer-events:none"></div>
-  <div style="position:relative;max-width:760px;margin:0 auto;display:grid;justify-items:center;text-align:center">
+  <div style="position:relative;max-width:760px;margin:0 auto;display:grid;justify-items:center;text-align:center;width:100%">
     <p data-seq style="margin:0;color:var(--muted);letter-spacing:.02em;max-width:32ch;text-wrap:balance">Healing experiences for greater resilience, vitality and freedom</p>
-    <img data-seq src="assets/images/sigil.png" alt="" width="1100" height="1132" fetchpriority="high" style="display:block;width:clamp(160px,38vw,270px);height:auto;margin:16px 0 12px;filter:drop-shadow(0 0 32px rgba(93,184,240,.22))">
-    <h1 data-seq id="hero-title" style="margin:0;font-size:var(--t-h2);line-height:1.15;letter-spacing:.01em">Welcoming all of life.</h1>
+    <img data-seq src="assets/images/sigil.png" alt="" width="1100" height="1132" fetchpriority="high" style="display:block;width:clamp(190px,46vw,320px);height:auto;margin:16px 0 12px;filter:drop-shadow(0 0 32px rgba(93,184,240,.22))">
+    <h1 data-seq id="hero-title" style="margin:0;font-size:var(--t-h1);line-height:1.05;letter-spacing:.01em">Welcoming all of life.</h1>
     <p data-seq style="margin:12px 0 0;max-width:36ch;color:var(--muted);text-wrap:pretty">Growing our capacity to remain <strong style="font-weight:500;color:var(--text)">open, connected and responsive</strong> through the beautiful, mundane, difficult and unknown.</p>
     <div data-seq style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:24px">
       <a class="btn btn--outline" href="offerings.html">Explore offerings</a>
@@ -247,7 +247,7 @@
           </div>
         </fieldset>
         <fieldset style="border:0;margin:0;padding:0;display:grid;gap:10px">
-          <legend style="font-weight:500;padding:0;margin-bottom:6px">Preferred time for the call</legend>
+          <legend style="font-weight:500;padding:0;margin-bottom:6px">Preferred day &amp; time for the call</legend>
           <p id="call-tz-note" style="margin:0;color:var(--muted)">Shown in your time.</p>
           <div id="call-slots" style="display:grid;border-top:1px solid var(--line)"></div>
         </fieldset>
