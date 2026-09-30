@@ -1,445 +1,237 @@
 /* =========================================================================
-   Vinay Swaminathan — behaviour
-
-   Two rules hold throughout:
-   1. Nothing is hidden by CSS until this file confirms the matching system
-      is running. A blocked or broken script leaves every word visible.
-   2. Every effect answers to prefers-reduced-motion.
+   Vinay Swaminathan — behaviour (2026 redesign)
+   Ported from the Claude Design canvas project's per-page motion script:
+   content is visible in plain HTML/CSS by default; this file only adds a
+   one-shot entrance animation, the header/nav toggle, the Approach page's
+   sticky sub-nav, and the Alignment Call scheduler + submission.
    ========================================================================= */
-
 (function () {
   'use strict';
-
   var root = document.documentElement;
+  root.classList.add('js');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   /* ---------------------------------------------------------------------
-     1. Reveals — one entrance per element, then it is left alone
-     --------------------------------------------------------------------- */
-  var revealSel = '[data-reveal], [data-reveal-group], .lines, .rule, .figure, .wheel-draw, ' +
-                  '.word-field, .diagram-body, .diagram-cycle';
-  var targets = document.querySelectorAll(revealSel);
-
-  var showAll = function () {
-    Array.prototype.forEach.call(targets, function (el) { el.classList.add('is-in'); });
-  };
-
-  if (targets.length && 'IntersectionObserver' in window && !reduce.matches) {
-    try {
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add('is-in');
-          io.unobserve(entry.target);
-        });
-      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.05 });
-
-      // Only now may CSS hide anything.
-      root.classList.add('reveal-ready');
-
-      Array.prototype.forEach.call(targets, function (el) { io.observe(el); });
-
-      // Anything already on screen arrives without waiting for a scroll.
-      window.setTimeout(function () {
-        Array.prototype.forEach.call(targets, function (el) {
-          var b = el.getBoundingClientRect();
-          if (b.top < window.innerHeight && b.bottom > 0) el.classList.add('is-in');
-        });
-      }, 80);
-
-      // Safety net: never leave anything invisible.
-      window.setTimeout(showAll, 4000);
-    } catch (err) {
-      root.classList.remove('reveal-ready');
-      showAll();
-    }
-  } else {
-    showAll();
-  }
-
-  if (typeof reduce.addEventListener === 'function') {
-    reduce.addEventListener('change', function (e) {
-      if (e.matches) { root.classList.remove('reveal-ready'); showAll(); }
-    });
-  }
-
-  /* ---------------------------------------------------------------------
-     2. Header — quieter going down, returns coming up, with a reading line
-     --------------------------------------------------------------------- */
-  var head = document.getElementById('site-head');
-  if (head) {
-    var lastY = window.scrollY;
-    var ticking = false;
-
-    var onScroll = function () {
-      var y = window.scrollY;
-      head.classList.toggle('is-scrolled', y > 24);
-
-      var doc = document.documentElement;
-      var max = (doc.scrollHeight - window.innerHeight) || 1;
-      head.style.setProperty('--progress', Math.min(1, Math.max(0, y / max)).toFixed(4));
-
-      var goingDown = y > lastY;
-      var pastHero = y > 220;
-      var menuOpen = head.classList.contains('is-open');
-      head.classList.toggle('is-hidden', goingDown && pastHero && !menuOpen);
-
-      lastY = y;
-    };
-
-    window.addEventListener('scroll', function () {
-      if (ticking) return;
-      ticking = true;
-      window.requestAnimationFrame(function () { ticking = false; onScroll(); });
-    }, { passive: true });
-    onScroll();
-  }
-
-  /* ---------------------------------------------------------------------
-     3. Navigation
-     No JS: the nav carries no hidden attribute, so it stays open and usable.
+     1. Header — mobile nav toggle (works with no JS: nav-mobile has no
+        [hidden] until this runs, but on narrow screens it is only reached
+        via the toggle button, so we default it closed once JS confirms).
      --------------------------------------------------------------------- */
   var toggle = document.getElementById('nav-toggle');
-  var nav = document.getElementById('site-nav');
-
-  if (toggle && nav) {
-    var mobile = window.matchMedia('(max-width: 860px)');
-
-    var setOpen = function (open, returnFocus) {
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      nav.hidden = !open;
-      if (head) head.classList.toggle('is-open', open);
-      if (!open && returnFocus) toggle.focus();
-    };
-
-    var sync = function () {
-      if (mobile.matches) {
-        if (toggle.getAttribute('aria-expanded') !== 'true') setOpen(false, false);
-      } else {
-        nav.hidden = false;
-        nav.removeAttribute('hidden');
-        toggle.setAttribute('aria-expanded', 'false');
-        if (head) head.classList.remove('is-open');
-      }
-    };
-
-    sync();
-    if (typeof mobile.addEventListener === 'function') mobile.addEventListener('change', sync);
-    else if (typeof mobile.addListener === 'function') mobile.addListener(sync);
-    window.addEventListener('resize', sync, { passive: true });
-
+  var mobileNav = document.getElementById('nav-mobile');
+  if (toggle && mobileNav) {
+    mobileNav.hidden = true;
     toggle.addEventListener('click', function () {
-      setOpen(toggle.getAttribute('aria-expanded') !== 'true', false);
+      var open = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', open ? 'false' : 'true');
+      toggle.querySelector('[data-label]').textContent = open ? 'Menu' : 'Close';
+      mobileNav.hidden = open;
     });
-    nav.addEventListener('click', function (e) {
-      if (mobile.matches && e.target.closest('a')) setOpen(false, false);
-    });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && mobile.matches && toggle.getAttribute('aria-expanded') === 'true') {
-        setOpen(false, true);
+    mobileNav.addEventListener('click', function (e) {
+      if (e.target.closest('a')) {
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.querySelector('[data-label]').textContent = 'Menu';
+        mobileNav.hidden = true;
       }
-    });
-    document.addEventListener('click', function (e) {
-      if (!mobile.matches || toggle.getAttribute('aria-expanded') !== 'true') return;
-      if (!nav.contains(e.target) && !toggle.contains(e.target)) setOpen(false, false);
     });
   }
 
   /* ---------------------------------------------------------------------
-     4. FACE — four letters, one open at a time
-     Fail-open: the rail is hidden and all four panels are shown until this
-     runs, so the whole framework reads without JavaScript.
+     2. Reveal engine — IntersectionObserver adds .is-in once; the CSS in
+        motion-ready mode uses that to transition from a JS-added start
+        state. Nothing is hidden until root carries .motion-ready.
      --------------------------------------------------------------------- */
-  var face = document.getElementById('face');
-  if (face) {
-    var keys = Array.prototype.slice.call(face.querySelectorAll('.face__key'));
-    var panels = Array.prototype.slice.call(face.querySelectorAll('.face__panel'));
-
-    if (keys.length && keys.length === panels.length) {
-      var open = function (stage, moveFocus) {
-        keys.forEach(function (k) {
-          var on = k.dataset.stage === stage;
-          k.setAttribute('aria-selected', on ? 'true' : 'false');
-          k.tabIndex = on ? 0 : -1;
-          if (on && moveFocus) k.focus();
-        });
-        panels.forEach(function (p) {
-          var on = p.dataset.stage === stage;
-          p.hidden = !on;
-          if (on) {
-            p.removeAttribute('data-opening');
-            void p.offsetWidth;
-            p.setAttribute('data-opening', '');
-          }
-        });
-      };
-
-      keys.forEach(function (k, i) {
-        k.addEventListener('click', function () { open(k.dataset.stage, false); });
-        k.addEventListener('keydown', function (e) {
-          var next = null;
-          if (e.key === 'ArrowDown' || e.key === 'ArrowRight') next = keys[(i + 1) % keys.length];
-          else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') next = keys[(i - 1 + keys.length) % keys.length];
-          else if (e.key === 'Home') next = keys[0];
-          else if (e.key === 'End') next = keys[keys.length - 1];
-          if (!next) return;
-          e.preventDefault();
-          open(next.dataset.stage, true);
-        });
+  if (!reduce.matches && 'IntersectionObserver' in window) {
+    root.classList.add('motion-ready');
+    var targets = document.querySelectorAll('[data-reveal], [data-stagger], [data-seq]');
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-in');
+        io.unobserve(entry.target);
       });
-
-      face.classList.add('face-ready');
-      open(keys[0].dataset.stage, false);
-    }
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
+    targets.forEach(function (el) { io.observe(el); });
+    // Anything already on screen arrives without waiting for a scroll.
+    setTimeout(function () {
+      targets.forEach(function (el) {
+        var b = el.getBoundingClientRect();
+        if (b.top < window.innerHeight && b.bottom > 0) el.classList.add('is-in');
+      });
+    }, 80);
+    // Safety net: never leave anything invisible.
+    setTimeout(function () {
+      targets.forEach(function (el) { el.classList.add('is-in'); });
+    }, 4000);
+  } else {
+    document.querySelectorAll('svg').forEach(function (svg) {
+      if (svg.pauseAnimations) svg.pauseAnimations();
+    });
   }
 
   /* ---------------------------------------------------------------------
-     5. Return CTA — a quiet, dismissible way back to the Alignment Call
-     Fail-open: markup carries `hidden`; only shown once this runs, so with
-     no JS there is no undismissable overlay.
+     3. Approach page — sticky sub-nav scroll-spy (a no-op elsewhere)
      --------------------------------------------------------------------- */
-  var recall = document.getElementById('recall');
-  if (recall) {
-    var STORE = 'vs-recall-dismissed';
-    var dismissed = false;
-    try { dismissed = window.sessionStorage.getItem(STORE) === '1'; } catch (e) {}
-
-    if (!dismissed) {
-      recall.hidden = false;
-      var callSection = document.getElementById('alignment-call');
-      var nearCall = false;
-
-      var syncRecall = function () {
-        var show = window.scrollY > window.innerHeight * 0.9 && !nearCall;
-        recall.classList.toggle('is-shown', show);
-      };
-
-      if (callSection && 'IntersectionObserver' in window) {
-        new IntersectionObserver(function (entries) {
-          nearCall = entries[0].isIntersecting;
-          syncRecall();
-        }, { rootMargin: '0px 0px -20% 0px' }).observe(callSection);
-      }
-
-      var rTicking = false;
-      window.addEventListener('scroll', function () {
-        if (rTicking) return;
-        rTicking = true;
-        window.requestAnimationFrame(function () { rTicking = false; syncRecall(); });
-      }, { passive: true });
-      syncRecall();
-
-      var dismissBtn = recall.querySelector('.recall__dismiss');
-      if (dismissBtn) {
-        dismissBtn.addEventListener('click', function () {
-          recall.classList.remove('is-shown');
-          try { window.sessionStorage.setItem(STORE, '1'); } catch (e) {}
-          window.setTimeout(function () { recall.hidden = true; }, 600);
-        });
-      }
-    }
+  var subnavLinks = document.querySelectorAll('.subnav [data-section]');
+  if (subnavLinks.length) {
+    var sectionIds = Array.prototype.map.call(subnavLinks, function (a) { return a.getAttribute('data-section'); });
+    var setActive = function () {
+      var current = sectionIds[0];
+      sectionIds.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top < 140) current = id;
+      });
+      subnavLinks.forEach(function (a) {
+        var on = a.getAttribute('data-section') === current;
+        a.setAttribute('aria-current', on ? 'location' : 'false');
+      });
+    };
+    window.addEventListener('scroll', function () { window.requestAnimationFrame(setActive); }, { passive: true });
+    setActive();
   }
 
   /* ---------------------------------------------------------------------
-     6. Alignment Call form
-     Native validation stays in charge. With JS: inline field messages, then
-     a background POST to Web3Forms so the acknowledgement shows in place.
-     Without JS: the form posts natively and `redirect` carries ?sent=1 back.
+     4. Alignment Call — day/slot picker in the visitor's own time zone,
+        submitted to Web3Forms. IST is the practice's home time zone.
      --------------------------------------------------------------------- */
-  var sent = document.getElementById('form-sent');
   var form = document.getElementById('alignment-form');
+  if (form) {
+    var IST_OFFSET_MIN = 330;
+    var slotsWrap = document.getElementById('call-slots');
+    var tzNote = document.getElementById('call-tz-note');
+    var slotInput = document.getElementById('f-slot');
 
-  if (sent && /(?:^|[?&])sent=1(?:&|$)/.test(window.location.search)) {
-    sent.hidden = false;
-    if (form) form.hidden = true;
-    sent.setAttribute('tabindex', '-1');
-    sent.focus();
-  }
+    function istParts(d) {
+      var p = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' })
+        .format(d).split('-').map(Number);
+      return { y: p[0], m: p[1], d: p[2] };
+    }
 
-  var summary = document.getElementById('form-errors');
-  if (form && summary) {
-    var list = summary.querySelector('ul');
-    var pending = [];
-    var render = null;
-
-    var labelFor = function (f) {
-      if (f.getAttribute('data-error-label')) return f.getAttribute('data-error-label');
-      if (f.type === 'radio' || f.type === 'checkbox') {
-        var group = f.closest('fieldset');
-        var legend = group && group.querySelector('legend');
-        if (legend) return legend.textContent.replace('*', '').trim();
-      }
-      var lab = form.querySelector('label[for="' + f.id + '"]');
-      return lab ? lab.textContent.replace('*', '').trim() : 'This field';
-    };
-
-    // Per-field inline message, sitting under the control it belongs to.
-    var inlineFor = function (f) {
-      var host = f.closest('.field') || f.closest('.consent') || f.parentNode;
-      if (!host) return null;
-      var node = host.querySelector('.field__error');
-      if (!node) {
-        node = document.createElement('p');
-        node.className = 'field__error';
-        node.hidden = true;
-        host.appendChild(node);
-      }
-      return node;
-    };
-
-    var messageFor = function (f) {
-      if (f.validity.valueMissing) {
-        if (f.type === 'checkbox') return 'Please tick this to continue.';
-        if (f.type === 'radio') return 'Please choose one.';
-        return 'Please fill this in.';
-      }
-      if (f.validity.typeMismatch && f.type === 'email') return 'Please check the email address.';
-      if (f.validity.tooLong) return 'That is a little too long.';
-      return 'Please check this field.';
-    };
-
-    var markField = function (f, bad) {
-      var node = inlineFor(f);
-      if (f.type !== 'radio' && f.type !== 'checkbox') {
-        f.setAttribute('aria-invalid', bad ? 'true' : 'false');
-      }
-      if (!node) return;
-      if (bad) {
-        node.textContent = messageFor(f);
-        node.hidden = false;
-        if (!node.id) node.id = (f.id || f.name) + '-error';
-        f.setAttribute('aria-describedby',
-          (f.getAttribute('aria-describedby') ? f.getAttribute('aria-describedby') + ' ' : '') + node.id);
-      } else {
-        node.hidden = true;
-        node.textContent = '';
-      }
-    };
-
-    var checkField = function (f) {
-      if (f.type === 'hidden' || f.disabled || f.name === 'website') return;
-      if (f.willValidate === false) return;
-      markField(f, !f.checkValidity());
-    };
-
-    // "invalid" fires per field before the browser blocks the submit, and it
-    // does not bubble — hence capture.
-    form.addEventListener('invalid', function (e) {
-      markField(e.target, true);
-      if (pending.indexOf(e.target) === -1) pending.push(e.target);
-      if (render) return;
-      render = window.setTimeout(function () {
-        render = null;
-        var seen = {}, items = [];
-        pending.forEach(function (f) {
-          var key = f.name || f.id;
-          if (seen[key]) return;
-          seen[key] = true;
-          if (!f.id) f.id = 'field-' + key;
-          items.push('<li><a href="#' + f.id + '">' + labelFor(f) + '</a></li>');
+    function buildDays() {
+      var now = new Date();
+      var t = istParts(now);
+      var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+      var isIST = tz === 'Asia/Kolkata' || tz === 'Asia/Calcutta';
+      var fTime = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' });
+      var fDay = new Intl.DateTimeFormat(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
+      var fDayIST = new Intl.DateTimeFormat(undefined, { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' });
+      var fWk = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
+      var days = [];
+      for (var k = 0; days.length < 6 && k < 14; k++) {
+        var base = new Date(Date.UTC(t.y, t.m - 1, t.d + k));
+        if (base.getUTCDay() === 0) continue;
+        var raw = [[15, 0, '3:00 PM'], [15, 45, '3:45 PM']].map(function (s) {
+          var dt = new Date(Date.UTC(t.y, t.m - 1, t.d + k, s[0], s[1]) - IST_OFFSET_MIN * 60000);
+          return { dt: dt, lbl: s[2] };
+        }).filter(function (s) { return s.dt - now > 3 * 3600000; });
+        if (!raw.length) continue;
+        var dayLocal = fDay.format(raw[0].dt);
+        days.push({
+          label: isIST ? fDayIST.format(raw[0].dt) : dayLocal,
+          slots: raw.map(function (s) {
+            var sameDay = fDay.format(s.dt) === dayLocal;
+            var local = (sameDay ? '' : fWk.format(s.dt) + ' ') + fTime.format(s.dt);
+            var value = fDayIST.format(s.dt) + ', ' + s.lbl + ' IST' + (isIST ? '' : ' (' + fDay.format(s.dt) + ' ' + fTime.format(s.dt) + ' ' + tz + ')');
+            return { value: value, local: isIST ? s.lbl : local, ist: isIST ? 'IST' : s.lbl + ' IST' };
+          }),
         });
-        pending = [];
-        list.innerHTML = items.join('');
-        summary.hidden = false;
-      }, 0);
-    }, true);
-
-    // Re-check on the way out of a field, and live once it has been flagged.
-    form.addEventListener('blur', function (e) {
-      if (e.target && e.target.matches('input, textarea, select')) checkField(e.target);
-    }, true);
-    form.addEventListener('input', function (e) {
-      var f = e.target;
-      if (f && f.getAttribute('aria-invalid') === 'true') checkField(f);
-    });
-    form.addEventListener('change', function (e) {
-      var f = e.target;
-      if (f && (f.type === 'checkbox' || f.type === 'radio')) {
-        var node = inlineFor(f);
-        if (node && f.checkValidity()) { node.hidden = true; node.textContent = ''; }
       }
-    });
+      var off = '';
+      try { off = new Intl.DateTimeFormat(undefined, { timeZone: tz, timeZoneName: 'short' }).formatToParts(now).find(function (p) { return p.type === 'timeZoneName'; }).value; } catch (e) {}
+      var city = tz.split('/').pop().replace(/_/g, ' ');
+      return { days: days, tzLabel: isIST ? 'India (IST)' : city + (off ? ' · ' + off : ''), isIST: isIST };
+    }
 
-    summary.addEventListener('click', function (e) {
-      var a = e.target.closest('a');
-      if (!a) return;
-      var t = document.getElementById(a.getAttribute('href').slice(1));
-      if (!t) return;
-      e.preventDefault();
-      t.focus();
-    });
+    function renderSlots() {
+      var built = buildDays();
+      if (tzNote) {
+        tzNote.textContent = 'Shown in your time · ' + built.tzLabel + (built.isIST ? '.' : ', with India time (IST) beneath each.');
+      }
+      slotsWrap.innerHTML = '';
+      built.days.forEach(function (day) {
+        var row = document.createElement('div');
+        row.setAttribute('role', 'group');
+        row.setAttribute('aria-label', day.label);
+        row.style.cssText = 'display:grid;grid-template-columns:minmax(88px,auto) 1fr;align-items:center;gap:8px 12px;padding:10px 0;border-bottom:1px solid var(--line)';
+        var label = document.createElement('span');
+        label.style.cssText = 'font-weight:500;color:var(--text)';
+        label.textContent = day.label;
+        row.appendChild(label);
+        var opts = document.createElement('div');
+        opts.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px';
+        day.slots.forEach(function (s) {
+          var lbl = document.createElement('label');
+          lbl.className = 'choice';
+          var input = document.createElement('input');
+          input.type = 'radio'; input.name = 'slot-pick'; input.value = s.value;
+          input.addEventListener('change', function () { slotInput.value = s.value; });
+          var span = document.createElement('span');
+          span.style.cssText = 'display:grid;line-height:1.25';
+          span.innerHTML = '<span style="font-weight:500">' + s.local + '</span><span style="color:var(--muted)">' + s.ist + '</span>';
+          lbl.appendChild(input); lbl.appendChild(span);
+          opts.appendChild(lbl);
+        });
+        row.appendChild(opts);
+        slotsWrap.appendChild(row);
+      });
+      var flexLbl = document.createElement('label');
+      flexLbl.className = 'choice';
+      flexLbl.style.cssText = 'justify-self:start';
+      var flexInput = document.createElement('input');
+      flexInput.type = 'radio'; flexInput.name = 'slot-pick'; flexInput.value = 'Flexible / later';
+      flexInput.addEventListener('change', function () { slotInput.value = 'Flexible / later'; });
+      flexLbl.appendChild(flexInput);
+      flexLbl.appendChild(document.createTextNode('I’m flexible, or need a later date'));
+      slotsWrap.appendChild(flexLbl);
+    }
+    if (slotsWrap) renderSlots();
 
-    /* --- Background submit to Web3Forms --------------------------------- */
+    var sent = document.getElementById('form-sent');
+    var errors = document.getElementById('form-errors');
     var endpoint = form.getAttribute('action') || '';
-    var canAjax = /web3forms\.com/.test(endpoint) &&
-                  typeof window.fetch === 'function' &&
-                  typeof window.FormData === 'function';
-    var submitting = false;
-
-    var showError = function (msg) {
-      list.innerHTML = '<li>' + msg + '</li>';
-      var h = summary.querySelector('h2');
-      if (h) h.textContent = 'Something went wrong';
-      summary.hidden = false;
-      summary.setAttribute('tabindex', '-1');
-      summary.focus();
-    };
+    var canAjax = /web3forms\.com/.test(endpoint) && typeof window.fetch === 'function';
 
     form.addEventListener('submit', function (e) {
-      summary.hidden = true;
-      list.innerHTML = '';
-      var h = summary.querySelector('h2');
-      if (h) h.textContent = 'Please check a few things';
-
-      if (!canAjax || submitting) return;          // let the native POST proceed
-      if (!form.checkValidity()) return;            // "invalid" handler takes over
-
-      // Honeypot: if it is filled, quietly pretend success.
+      if (errors) errors.hidden = true;
+      if (!canAjax) return;
+      if (!form.checkValidity()) return;
       var hp = form.querySelector('input[name="website"]');
-      if (hp && hp.value) { e.preventDefault(); reveal(); return; }
-
+      if (hp && hp.value) { e.preventDefault(); return; }
       e.preventDefault();
-      submitting = true;
       var btn = form.querySelector('button[type="submit"]');
-      var btnLabel = btn ? btn.innerHTML : '';
-      if (btn) { btn.disabled = true; btn.innerHTML = 'Sending&hellip;'; }
-
-      fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' },
-        body: new FormData(form)
-      }).then(function (r) {
-        return r.json().catch(function () { return {}; }).then(function (data) {
-          return { ok: r.ok, data: data };
+      var label = btn ? btn.innerHTML : '';
+      if (btn) { btn.disabled = true; btn.innerHTML = 'Sending…'; }
+      fetch(endpoint, { method: 'POST', headers: { Accept: 'application/json' }, body: new FormData(form) })
+        .then(function (r) { return r.json().catch(function () { return {}; }).then(function (data) { return { ok: r.ok, data: data }; }); })
+        .then(function (res) {
+          if (res.ok && (res.data.success === true || res.data.success === undefined)) {
+            var nameEl = document.getElementById('sent-name');
+            if (nameEl) nameEl.textContent = String(new FormData(form).get('name') || '').split(' ')[0];
+            var slotEl = document.getElementById('sent-slot');
+            if (slotEl) {
+              var v = slotInput ? slotInput.value : '';
+              if (v) { slotEl.hidden = false; slotEl.querySelector('span').textContent = v; }
+            }
+            form.hidden = true;
+            if (sent) { sent.hidden = false; sent.setAttribute('tabindex', '-1'); sent.focus(); }
+          } else {
+            if (btn) { btn.disabled = false; btn.innerHTML = label; }
+            if (errors) { errors.hidden = false; errors.textContent = (res.data && res.data.message) || 'The message did not go through. Please try again, or write in directly.'; }
+          }
+        })
+        .catch(function () {
+          if (btn) { btn.disabled = false; btn.innerHTML = label; }
+          if (errors) { errors.hidden = false; errors.textContent = 'The message did not go through — this can be a connection issue. Please try again in a moment.'; }
         });
-      }).then(function (res) {
-        if (res.ok && (res.data.success === true || res.data.success === undefined)) {
-          reveal();
-        } else {
-          restore(btn, btnLabel);
-          showError((res.data && res.data.message) ||
-            'The message did not go through. Please try again, or email vinay directly.');
-        }
-      }).catch(function () {
-        restore(btn, btnLabel);
-        showError('The message did not go through — this can be a connection issue. Please try again in a moment.');
-      });
     });
+  }
 
-    function restore(btn, label) {
-      submitting = false;
-      if (btn) { btn.disabled = false; btn.innerHTML = label; }
-    }
-
-    function reveal() {
-      submitting = false;
-      if (sent) {
-        sent.hidden = false;
-        form.hidden = true;
-        sent.setAttribute('tabindex', '-1');
-        sent.scrollIntoView({ block: 'center', behavior: reduce.matches ? 'auto' : 'smooth' });
-        sent.focus();
-      }
-    }
+  /* ---------------------------------------------------------------------
+     5. Jump-to-hash on load (matches the design's instant-scroll behaviour)
+     --------------------------------------------------------------------- */
+  if (location.hash) {
+    setTimeout(function () {
+      var t = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      if (t) window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - 72, behavior: 'instant' });
+    }, 90);
   }
 }());
