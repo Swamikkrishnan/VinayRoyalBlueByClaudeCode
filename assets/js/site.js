@@ -42,7 +42,7 @@
      --------------------------------------------------------------------- */
   if (!reduce.matches && 'IntersectionObserver' in window) {
     root.classList.add('motion-ready');
-    var targets = document.querySelectorAll('[data-reveal], [data-stagger], [data-seq]');
+    var targets = document.querySelectorAll('[data-reveal], [data-stagger], [data-seq], [data-hl]');
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
