@@ -76,9 +76,12 @@ the header flow.
   stacked and readable.
 - Interior pages (Approach, 1:1 Offerings, Group Offerings, About, Training)
   share one section nav (`.subnav`) and one scroll-spy in `site.js`. From
-  1200px it is a slim fixed index beside the reading column (content shifts
-  right to clear it); below that it is a horizontal bar under the header
+  1100px it is a slim fixed index in the left gutter (the content column
+  stays centred, inset equally to clear it); below that it is a horizontal bar under the header
   (50px + border = `--subnav-h`). Anchors land below the sticky bars.
+- Emphasis: Gillius for explanation, EB Garamond (`.insight`) only for
+  complete distilled sentences; `.anchor` (semibold) marks a short scanning
+  phrase; the blue highlight sweep is kept to one per neighbourhood.
 - Gillius ADF maps "oe" to "œ" through its required-ligature table; `body`
   sets `font-feature-settings: "rlig" 0` so "does" never reads "dœs".
 - Mobile nav traps nothing, closes on Escape, returns focus to the toggle.

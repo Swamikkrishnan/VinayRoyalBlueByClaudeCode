@@ -78,7 +78,7 @@
 
   /* ---------------------------------------------------------------------
      3. Interior pages — sticky section nav scroll-spy (no-op without one).
-        On desktop the nav is a slim fixed index beside the content; below
+        From 1100px the nav is a slim fixed index in the left gutter; below
         that it is a horizontal bar under the header (its height is
         --subnav-h). A section is current once its top passes the bottom of
         the sticky bars; at the very bottom the last reached section wins.
