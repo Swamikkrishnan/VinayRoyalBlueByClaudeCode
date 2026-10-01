@@ -12,6 +12,23 @@
   root.classList.add('js');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+  // Calls cb once the image is loaded and decoded (immediately if cached),
+  // with a short cap so a slow network never leaves a photo hidden.
+  function whenReady(img, cb) {
+    var done = false;
+    var go = function () { if (!done) { done = true; cb(); } };
+    if (!img) return go();
+    var decode = function () {
+      if (img.decode) img.decode().then(go, go); else go();
+    };
+    if (img.complete && img.naturalWidth) decode();
+    else {
+      img.addEventListener('load', decode, { once: true });
+      img.addEventListener('error', go, { once: true });
+    }
+    setTimeout(go, 2500);
+  }
+
   /* ---------------------------------------------------------------------
      1. Header — mobile nav toggle (works with no JS: nav-mobile has no
         [hidden] until this runs, but on narrow screens it is only reached
@@ -109,19 +126,35 @@
   if (!reduce.matches && 'IntersectionObserver' in window) {
     root.classList.add('motion-ready');
     var targets = document.querySelectorAll('[data-reveal], [data-seq], [data-hl], [data-reveal-img]');
+    // Photos fade in only once decoded (cached images resolve at once).
+    var show = function (el) {
+      if (el.hasAttribute('data-reveal-img')) {
+        whenReady(el.querySelector('img'), function () { el.classList.add('is-in'); });
+      } else {
+        el.classList.add('is-in');
+      }
+    };
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
-        entry.target.classList.add('is-in');
+        show(entry.target);
         io.unobserve(entry.target);
       });
     }, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
-    targets.forEach(function (el) { io.observe(el); });
+    // Photos start a little earlier so they never pop in late.
+    var ioImg = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        show(entry.target);
+        ioImg.unobserve(entry.target);
+      });
+    }, { rootMargin: '0px 0px 4% 0px', threshold: 0 });
+    targets.forEach(function (el) { (el.hasAttribute('data-reveal-img') ? ioImg : io).observe(el); });
     // Anything already on screen arrives without waiting for a scroll.
     setTimeout(function () {
       targets.forEach(function (el) {
         var b = el.getBoundingClientRect();
-        if (b.top < window.innerHeight && b.bottom > 0) el.classList.add('is-in');
+        if (b.top < window.innerHeight && b.bottom > 0) show(el);
       });
     }, 80);
     // Safety net: never leave anything invisible.
@@ -181,6 +214,22 @@
     window.addEventListener('resize', setActive);
     setActive();
   }
+
+  // Training archive photos (inside accordions): hold the CSS fade at its
+  // transparent start until the photo is decoded, so it never pops in late.
+  // Lazy photos only load once their accordion opens, so the wait starts there.
+  document.querySelectorAll('.training-archive__figure').forEach(function (fig) {
+    var img = fig.querySelector('img');
+    var acc = fig.closest('details');
+    if (!img || !acc || (img.complete && img.naturalWidth)) return;
+    fig.setAttribute('data-pending', '');
+    var onToggle = function () {
+      if (!acc.open) return;
+      acc.removeEventListener('toggle', onToggle);
+      whenReady(img, function () { fig.removeAttribute('data-pending'); });
+    };
+    acc.addEventListener('toggle', onToggle);
+  });
 
   /* ---------------------------------------------------------------------
      3b. FACE (Approach) — progressive tab selector. Without JS the four

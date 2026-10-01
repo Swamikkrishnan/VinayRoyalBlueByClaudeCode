@@ -63,7 +63,8 @@
   --motion-fast: 240ms;   /* hover, colour, small state changes */
   --motion-base: 360ms;   /* menus, accordions, chevrons, tab switches */
   --motion-slow: 750ms;   /* text / section reveals */
-  --motion-image: 950ms;  /* photographs settling into view */
+  --motion-image: 1150ms; /* photographs gradually appearing */
+  --ease-image: cubic-bezier(.25,.46,.45,.94); /* soft ease-out, no overshoot */
   --t-fast: var(--motion-fast);
 }
 
@@ -224,14 +225,14 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 .js.motion-ready [data-seq]:nth-child(2).is-in { transition-delay: 90ms; }
 .js.motion-ready [data-seq]:nth-child(3).is-in { transition-delay: 180ms; }
 .js.motion-ready [data-seq]:nth-child(4).is-in { transition-delay: 270ms; }
-/* Photographs: fade up from near-transparent, a 14px settle and a 3px blur
-   that resolves early. No zoom, no slide. Runs once; stays put afterwards. */
+/* Photographs: a slow fade with a 5px settle; opacity and transform only, no
+   blur, no zoom. site.js adds .is-in once the image is decoded, so the fade
+   never runs over an empty frame. Space is reserved by --ar beforehand. */
 [data-reveal-img] { opacity: 1; }
-.js.motion-ready [data-reveal-img] { opacity: 0; transform: translate3d(0,14px,0); filter: blur(3px); }
+.js.motion-ready [data-reveal-img] { opacity: 0; transform: translate3d(0,5px,0); }
 .js.motion-ready [data-reveal-img].is-in {
-  opacity: 1; transform: none; filter: none;
-  transition: opacity var(--motion-image) var(--ease) 120ms, transform var(--motion-image) var(--ease) 120ms,
-              filter calc(var(--motion-image) * .6) var(--ease) 120ms;
+  opacity: 1; transform: none;
+  transition: opacity var(--motion-image) var(--ease-image) 60ms, transform var(--motion-image) var(--ease-image) 60ms;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -806,8 +807,10 @@ textarea.finput { min-height: 112px; resize: vertical; }
 .training-archive__figure { margin: 0; display: grid; gap: 8px; justify-items: start; }
 .training-archive__image { width: min(100%, calc(360px * var(--ar, 1.33))); height: auto; border-radius: 6px; }
 .training-archive__caption { font-size: var(--t-small); color: var(--muted); line-height: 1.4; }
-.js .accordion[open]:not(.is-closing) .training-archive__figure { animation: archive-in 700ms var(--ease) 140ms both; }
-@keyframes archive-in { from { opacity: 0; transform: translate3d(0,8px,0); } to { opacity: 1; transform: none; } }
+.js .accordion[open]:not(.is-closing) .training-archive__figure { animation: archive-in 950ms var(--ease-image) 110ms both; }
+/* Held at its transparent start until site.js has the photo decoded. */
+.js .training-archive__figure[data-pending] { animation-play-state: paused; }
+@keyframes archive-in { from { opacity: 0; transform: translate3d(0,5px,0); } to { opacity: 1; transform: none; } }
 @media (max-width: 559px) { .training-archive__figure { justify-items: center; text-align: center; } }
 .training-archive--pair { display: flex; flex-wrap: wrap; gap: var(--s-2); }
 .training-archive--pair .training-archive__figure { flex: var(--ar, 1) 1 0; min-width: 0; }
