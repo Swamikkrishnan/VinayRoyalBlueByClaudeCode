@@ -128,3 +128,11 @@ works the same on GitHub Pages and on the final host.
 
 - Have the `privacy.html` wording reviewed.
 - A purpose-made 1200×630 `social-card.jpg` and the matching `og:image` tags.
+
+## Cache-busting
+
+Pages link `assets/css/site.css?v=…` and `assets/js/site.js?v=…`. GitHub
+Pages caches assets for 10 minutes, so bump the `v` value in all seven pages
+whenever CSS or JS changes, or visitors may keep the old file:
+
+    V=$(date +%Y%m%d%H%M); sed -i '' -E "s#(site\.(css|js))(\?v=[0-9]+)?\"#\1?v=$V\"#" *.html
