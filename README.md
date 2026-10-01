@@ -7,16 +7,17 @@ Static site. No framework, no bundler, no npm, no database.
   `vinayswaminathan.com` (harmless until the DNS is set).
 - **Final host (cPanel):** upload the contents of this folder to `public_html/`.
 
-    index.html          Arrival, invitation, the five doorways, Meet Vinay,
-                        go-deeper, Request an Alignment Call
+    index.html          Arrival, Why welcome?, 1:1 Offerings, Group Offerings,
+                        Meet Vinay, How to start (Alignment Call form)
     approach.html       The approach + FACE (Focus · Admit · Connect · Embody)
     offerings.html      1:1 offerings — anchors #body #mind #emotion #action #breath
-    groupwork.html      Group work
+    groupwork.html      Group Offerings
     about.html          About Vinay
     training.html       Training & background
     privacy.html        Privacy notice
     assets/css/site.css  One stylesheet
     assets/js/site.js    One script
+    assets/fonts/        Gillius ADF No2 (OTF)
     assets/images/       Sigil + photography
     CNAME · .nojekyll    GitHub Pages / custom-domain config
 
@@ -36,9 +37,20 @@ welcoming.
 All body text clears WCAG AA (7:1+) on every band; the accent clears AA as a
 link colour on every band.
 
-Newsreader for display, Archivo for UI/body. Hierarchy comes from scale and
-space, not weight; `<strong>` lifts a phrase toward full white rather than
-adding heavy weight. Body measure is capped at 36rem.
+EB Garamond (Google Fonts) for ceremonial/display type — hero, page and section
+titles, the header name, the footer line. Gillius ADF No2 for body and UI,
+self-hosted from `assets/fonts/` (Regular 400, Bold 600, Italic 400 — the
+condensed and bold-italic files are present but not loaded). The Regular face
+is preloaded on every page.
+
+Four type tiers (`--t-display`, `--t-heading`, `--t-sub`, `--t-body`) plus
+`--t-small`; spacing tokens `--s-1`…`--s-5` and `--section-y`. Hierarchy comes
+from scale, space and typeface contrast, not weight.
+
+Progressive disclosure uses one native `<details class="accordion">` pattern
+(no JavaScript). A hash link to an element inside a closed accordion opens it.
+Anchor offset is a single rule: `[id] { scroll-margin-top: … }` driven by
+`--header-h` (+ `--subnav-h` on the Approach page).
 
 A fixed paper grain (inline SVG turbulence, `overlay`, 0.5) sits over the
 bands (`body::before`, `z-index: 3`); a soft top-light / foot-shadow wash
@@ -49,29 +61,25 @@ aura (`.aperture::before`) to seat it. Photographs get a scrim
 
 ## Two architectural rules
 
-**Fail open.** CSS only hides content once JavaScript has confirmed the
-matching system is live (`html.reveal-ready`, `#face.face-ready`). A 4s
-safety net reveals everything regardless. With JS off, every page shows all
-of its content — verified in the QA harness (`hidden: 0` on all seven pages).
-The arrival sequence on the homepage is pure CSS with `animation-fill-mode:
-both`, so it completes even if no script ever runs.
-
-**Fail closed.** Development-only content is `display: none !important` by
-default and appears only when `body` carries `show-dev`. The testimonial
-block on index.html is marked this way and will not appear publicly.
+**Fail open.** CSS only hides content for motion once JavaScript has
+confirmed the reveal engine is live (`html.motion-ready`). A 4s safety net
+reveals everything regardless. With JS off, every page shows all of its
+content; accordions remain native and openable, and the mobile menu sits in
+the header flow.
 
 ## Accessibility
 
 - `prefers-reduced-motion: reduce` removes transforms, opacity choreography
   and smooth scrolling; all animated content is legible without animation.
-- FACE is a proper tablist (roving tabindex, Arrow/Home/End) and degrades to
-  four stacked, fully readable panels without JS.
+- FACE (Approach) is a tab selector built by `site.js` (real buttons, roving
+  tabindex, Arrow/Home/End, `aria-selected`); without JS all four steps stay
+  stacked and readable.
+- Interior pages (Approach, 1:1 Offerings, Group Offerings, About, Training)
+  share one sticky section nav (`.subnav`, 50px + border = `--subnav-h`) with
+  one scroll-spy in `site.js`; anchors land below both sticky bars.
 - Mobile nav traps nothing, closes on Escape, returns focus to the toggle.
 - All body text clears WCAG AA comfortably (7:1+ on every band); the royal-blue
   accent clears AA as a link colour on every band. Audited across all seven pages.
-- The return-CTA (`.recall`) is revealed by `site.js` only and is dismissible
-  (per session); with no JS it stays hidden rather than becoming an overlay
-  that cannot be closed.
 
 ## Two CSS traps worth remembering
 
@@ -89,8 +97,7 @@ works the same on GitHub Pages and on the final host.
 
 1. Go to web3forms.com and create an access key for **vinay.swami91@gmail.com**
    (a verification email is sent to that address).
-2. In `index.html`, replace `WEB3FORMS_ACCESS_KEY` in the hidden
-   `access_key` field with the real key.
+2. The key lives in the hidden `access_key` field in `index.html`.
 3. That is all. The recipient address is bound to the key inside the Web3Forms
    dashboard and never appears anywhere in this repo.
 
@@ -103,12 +110,7 @@ works the same on GitHub Pages and on the final host.
   you want the no-JS path to work on a URL other than `vinayswaminathan.com`).
 - Spam: a hidden honeypot (`website`) plus Web3Forms' own `botcheck`.
 
-Until a real key is in place the form will not send — everything else on the
-site is independent of it.
-
 ## Still to do before public launch
 
-- Remove `class="show-dev"` from `<body>` on every page (hides the testimonial
-  placeholders), or replace them with real, permissioned accounts.
-- Have the `privacy.html` wording reviewed; set its "Last reviewed" line.
+- Have the `privacy.html` wording reviewed.
 - A purpose-made 1200×630 `social-card.jpg` and the matching `og:image` tags.

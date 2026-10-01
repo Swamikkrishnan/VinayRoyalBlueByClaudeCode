@@ -18,14 +18,16 @@
 <meta property="og:image" content="https://vinayswaminathan.com/assets/images/sigil.png">
 <meta name="twitter:card" content="summary_large_image">
 
+<script>document.documentElement.classList.add('js')</script>
 <link rel="icon" href="assets/images/sigil-small.png" type="image/png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/GilliusADFNo2-Regular.otf" as="font" type="font/otf" crossorigin>
 <link rel="stylesheet" href="assets/css/site.css">
 </head>
-<body>
+<body class="has-subnav">
 <a class="skip-link" href="#main">Skip to content</a>
 
 <header class="site-head" id="site-head">
@@ -37,7 +39,7 @@
     <nav class="nav" aria-label="Primary">
       <a class="nav__link" href="approach.html">The Approach</a>
       <a class="nav__link" href="offerings.html">1:1 Offerings</a>
-      <a class="nav__link" href="groupwork.html">Group Work</a>
+      <a class="nav__link" href="groupwork.html">Group Offerings</a>
       <a class="nav__link" href="about.html">About</a>
       <a class="nav__link" href="training.html" aria-current="page">Training</a>
       <a class="btn btn--solid" href="index.html#alignment-call">Request an Alignment Call</a>
@@ -47,118 +49,145 @@
       <span data-label>Menu</span>
     </button>
   </div>
-  <nav class="nav-mobile" id="nav-mobile" aria-label="Primary">
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Primary mobile">
     <a href="approach.html">The Approach <span aria-hidden="true">&rarr;</span></a>
     <a href="offerings.html">1:1 Offerings <span aria-hidden="true">&rarr;</span></a>
-    <a href="groupwork.html">Group Work <span aria-hidden="true">&rarr;</span></a>
+    <a href="groupwork.html">Group Offerings <span aria-hidden="true">&rarr;</span></a>
     <a href="about.html">About <span aria-hidden="true">&rarr;</span></a>
     <a href="training.html" aria-current="page">Training <span aria-hidden="true">&rarr;</span></a>
-    <a class="btn btn--solid" style="margin-top:16px;justify-content:center" href="index.html#alignment-call">Request an Alignment Call</a>
+    <a class="btn btn--solid" href="index.html#alignment-call">Request an Alignment Call</a>
   </nav>
 </header>
 
+<nav class="subnav" aria-label="Sections of this page">
+  <ul>
+    <li><a data-section="matters" href="#matters">What really matters</a></li>
+    <li><a data-section="path" href="#path">The Path</a></li>
+    <li><a data-section="certified" href="#certified">Qualifications</a></li>
+    <li><a data-section="practice" href="#practice">Practice &amp; Study</a></li>
+    <li><a data-section="personal" href="#personal">Personal Transformation</a></li>
+  </ul>
+</nav>
+
+
 <main id="main">
 
-<section id="hero" class="page-hero" aria-labelledby="t1" style="background:var(--ink-1);padding:36px 20px 52px;display:flex;align-items:center">
-  <div class="wrap" style="display:grid;gap:14px;max-width:640px;width:100%">
-    <p style="margin:0;color:var(--muted);letter-spacing:.02em">Training &amp; Background</p>
-    <h1 data-seq id="t1" style="font-size:var(--t-h1);line-height:1.02">The path behind the practice</h1>
-    <p style="margin:0;font-size:var(--t-h3);line-height:1.35;color:var(--text)">Every session draws on years of <span data-hl>steadiness</span> built through training, and <span data-hl>readiness</span> built through life itself.</p>
+<section id="matters" class="page-hero" aria-labelledby="t0">
+  <div class="wrap stack stack--lg">
+    <h1 data-seq id="t0">Training &amp; Background</h1>
+    <div data-seq class="stack prose">
+      <h2 id="t1" class="eyebrow">What really matters</h2>
+      <p class="lede lede--wide">Training gives me the tools to hold this work safely. Your readiness is what makes change possible.</p>
+    </div>
   </div>
 </section>
 
-<section id="stats" aria-labelledby="t2" style="background:var(--ink-2);padding:40px 20px">
-  <div class="wrap">
-    <h2 id="t2" class="visually-hidden" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">The Path, in numbers</h2>
-    <dl data-reveal style="margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px;text-align:center">
-      <div>
-        <dt style="font-family:var(--display);font-size:clamp(2rem,6vw,2.8rem);font-weight:400;color:var(--accent)">3,000+</dt>
-        <dd style="margin:4px 0 0;color:var(--muted)">Hours of sessions held</dd>
-      </div>
-      <div>
-        <dt style="font-family:var(--display);font-size:clamp(2rem,6vw,2.8rem);font-weight:400;color:var(--accent)">200+</dt>
-        <dd style="margin:4px 0 0;color:var(--muted)">Group experiences facilitated</dd>
-      </div>
-      <div>
-        <dt style="font-family:var(--display);font-size:clamp(2rem,6vw,2.8rem);font-weight:400;color:var(--accent)">1,000+</dt>
-        <dd style="margin:4px 0 0;color:var(--muted)">People supported</dd>
-      </div>
+<section id="path" class="section section--alt" aria-labelledby="t2">
+  <div class="wrap stack stack--lg">
+    <h2 id="t2">The Path</h2>
+    <p class="prose">My training and transformation began in June 2016 and have continued through formal study, retreats, supervised practice, assisting and lived application.</p>
+    <dl class="metrics metrics--row">
+      <div class="metric"><dt>3,000+</dt><dd>Hours across training, workshops, retreats, study and assisting</dd></div>
+      <div class="metric"><dt>200+</dt><dd>Workshops, trainings, seminars, retreats, resits and assisting roles</dd></div>
+      <div class="metric"><dt>1,000+</dt><dd>People supported</dd></div>
     </dl>
   </div>
 </section>
 
-<section id="certs" aria-labelledby="t3" style="background:var(--ink-1);padding:48px 20px 52px">
-  <div class="wrap" style="display:grid;gap:20px">
-    <h2 id="t3" style="font-size:var(--t-h2);line-height:1.2;font-weight:500">Certified Qualifications</h2>
-    <div style="display:grid;gap:16px">
-      <article data-reveal style="display:grid;grid-template-columns:64px 1fr;gap:16px;padding:18px;background:var(--ink-2);border:1px solid var(--line);border-radius:16px;align-items:start">
-        <div aria-hidden="true" style="width:64px;height:64px;border-radius:12px;background:var(--ink-3);display:grid;place-items:center;color:var(--accent);font-family:var(--display);font-size:1.4rem">CST</div>
-        <div style="display:grid;gap:4px">
-          <h3 style="margin:0;font-size:var(--t-h3);font-weight:500">Certified Soma Therapist (CST)</h3>
-          <p style="margin:0;color:var(--muted)">A comprehensive, multi-year training in trauma-informed somatic therapy &mdash; nervous system regulation, embodiment and the body-based resolution of stuck patterns.</p>
+<section id="certified" class="section" aria-labelledby="t3">
+  <div class="wrap stack stack--lg">
+    <h2 id="t3">Certified Qualifications</h2>
+    <div class="accordion-group">
+      <details class="accordion">
+        <summary><span class="accordion__title">Craniosacral Therapy (CST)</span><span class="accordion__meta">Sri Sri School of Healing Arts &middot; 2018&ndash;2020</span></summary>
+        <div class="accordion__body">
+          <dl class="facts facts--split">
+            <div><dt>Training</dt><dd>Nine five-day modules, with casework and advanced study.</dd></div>
+            <div><dt>About the modality</dt><dd>A gentle, non-invasive bodywork approach using subtle touch to support relaxation, regulation and the body&rsquo;s capacity to rebalance.</dd></div>
+          </dl>
         </div>
-      </article>
-      <article data-reveal style="display:grid;grid-template-columns:64px 1fr;gap:16px;padding:18px;background:var(--ink-2);border:1px solid var(--line);border-radius:16px;align-items:start">
-        <div aria-hidden="true" style="width:64px;height:64px;border-radius:12px;background:var(--ink-3);display:grid;place-items:center;color:var(--accent);font-family:var(--display);font-size:1.4rem">HB</div>
-        <div style="display:grid;gap:4px">
-          <h3 style="margin:0;font-size:var(--t-h3);font-weight:500">Certified Holotropic Breathwork Facilitator</h3>
-          <p style="margin:0;color:var(--muted)">Trained to hold intensive, non-ordinary states of consciousness safely, for deep emotional release and integration.</p>
+      </details>
+      <details class="accordion">
+        <summary><span class="accordion__title">Holotropic Breathing Technique</span><span class="accordion__meta">Center for Holotropic Breathwork &middot; 2023&ndash;2024</span></summary>
+        <div class="accordion__body">
+          <dl class="facts facts--split">
+            <div><dt>Training</dt><dd>Nine five-day modules, with equal experience as breather and sitter.</dd></div>
+            <div><dt>About the modality</dt><dd>A long-form breathwork process using intensified breathing, music and supported non-ordinary states for emotional exploration, release and integration.</dd></div>
+          </dl>
         </div>
-      </article>
-      <article data-reveal style="display:grid;grid-template-columns:64px 1fr;gap:16px;padding:18px;background:var(--ink-2);border:1px solid var(--line);border-radius:16px;align-items:start">
-        <div aria-hidden="true" style="width:64px;height:64px;border-radius:12px;background:var(--ink-3);display:grid;place-items:center;color:var(--accent);font-family:var(--display);font-size:1.4rem">NLP</div>
-        <div style="display:grid;gap:4px">
-          <h3 style="margin:0;font-size:var(--t-h3);font-weight:500">Certified NLP &amp; Breakthrough Coach</h3>
-          <p style="margin:0;color:var(--muted)">Trained in Neuro-Linguistic Programming and breakthrough coaching methods for rapid, durable shifts in belief and behaviour.</p>
+      </details>
+      <details class="accordion">
+        <summary><span class="accordion__title">NLP Practitioner &amp; Breakthrough Coach</span><span class="accordion__meta">Vitality Living College &middot; 2017&ndash;2019</span></summary>
+        <div class="accordion__body">
+          <dl class="facts facts--split">
+            <div><dt>Training</dt><dd>Practitioner and breakthrough-coaching training completed across this period.</dd></div>
+            <div><dt>About the modality</dt><dd>A conversational framework for noticing patterns in language, thought and behaviour and supporting shifts in perspective and action.</dd></div>
+          </dl>
         </div>
-      </article>
-      <article data-reveal style="display:grid;grid-template-columns:64px 1fr;gap:16px;padding:18px;background:var(--ink-2);border:1px solid var(--line);border-radius:16px;align-items:start">
-        <div aria-hidden="true" style="width:64px;height:64px;border-radius:12px;background:var(--ink-3);display:grid;place-items:center;color:var(--accent);font-family:var(--display);font-size:1.4rem">AB</div>
-        <div style="display:grid;gap:4px">
-          <h3 style="margin:0;font-size:var(--t-h3);font-weight:500">Certified Access Bars Facilitator</h3>
-          <p style="margin:0;color:var(--muted)">A gentle, hands-on energetic process for releasing limiting thoughts, beliefs and patterns held in the body.</p>
+      </details>
+      <details class="accordion">
+        <summary><span class="accordion__title">Access Bars Practitioner</span><span class="accordion__meta">Access Consciousness &middot; 2018&ndash;2019</span></summary>
+        <div class="accordion__body">
+          <dl class="facts facts--split">
+            <div><dt>Training</dt><dd>Practitioner training completed across this period.</dd></div>
+            <div><dt>About the modality</dt><dd>A light-touch practice involving 32 points on the head, used within the Access Consciousness system as a relaxation and awareness practice.</dd></div>
+          </dl>
         </div>
-      </article>
+      </details>
     </div>
   </div>
 </section>
 
-<section id="practice" aria-labelledby="t4" style="background:var(--ink-2);padding:48px 20px 52px">
-  <div class="wrap" style="display:grid;gap:20px">
-    <h2 id="t4" style="font-size:var(--t-h2);line-height:1.2;font-weight:500">Extensive Practice &amp; Study</h2>
-    <div style="display:grid;gap:16px">
-      <article data-reveal style="padding:18px 0;border-top:1px solid var(--line);display:grid;gap:4px">
-        <h3 style="margin:0;font-size:var(--t-h3);font-weight:500">The Journey</h3>
-        <p style="margin:0;color:var(--muted)">Years of practice with The Journey method, a process for releasing stored emotional patterns at their source.</p>
-      </article>
-      <article data-reveal style="padding:18px 0;border-top:1px solid var(--line);display:grid;gap:4px">
-        <h3 style="margin:0;font-size:var(--t-h3);font-weight:500">EFT &amp; Matrix Reimprinting</h3>
-        <p style="margin:0;color:var(--muted)">Extensive use of Emotional Freedom Technique (tapping) and Matrix Reimprinting for shifting the emotional charge held around past events.</p>
-      </article>
+<section id="practice" class="section section--alt" aria-labelledby="t4">
+  <div class="wrap stack stack--lg">
+    <h2 id="t4">Extensive Practice &amp; Study</h2>
+    <div class="accordion-group">
+      <details class="accordion">
+        <summary><span class="accordion__title">The Journey</span><span class="accordion__meta">642 hours &middot; 2017&ndash;2020</span></summary>
+        <div class="accordion__body">
+          <dl class="facts facts--split">
+            <div><dt>Training</dt><dd>Full training pathway completed twice, including assisting.</dd></div>
+            <div><dt>About the modality</dt><dd>A guided emotional process developed by Brandon Bays for exploring and working through unresolved emotional experiences.</dd></div>
+          </dl>
+        </div>
+      </details>
+      <details class="accordion">
+        <summary><span class="accordion__title">EFT &amp; Matrix Reimprinting</span><span class="accordion__meta">195+ hours &middot; 2016&ndash;2020</span></summary>
+        <div class="accordion__body">
+          <dl class="facts facts--split">
+            <div><dt>Training</dt><dd>Advanced levels, repeat study and assisting.</dd></div>
+            <div><dt>About the modality</dt><dd>Combines tapping on acupressure points with guided reflection to work with emotional charge around memories, beliefs and present-day triggers.</dd></div>
+          </dl>
+        </div>
+      </details>
     </div>
-    <p data-reveal style="margin:0;color:var(--muted);font-size:.95rem;max-width:56ch">Every certification and method above has been documented across hundreds of real case studies &mdash; not studied once and set aside, but lived with, in session after session, until it became second nature.</p>
+    <p class="muted small prose">Final accreditation for The Journey and EFT required additional case-study documentation, which I did not complete.</p>
   </div>
 </section>
 
-<section id="personal" aria-labelledby="t5" style="background:var(--ink-1);padding:48px 20px 56px">
-  <div class="wrap" style="display:grid;gap:20px;max-width:640px">
-    <h2 id="t5" style="font-size:var(--t-h2);line-height:1.2;font-weight:500">Personal Transformation</h2>
-    <p style="margin:0;color:var(--muted)">Alongside formal training, my own inner work has shaped how I show up as much as any certification:</p>
-    <ul data-stagger style="margin:0;padding:0;list-style:none;display:grid;gap:14px">
-      <li style="display:flex;gap:12px;align-items:start">
-        <span aria-hidden="true" style="width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:9px;flex:none"></span>
-        <span style="color:var(--text)">Completed the Landmark curriculum, a rigorous inquiry into personal responsibility and possibility.</span>
-      </li>
-      <li style="display:flex;gap:12px;align-items:start">
-        <span aria-hidden="true" style="width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:9px;flex:none"></span>
-        <span style="color:var(--text)">A sustained meditation, pranayama and silence practice, maintained over many years.</span>
-      </li>
-      <li style="display:flex;gap:12px;align-items:start">
-        <span aria-hidden="true" style="width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:9px;flex:none"></span>
-        <span style="color:var(--text)">Wide-ranging study across somatic, energetic, psychological and spiritual traditions.</span>
-      </li>
-    </ul>
-    <a class="btn btn--solid" href="index.html#alignment-call" style="margin-top:8px">Request an Alignment Call <span aria-hidden="true">&rarr;</span></a>
+<section id="personal" class="section" aria-labelledby="t5">
+  <div class="wrap stack stack--lg">
+    <h2 id="t5">Personal Transformation</h2>
+    <div class="accordion-group">
+      <details class="accordion">
+        <summary><span class="accordion__title">Landmark Curriculum</span><span class="accordion__meta">2018&ndash;2019</span></summary>
+        <div class="accordion__body"><p>An intensive program using group dialogue to uncover personal blind spots, separating facts from stories while defining integrity not as a moral value, but as a mechanical condition of being whole and complete.</p></div>
+      </details>
+      <div class="plain-row">
+        <h3 class="accordion__title">Meditation, Pranayama and Silence</h3>
+        <p class="accordion__meta">Sustained personal practice and periods of silence since childhood.</p>
+      </div>
+      <div class="plain-row">
+        <h3 class="accordion__title">Wider Study</h3>
+        <p class="accordion__meta">Human Design, Gene Keys and the Enneagram.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt section--center watermark" aria-label="Begin">
+  <div class="wrap stack">
+    <a class="btn btn--solid" href="index.html#alignment-call">Request an Alignment Call <span aria-hidden="true">&rarr;</span></a>
   </div>
 </section>
 
@@ -171,17 +200,25 @@
       <p>Welcoming all of life.</p>
     </div>
     <nav class="site-foot__nav" aria-label="Footer">
-      <a href="approach.html">The Approach</a>
-      <a href="offerings.html">1:1 Offerings</a>
-      <a href="groupwork.html">Group Work</a>
-      <a href="about.html">About</a>
-      <a href="training.html">Training &amp; Background</a>
+      <ul>
+        <li><a href="about.html">About</a></li>
+        <li><a href="approach.html">Approach</a></li>
+        <li><a href="training.html">Training</a></li>
+      </ul>
+      <ul>
+        <li><a href="offerings.html">1:1</a></li>
+        <li><a href="groupwork.html">Group</a></li>
+        <li><a href="index.html#alignment-call">Alignment Call</a></li>
+      </ul>
+    </nav>
+    <nav class="site-foot__closing" aria-label="Footer">
       <a href="index.html#alignment-call">Alignment Call</a>
+      <a href="privacy.html">Privacy &amp; Scope</a>
     </nav>
   </div>
   <div class="site-foot__bottom">
     <span>&copy; 2026 Vinay Swaminathan &middot; Auroville</span>
-    <span><a href="privacy.html">Privacy &amp; Scope</a></span>
+    <span class="site-foot__privacy"><a href="privacy.html">Privacy &amp; Scope</a></span>
   </div>
 </footer>
 

@@ -1,9 +1,10 @@
 /* =========================================================================
    Vinay Swaminathan — behaviour (2026 redesign)
-   Ported from the Claude Design canvas project's per-page motion script:
-   content is visible in plain HTML/CSS by default; this file only adds a
-   one-shot entrance animation, the header/nav toggle, the Approach page's
-   sticky sub-nav, and the Alignment Call scheduler + submission.
+   Content is visible in plain HTML/CSS by default; this file only adds a
+   one-shot entrance animation, the header/nav toggle, the interior pages'
+   sticky section nav, the Approach FACE selector, the Alignment Call
+   scheduler + submission, and a settle-safe hash landing. Accordions are
+   native <details>: no JS.
    ========================================================================= */
 (function () {
   'use strict';
@@ -25,13 +26,20 @@
       toggle.setAttribute('aria-expanded', open ? 'false' : 'true');
       toggle.querySelector('[data-label]').textContent = open ? 'Menu' : 'Close';
       mobileNav.hidden = open;
+      mobileNav.classList.toggle('is-open', !open);
     });
+    var closeNav = function (returnFocus) {
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.querySelector('[data-label]').textContent = 'Menu';
+      mobileNav.hidden = true;
+      mobileNav.classList.remove('is-open');
+      if (returnFocus) toggle.focus();
+    };
     mobileNav.addEventListener('click', function (e) {
-      if (e.target.closest('a')) {
-        toggle.setAttribute('aria-expanded', 'false');
-        toggle.querySelector('[data-label]').textContent = 'Menu';
-        mobileNav.hidden = true;
-      }
+      if (e.target.closest('a')) closeNav(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !mobileNav.hidden) closeNav(true);
     });
   }
 
@@ -42,7 +50,7 @@
      --------------------------------------------------------------------- */
   if (!reduce.matches && 'IntersectionObserver' in window) {
     root.classList.add('motion-ready');
-    var targets = document.querySelectorAll('[data-reveal], [data-stagger], [data-seq], [data-hl]');
+    var targets = document.querySelectorAll('[data-reveal], [data-seq], [data-hl]');
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
@@ -69,24 +77,79 @@
   }
 
   /* ---------------------------------------------------------------------
-     3. Approach page — sticky sub-nav scroll-spy (a no-op elsewhere)
+     3. Interior pages — sticky section nav scroll-spy (no-op without one).
+        A section is current once its top passes the bottom of the sticky
+        bars; at the very bottom of the page the last reached section wins.
      --------------------------------------------------------------------- */
+  var subnav = document.querySelector('.subnav');
   var subnavLinks = document.querySelectorAll('.subnav [data-section]');
-  if (subnavLinks.length) {
+  if (subnav && subnavLinks.length) {
+    var head = document.getElementById('site-head');
     var sectionIds = Array.prototype.map.call(subnavLinks, function (a) { return a.getAttribute('data-section'); });
     var setActive = function () {
+      var line = (head ? head.offsetHeight : 0) + subnav.offsetHeight + 24;
+      var atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
       var current = sectionIds[0];
       sectionIds.forEach(function (id) {
         var el = document.getElementById(id);
-        if (el && el.getBoundingClientRect().top < 140) current = id;
+        if (!el) return;
+        var top = el.getBoundingClientRect().top;
+        if (top < line || (atBottom && top < window.innerHeight * 0.6)) current = id;
       });
       subnavLinks.forEach(function (a) {
         var on = a.getAttribute('data-section') === current;
+        if (on && a.getAttribute('aria-current') !== 'location') {
+          // Keep the active item in view in the horizontally scrolling bar.
+          var bar = a.closest('ul');
+          if (bar) bar.scrollLeft = a.parentNode.offsetLeft - bar.offsetLeft - (bar.clientWidth - a.offsetWidth) / 2;
+        }
         a.setAttribute('aria-current', on ? 'location' : 'false');
       });
     };
     window.addEventListener('scroll', function () { window.requestAnimationFrame(setActive); }, { passive: true });
+    window.addEventListener('resize', setActive);
     setActive();
+  }
+
+  /* ---------------------------------------------------------------------
+     3b. FACE (Approach) — progressive tab selector. Without JS the four
+         panels stay stacked and fully readable.
+     --------------------------------------------------------------------- */
+  var face = document.querySelector('[data-face]');
+  if (face) {
+    var tablist = face.querySelector('.face__tabs');
+    var tabs = Array.prototype.slice.call(face.querySelectorAll('.face__tab'));
+    var panels = tabs.map(function (t) { return document.getElementById(t.getAttribute('aria-controls')); });
+    tablist.setAttribute('role', 'tablist');
+    tabs.forEach(function (t, i) {
+      t.setAttribute('role', 'tab');
+      panels[i].setAttribute('role', 'tabpanel');
+      panels[i].setAttribute('aria-labelledby', t.id);
+      panels[i].setAttribute('tabindex', '0');
+    });
+    var select = function (i, focus) {
+      tabs.forEach(function (t, k) {
+        var on = k === i;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+        panels[k].hidden = !on;
+      });
+      if (focus) tabs[i].focus();
+    };
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { select(i, false); });
+      t.addEventListener('keydown', function (e) {
+        var n = tabs.length, k = null;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') k = (i + 1) % n;
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') k = (i - 1 + n) % n;
+        else if (e.key === 'Home') k = 0;
+        else if (e.key === 'End') k = n - 1;
+        if (k !== null) { e.preventDefault(); select(k, true); }
+      });
+    });
+    tablist.hidden = false;
+    face.classList.add('is-tabs');
+    select(0, false);
   }
 
   /* ---------------------------------------------------------------------
@@ -261,15 +324,40 @@
   }
 
   /* ---------------------------------------------------------------------
-     5. Jump-to-hash on load (matches the design's instant-scroll behaviour)
+     5. Hash landing. The browser's own jump happens before web fonts and
+        images have settled, so the target can drift. Re-land once now and
+        again after fonts/load, unless the visitor has scrolled meanwhile.
+        `scroll-margin-top` (site.css) keeps it clear of the sticky header.
+        A target inside a closed <details> opens it first.
      --------------------------------------------------------------------- */
-  if (location.hash) {
-    setTimeout(function () {
-      var t = document.getElementById(decodeURIComponent(location.hash.slice(1)));
-      // scrollIntoView respects the target's `scroll-margin-top` (site.css),
-      // so this always lands below the sticky header regardless of its
-      // rendered height on a given device.
-      if (t) t.scrollIntoView({ block: 'start', behavior: 'instant' });
-    }, 90);
+  function hashTarget() {
+    if (!location.hash) return null;
+    try { return document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (e) { return null; }
   }
+  function revealTarget(t) {
+    for (var el = t; el; el = el.parentElement) {
+      if (el.tagName === 'DETAILS') el.open = true;
+    }
+  }
+  function land() {
+    var t = hashTarget();
+    if (!t) return;
+    revealTarget(t);
+    t.scrollIntoView({ block: 'start', behavior: 'instant' });
+  }
+  if (location.hash) {
+    var userMoved = false;
+    var stop = function () { userMoved = true; };
+    ['wheel', 'touchstart', 'keydown'].forEach(function (ev) { window.addEventListener(ev, stop, { once: true, passive: true }); });
+    var reland = function () { if (!userMoved) land(); };
+    land();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(reland);
+    window.addEventListener('load', function () { reland(); setTimeout(reland, 150); });
+  }
+  // In-page links keep their native (smooth) scroll; only a target hidden
+  // inside a closed <details> needs opening and re-landing.
+  window.addEventListener('hashchange', function () {
+    var t = hashTarget();
+    if (t && t.closest('details:not([open])')) land();
+  });
 }());

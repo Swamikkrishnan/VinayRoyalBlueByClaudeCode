@@ -18,12 +18,14 @@
 <meta property="og:image" content="https://vinayswaminathan.com/assets/images/sigil.png">
 <meta name="twitter:card" content="summary_large_image">
 
+<script>document.documentElement.classList.add('js')</script>
 <link rel="icon" href="assets/images/sigil-small.png" type="image/png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./assets/css/site.css">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/GilliusADFNo2-Regular.otf" as="font" type="font/otf" crossorigin>
+<link rel="stylesheet" href="assets/css/site.css">
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -37,7 +39,7 @@
     <nav class="nav" aria-label="Primary">
       <a class="nav__link" href="approach.html">The Approach</a>
       <a class="nav__link" href="offerings.html">1:1 Offerings</a>
-      <a class="nav__link" href="groupwork.html">Group Work</a>
+      <a class="nav__link" href="groupwork.html">Group Offerings</a>
       <a class="nav__link" href="about.html">About</a>
       <a class="nav__link" href="training.html">Training</a>
       <a class="btn btn--solid" href="#alignment-call">Request an Alignment Call</a>
@@ -47,170 +49,148 @@
       <span data-label>Menu</span>
     </button>
   </div>
-  <nav class="nav-mobile" id="nav-mobile" aria-label="Primary">
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Primary mobile">
     <a href="approach.html">The Approach <span aria-hidden="true">&rarr;</span></a>
     <a href="offerings.html">1:1 Offerings <span aria-hidden="true">&rarr;</span></a>
-    <a href="groupwork.html">Group Work <span aria-hidden="true">&rarr;</span></a>
+    <a href="groupwork.html">Group Offerings <span aria-hidden="true">&rarr;</span></a>
     <a href="about.html">About <span aria-hidden="true">&rarr;</span></a>
     <a href="training.html">Training <span aria-hidden="true">&rarr;</span></a>
-    <a class="btn btn--solid" style="margin-top:16px;justify-content:center" href="#alignment-call">Request an Alignment Call</a>
+    <a class="btn btn--solid" href="#alignment-call">Request an Alignment Call</a>
   </nav>
 </header>
 
 <main id="main">
 
-<section class="page-hero" aria-labelledby="hero-title" style="background:var(--ink-1);padding:20px 20px 52px;overflow:hidden;position:relative;display:flex;align-items:center">
-  <div aria-hidden="true" style="position:absolute;left:50%;top:10px;width:min(720px,130vw);aspect-ratio:1/1;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(93,184,240,.16),rgba(42,68,184,.08) 60%,transparent);pointer-events:none"></div>
-  <div style="position:relative;max-width:760px;margin:0 auto;display:grid;justify-items:center;text-align:center;width:100%">
-    <p data-seq style="margin:0;color:var(--muted);letter-spacing:.02em;max-width:32ch;text-wrap:balance">Healing experiences for greater resilience, vitality and freedom</p>
-    <img data-seq src="assets/images/sigil.png" alt="" width="1100" height="1132" fetchpriority="high" style="display:block;width:clamp(190px,46vw,320px);height:auto;margin:16px 0 12px;filter:drop-shadow(0 0 32px rgba(93,184,240,.22))">
-    <h1 data-seq id="hero-title" style="margin:0;font-size:var(--t-h1);line-height:1.05;letter-spacing:.01em">Welcoming all of life.</h1>
-    <p data-seq style="margin:12px 0 0;max-width:36ch;color:var(--muted);text-wrap:pretty">Growing our capacity to remain <strong style="font-weight:500;color:var(--text)">open, connected and responsive</strong> through the beautiful, mundane, difficult and unknown.</p>
-    <div data-seq style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:24px">
+<section class="home-hero" aria-labelledby="hero-title">
+  <div class="home-hero__inner">
+    <h1 data-seq id="hero-title" class="display-title">Welcoming all of life.</h1>
+    <img data-seq class="home-hero__sigil" src="assets/images/sigil.png" alt="" width="1100" height="1132" fetchpriority="high">
+    <p data-seq class="home-hero__tagline">Healing experiences for greater resilience, vitality and freedom.</p>
+    <div data-seq class="btn-row">
       <a class="btn btn--outline" href="offerings.html">Explore offerings</a>
       <a class="btn btn--solid" href="#alignment-call">Request an Alignment Call <span aria-hidden="true">&rarr;</span></a>
     </div>
   </div>
 </section>
 
-<section id="why" aria-labelledby="why-title" style="position:relative;overflow:hidden;background:var(--ink-2);padding:48px 20px 56px">
-  <img src="assets/images/sigil.png" alt="" aria-hidden="true" width="1100" height="1132" loading="lazy" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(600px,96vw);height:auto;opacity:.07;pointer-events:none">
-  <div class="wrap" style="position:relative;display:grid;gap:20px">
-    <h2 id="why-title" data-reveal style="font-size:var(--t-h3);font-weight:500;color:var(--text)">Why welcome?</h2>
-    <p data-reveal style="margin:0;font-size:var(--t-h2);line-height:1.22;font-weight:500;max-width:22ch;text-wrap:pretty">When we feel welcome, we feel wanted. <span data-hl>We know we belong.</span></p>
-    <p data-reveal style="margin:0;max-width:40ch;color:var(--muted)">We relax. We open up. It becomes easier to connect and contribute.</p>
-    <div data-reveal style="border-top:1px solid var(--line);padding-top:24px;margin-top:8px;display:grid;gap:16px">
-      <p style="margin:0;font-family:var(--display);font-weight:300;font-size:var(--t-h1);line-height:1.04;max-width:16ch;color:var(--text);text-wrap:balance">What if we offered life the same welcome?</p>
-      <a class="link-u" href="approach.html">Explore the approach <span aria-hidden="true">&rarr;</span></a>
-    </div>
+<section id="why" class="section section--alt watermark" aria-labelledby="why-title">
+  <div class="wrap stack stack--lg">
+    <h2 id="why-title" data-reveal>Why welcome?</h2>
+    <p data-reveal class="lede lede--wide">The way we relate to life shapes the way we experience it.</p>
+    <p data-reveal class="muted prose">When we meet life with more openness, more of its beauty, mystery, movement, challenge, connection and possibility becomes available to us.</p>
+    <a data-reveal class="btn btn--outline" href="approach.html">Explore the Approach <span aria-hidden="true">&rarr;</span></a>
   </div>
 </section>
 
-<section id="doorways" aria-labelledby="doors-title" style="background:var(--ink-1);padding:48px 20px 56px">
-  <div class="wrap">
-    <h2 id="doors-title" data-reveal style="font-size:var(--t-h2);line-height:1.2;font-weight:500">Five doorways into the work</h2>
-    <div data-reveal style="margin-top:16px;display:grid;gap:8px;max-width:44ch">
-      <h3 style="margin:0;font-size:var(--t-h3);font-weight:500;line-height:1.5;color:var(--text)">Do you know something needs to change, but keep finding yourself in <span data-hl>the same place?</span></h3>
-      <p style="margin:0;color:var(--muted)">Or is life getting bigger, and you know you need to become bigger with it?</p>
+<section id="doorways" class="section" aria-labelledby="doors-title">
+  <div class="wrap stack stack--lg">
+    <h2 id="doors-title" data-reveal>1:1 Offerings</h2>
+    <div data-reveal class="stack stack--sm prose">
+      <p class="lede">Do you know something needs to change, but keep finding yourself in <span data-hl>the same place?</span></p>
+      <p class="lede muted">Or is life getting bigger, and you know you need to become bigger with it?</p>
     </div>
-    <ul aria-label="Five doorways" style="list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));border-top:1px solid var(--line)">
-      <li data-reveal style="border-bottom:1px solid var(--line)">
-        <a class="link-plain" href="offerings.html#body" style="display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:14px;padding:14px 4px;min-height:64px">
-          <span aria-hidden="true" style="width:32px;height:32px;color:var(--accent)"><svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M6 22c3-8 8-12 10-12s7 4 10 12"/><line x1="4" y1="24" x2="28" y2="24"/></svg></span>
-          <span style="display:grid;line-height:1.35"><span style="font-weight:500">Body</span><span style="color:var(--muted)">Rest &amp; Reconnection</span></span>
-          <span aria-hidden="true" style="color:var(--accent)">&rarr;</span>
-        </a>
-      </li>
-      <li data-reveal style="border-bottom:1px solid var(--line)">
-        <a class="link-plain" href="offerings.html#mind" style="display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:14px;padding:14px 4px;min-height:64px">
-          <span aria-hidden="true" style="width:32px;height:32px;color:var(--accent)"><svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="16" cy="16" r="10"/><path d="M16 8a8 8 0 0 1 6.9 4M24 16a8 8 0 0 1-4 6.9M16 24a8 8 0 0 1-6.9-4M8 16a8 8 0 0 1 4-6.9" opacity=".6"/></svg></span>
-          <span style="display:grid;line-height:1.35"><span style="font-weight:500">Mind</span><span style="color:var(--muted)">Clarity &amp; Confidence</span></span>
-          <span aria-hidden="true" style="color:var(--accent)">&rarr;</span>
-        </a>
-      </li>
-      <li data-reveal style="border-bottom:1px solid var(--line)">
-        <a class="link-plain" href="offerings.html#emotion" style="display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:14px;padding:14px 4px;min-height:64px">
-          <span aria-hidden="true" style="width:32px;height:32px;color:var(--accent)"><svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M4 18c3-6 6 6 9 0s6-10 9-4 4 8 6 4"/></svg></span>
-          <span style="display:grid;line-height:1.35"><span style="font-weight:500">Emotion</span><span style="color:var(--muted)">Peace &amp; Freedom</span></span>
-          <span aria-hidden="true" style="color:var(--accent)">&rarr;</span>
-        </a>
-      </li>
-      <li data-reveal style="border-bottom:1px solid var(--line)">
-        <a class="link-plain" href="offerings.html#action" style="display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:14px;padding:14px 4px;min-height:64px">
-          <span aria-hidden="true" style="width:32px;height:32px;color:var(--accent)"><svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M8 8l12 8-12 8"/><path d="M22 12a6 6 0 0 1 0 8" opacity=".6"/></svg></span>
-          <span style="display:grid;line-height:1.35"><span style="font-weight:500">Action</span><span style="color:var(--muted)">Momentum &amp; Motivation</span></span>
-          <span aria-hidden="true" style="color:var(--accent)">&rarr;</span>
-        </a>
-      </li>
-      <li data-reveal style="border-bottom:1px solid var(--line)">
-        <a class="link-plain" href="offerings.html#breath" style="display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:14px;padding:14px 4px;min-height:64px">
-          <span aria-hidden="true" style="width:32px;height:32px;color:var(--accent)"><svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="16" cy="16" r="10"/><circle cx="16" cy="16" r="5.5" opacity=".6"/></svg></span>
-          <span style="display:grid;line-height:1.35"><span style="font-weight:500">Breath</span><span style="color:var(--muted)">Range &amp; Regulation</span></span>
-          <span aria-hidden="true" style="color:var(--accent)">&rarr;</span>
-        </a>
-      </li>
+    <p data-reveal>Every destination has more than one path. Let&rsquo;s find yours.</p>
+    <ul class="doorway-list" aria-label="Five doorways">
+      <li><a href="offerings.html#body">
+        <svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M6 22c3-8 8-12 10-12s7 4 10 12"/><line x1="4" y1="24" x2="28" y2="24"/></svg>
+        <span class="doorway-list__name">Body</span>
+        <span class="doorway-list__desc">Subtle-touch bodywork to support deep rest, integration and the body&rsquo;s natural capacity to rebalance.</span>
+        <span class="doorway-list__arrow" aria-hidden="true">&rarr;</span>
+      </a></li>
+      <li><a href="offerings.html#mind">
+        <svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="16" cy="16" r="10"/><path d="M16 8a8 8 0 0 1 6.9 4M24 16a8 8 0 0 1-4 6.9M16 24a8 8 0 0 1-6.9-4M8 16a8 8 0 0 1 4-6.9" opacity=".6"/></svg>
+        <span class="doorway-list__name">Mind</span>
+        <span class="doorway-list__desc">Clarifying what is happening, widening perspective and untangling what feels stuck.</span>
+        <span class="doorway-list__arrow" aria-hidden="true">&rarr;</span>
+      </a></li>
+      <li><a href="offerings.html#emotion">
+        <svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M4 18c3-6 6 6 9 0s6-10 9-4 4 8 6 4"/></svg>
+        <span class="doorway-list__name">Emotion</span>
+        <span class="doorway-list__desc">In-depth guided processes to move through emotional layers and complete what remains unfinished.</span>
+        <span class="doorway-list__arrow" aria-hidden="true">&rarr;</span>
+      </a></li>
+      <li><a href="offerings.html#action">
+        <svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M8 8l12 8-12 8"/><path d="M22 12a6 6 0 0 1 0 8" opacity=".6"/></svg>
+        <span class="doorway-list__name">Action</span>
+        <span class="doorway-list__desc">Turning what you know into decisions, conversations, boundaries and real-world movement.</span>
+        <span class="doorway-list__arrow" aria-hidden="true">&rarr;</span>
+      </a></li>
+      <li><a href="offerings.html#breath">
+        <svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="16" cy="16" r="10"/><circle cx="16" cy="16" r="5.5" opacity=".6"/></svg>
+        <span class="doorway-list__name">Breath</span>
+        <span class="doorway-list__desc">Tailored breathwork to support regulation, emotional release, insight and transformation.</span>
+        <span class="doorway-list__arrow" aria-hidden="true">&rarr;</span>
+      </a></li>
     </ul>
+    <a class="btn btn--outline" href="offerings.html">Explore 1:1 Offerings <span aria-hidden="true">&rarr;</span></a>
   </div>
 </section>
 
-<section id="group-work" aria-labelledby="group-title" style="background:var(--ink-2);padding:48px 20px 56px">
-  <div class="wrap">
-    <h2 id="group-title" data-reveal style="font-size:var(--t-h2);line-height:1.2;font-weight:500">Group work &amp; collaboration</h2>
-    <div style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:0 32px">
-      <div data-reveal style="display:grid;grid-template-columns:40px 1fr;gap:4px 12px;padding:18px 0;border-top:1px solid var(--line)">
-        <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" style="grid-row:span 2;fill:none;stroke:var(--accent);stroke-width:1.4"><circle cx="12" cy="14" r="6"/><circle cx="21" cy="16" r="6" opacity=".55"/></svg>
-        <h3 style="margin:0;font-size:var(--t-h3);font-weight:500">Group Experiences</h3>
-        <p style="margin:0;color:var(--muted)">Breathwork &middot; Conscious Dance &middot; Listening Circles &middot; Men&rsquo;s Work</p>
-      </div>
-      <div data-reveal style="display:grid;grid-template-columns:40px 1fr;gap:4px 12px;padding:18px 0;border-top:1px solid var(--line)">
-        <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" style="grid-row:span 2;fill:none;stroke:var(--accent);stroke-width:1.4"><rect x="6" y="7" width="14" height="10" rx="1"/><rect x="12" y="15" width="14" height="10" rx="1" opacity=".55"/></svg>
-        <h3 style="margin:0;font-size:var(--t-h3);font-weight:500">Experience Design &amp; Curation</h3>
-        <p style="margin:0;color:var(--muted)">Concept &middot; Container &middot; Flow &middot; Atmosphere &middot; Pacing &middot; Detail</p>
-      </div>
-      <div data-reveal style="display:grid;grid-template-columns:40px 1fr;gap:4px 12px;padding:18px 0;border-top:1px solid var(--line)">
-        <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" style="grid-row:span 2;fill:none;stroke:var(--accent);stroke-width:1.4"><path d="M12 9a7 7 0 1 0 0 14"/><path d="M20 9a7 7 0 1 1 0 14" opacity=".55"/></svg>
-        <h3 style="margin:0;font-size:var(--t-h3);font-weight:500">Collaboration &amp; Guest Facilitation</h3>
-        <p style="margin:0;color:var(--muted)">Shared Values &middot; Clear Roles &middot; Trust &middot; Reciprocity &middot; Integrity</p>
-      </div>
-    </div>
-    <a class="link-plain" href="groupwork.html" style="margin-top:12px">Explore group work <span aria-hidden="true">&rarr;</span></a>
+<section id="group-offerings" class="section section--alt" aria-labelledby="group-title">
+  <div class="wrap stack stack--lg">
+    <h2 id="group-title" data-reveal>Group Offerings</h2>
+    <ul class="summary-list">
+      <li data-reveal><svg class="icon" viewBox="0 0 28 28" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5L23 11.5 19.5 22h-11L5 11.5z" opacity=".5"/><circle cx="14" cy="5" r="2"/><circle cx="23" cy="11.5" r="2"/><circle cx="19.5" cy="22" r="2"/><circle cx="8.5" cy="22" r="2"/><circle cx="5" cy="11.5" r="2"/></svg><h3>Group Experiences</h3><p>Breathwork &middot; Conscious Dance &middot; Listening Circles &middot; Men&rsquo;s Work</p></li>
+      <li data-reveal><svg class="icon" viewBox="0 0 28 28" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="14" cy="14" r="11" opacity=".4"/><circle cx="14" cy="14" r="7" opacity=".7"/><circle cx="14" cy="14" r="2.5"/></svg><h3>Experience Design</h3><p>Concept &middot; Flow &middot; Atmosphere &middot; Detail &middot; Leadership</p></li>
+      <li data-reveal><svg class="icon" viewBox="0 0 28 28" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="10" cy="14" r="7"/><circle cx="18" cy="14" r="7" opacity=".6"/></svg><h3>Collaboration &amp; Guest Facilitation</h3><p>Upon request</p></li>
+    </ul>
+    <a class="btn btn--outline" href="groupwork.html">Explore Group Offerings <span aria-hidden="true">&rarr;</span></a>
   </div>
 </section>
 
-<section id="meet-vinay" aria-labelledby="meet-title" style="background:var(--ink-1);padding:48px 20px 56px">
-  <div style="max-width:680px;margin:0 auto;display:grid;gap:16px">
-    <figure data-reveal style="margin:0 auto 8px;width:min(100%,340px)">
-      <img src="assets/images/portrait-700.jpg" srcset="assets/images/portrait-700.jpg 700w, assets/images/portrait-1400.jpg 1400w" sizes="340px" alt="Vinay Swaminathan, smiling" width="700" height="933" loading="lazy" style="display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;object-position:50% 25%;border-radius:14px">
+<section id="meet-vinay" class="section" aria-labelledby="meet-title">
+  <div class="wrap--narrow stack stack--lg">
+    <figure data-reveal class="portrait portrait--home">
+      <img src="assets/images/portrait-700.jpg" srcset="assets/images/portrait-700.jpg 700w, assets/images/portrait-1400.jpg 1400w" sizes="340px" alt="Vinay Swaminathan, smiling" width="700" height="933" loading="lazy">
     </figure>
-    <h2 id="meet-title" data-reveal style="font-size:var(--t-h2);line-height:1.2;font-weight:500">My name is Vinay Swaminathan.</h2>
-    <p data-reveal style="margin:0;color:var(--text)">I&rsquo;m a healer and facilitator living in Auroville, building a life around nature, community, creativity and conscious ways of living.</p>
-    <p data-reveal style="margin:0;color:var(--text)">At the heart of my work is developing <span data-hl>a deeper relationship with our emotions</span>: greater range, capacity, intelligence, maturity and responsibility.</p>
-    <p data-reveal style="margin:0;color:var(--muted)">What matters is how this shows up in ordinary life. How we care for our bodies, relate to people, work, handle money, make choices, keep our word and live with a clear conscience.</p>
-    <dl data-reveal style="margin:8px 0 0;display:grid;border-top:1px solid var(--line)">
-      <div style="display:grid;grid-template-columns:minmax(max-content,8.5rem) 1fr;align-items:baseline;gap:16px;padding:14px 0;border-bottom:1px solid var(--line)"><dt style="font-size:var(--t-h2);line-height:1.1;font-weight:500;color:var(--text);white-space:nowrap;min-width:7.5rem">3,000+</dt><dd style="margin:0;color:var(--muted);line-height:1.45">Hours of training, retreats, study and supervised practice</dd></div>
-      <div style="display:grid;grid-template-columns:minmax(max-content,8.5rem) 1fr;align-items:baseline;gap:16px;padding:14px 0;border-bottom:1px solid var(--line)"><dt style="font-size:var(--t-h2);line-height:1.1;font-weight:500;color:var(--text);white-space:nowrap;min-width:7.5rem">1,000+</dt><dd style="margin:0;color:var(--muted);line-height:1.45">People worked with across paid, gifted, peer and training settings</dd></div>
-      <div style="display:grid;grid-template-columns:minmax(max-content,8.5rem) 1fr;align-items:baseline;gap:16px;padding:14px 0;border-bottom:1px solid var(--line)"><dt style="font-size:var(--t-h2);line-height:1.1;font-weight:500;color:var(--text);white-space:nowrap;min-width:7.5rem">10 years</dt><dd style="margin:0;color:var(--muted);line-height:1.45">Practice, facilitation and personal transformation</dd></div>
-    </dl>
-    <p data-reveal style="margin:0;color:var(--text)">My training spans bodywork, breathwork, emotional process, coaching and contemplative practice.</p>
-    <p data-reveal style="margin:0;color:var(--muted)">Deeper than technique or certification, I believe my ability to create meaningful change with others depends on how deeply I continue to live, integrate and embody the work myself.</p>
-    <div style="display:grid;border-top:1px solid var(--line)">
-      <a class="link-plain" href="training.html" style="display:flex;justify-content:space-between;min-height:52px;border-bottom:1px solid var(--line)">Training &amp; Background <span aria-hidden="true" style="color:var(--accent)">&rarr;</span></a>
-      <a class="link-plain" href="about.html" style="display:flex;justify-content:space-between;min-height:52px;border-bottom:1px solid var(--line)">My story &amp; what matters to me <span aria-hidden="true" style="color:var(--accent)">&rarr;</span></a>
+    <h2 id="meet-title" data-reveal>My name is Vinay Swaminathan.</h2>
+    <div data-reveal class="prose">
+      <p>I&rsquo;m a healer and facilitator living in Auroville, building a life around nature, community, creativity and conscious ways of living.</p>
+      <p>At the heart of my work is <span data-hl>a deeper relationship with our emotions</span>: greater range, capacity, intelligence, maturity and responsibility.</p>
+      <p class="muted">What matters to me is how we respond to this in ordinary life.</p>
     </div>
+    <dl data-reveal class="metrics">
+      <div class="metric"><dt>3,000+</dt><dd>Hours across training, workshops, retreats, study and assisting</dd></div>
+      <div class="metric"><dt>1,000+</dt><dd>People supported</dd></div>
+      <div class="metric"><dt>10 years</dt><dd>Practice, facilitation and personal transformation</dd></div>
+    </dl>
+    <p data-reveal>My training spans bodywork, breathwork, emotional process, coaching and contemplative practice.</p>
+    <nav class="link-list" aria-label="More about Vinay">
+      <a href="training.html">Training &amp; Background <span aria-hidden="true">&rarr;</span></a>
+      <a href="about.html">My story &amp; what matters to me <span aria-hidden="true">&rarr;</span></a>
+    </nav>
   </div>
 </section>
 
-<section id="alignment-call" aria-labelledby="call-title" style="background:var(--ink-2);padding:48px 20px 64px">
-  <div style="max-width:620px;margin:0 auto;display:grid;gap:32px">
-    <div data-reveal style="display:grid;gap:14px;justify-items:center;text-align:center">
-      <p style="margin:0;color:var(--muted);letter-spacing:.02em">The Alignment Call</p>
-      <h2 id="call-title" style="font-weight:500;font-size:var(--t-h2);line-height:1.2">A first conversation to see if this fits.</h2>
-      <ol style="list-style:none;margin:4px 0 0;padding:0;display:grid;border-top:1px solid var(--line);width:100%;text-align:left">
-        <li style="display:grid;grid-template-columns:36px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)"><span aria-hidden="true" style="width:32px;height:32px;border:1px solid var(--accent);border-radius:50%;display:grid;place-items:center;color:var(--accent);line-height:1">1</span><span><strong style="font-weight:500">Complete a short form</strong><br><span style="color:var(--muted)">So I can understand your situation and whether what I offer is appropriate.</span></span></li>
-        <li style="display:grid;grid-template-columns:36px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)"><span aria-hidden="true" style="width:32px;height:32px;border:1px solid var(--accent);border-radius:50%;display:grid;place-items:center;color:var(--accent);line-height:1">2</span><span><strong style="font-weight:500">We talk it through</strong><br><span style="color:var(--muted)">We clarify expectations and align on what feels most relevant now.</span></span></li>
+<section id="alignment-call" class="section section--alt" aria-labelledby="call-title">
+  <div class="call">
+    <div data-reveal class="call__intro">
+      <p class="eyebrow">The Alignment Call</p>
+      <h2 id="call-title">How to start</h2>
+      <ol class="steps">
+        <li><span><strong>Complete a short form</strong><span>So I can understand your situation and context.</span></span></li>
+        <li><span><strong>We talk it through</strong><span>For deeper clarity and alignment.</span></span></li>
       </ol>
-      <p style="margin:0;color:var(--muted)">Alignment Calls run Monday to Saturday at 3:00 PM or 3:45 PM India time.</p>
     </div>
 
-    <div style="min-width:0">
-      <div role="status" tabindex="-1" id="form-sent" hidden style="border-top:2px solid var(--accent);padding-top:20px;display:grid;gap:12px">
-        <h3 style="margin:0;font-weight:500;font-size:var(--t-h2);line-height:1.2">Thank you, <span id="sent-name"></span>.</h3>
-        <p style="margin:0;color:var(--text)">I&rsquo;ve received your request. I&rsquo;ll read what you&rsquo;ve shared <strong style="font-weight:500">personally</strong> and come back to you <strong style="font-weight:500">within 48 hours</strong>.</p>
-        <p id="sent-slot" hidden style="margin:0;color:var(--muted)">Your preferred time: <span style="color:var(--text)"></span></p>
+    <div>
+      <div role="status" tabindex="-1" id="form-sent" class="form-sent" hidden>
+        <h3>Thank you, <span id="sent-name"></span>.</h3>
+        <p>I&rsquo;ve received your request. I&rsquo;ll read what you&rsquo;ve shared <strong>personally</strong> and come back to you <strong>within 48 hours</strong>.</p>
+        <p id="sent-slot" class="muted" hidden>Your preferred time: <span style="color:var(--text)"></span></p>
       </div>
 
-      <div id="form-errors" role="alert" hidden style="border-left:2px solid var(--warn);padding:10px 0 10px 14px;color:var(--text);margin-bottom:16px"></div>
+      <div id="form-errors" class="form-errors" role="alert" hidden></div>
 
       <!-- Delivery: Web3Forms. The recipient address is bound to the access
-           key inside the Web3Forms dashboard and never appears here. Replace
-           WEB3FORMS_ACCESS_KEY with the real key before the form can send. -->
-      <form id="alignment-form" method="post" action="https://api.web3forms.com/submit" style="display:grid;gap:20px">
+           key inside the Web3Forms dashboard and never appears here. -->
+      <form id="alignment-form" class="form" method="post" action="https://api.web3forms.com/submit">
         <input type="hidden" name="access_key" value="7d72a4c8-7199-40bb-a6a2-3202c847cce5">
         <input type="hidden" name="from_name" value="vinayswaminathan.com">
         <input type="hidden" name="subject" value="New Alignment Call request — vinayswaminathan.com">
         <input type="hidden" name="redirect" value="https://vinayswaminathan.com/?sent=1">
         <input type="hidden" name="slot" id="f-slot" value="">
-        <div class="ffield" style="position:absolute;left:-9999px" aria-hidden="true">
+        <div class="ffield honeypot" aria-hidden="true">
           <label for="website">Leave this field empty</label>
           <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
         </div>
@@ -219,7 +199,7 @@
           <label class="flabel" for="f-name">Full name</label>
           <input class="finput" id="f-name" name="name" required maxlength="120" autocomplete="name">
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;align-items:start">
+        <div class="form__row">
           <div class="ffield">
             <label class="flabel" for="f-email">Email</label>
             <input class="finput" id="f-email" type="email" name="email" required autocomplete="email">
@@ -227,16 +207,16 @@
           <div class="ffield">
             <label class="flabel" for="f-wa">WhatsApp number</label>
             <input class="finput" id="f-wa" type="tel" name="whatsapp" required autocomplete="tel" aria-describedby="f-wa-hint">
-            <span id="f-wa-hint" style="color:var(--muted)">Include your country code.</span>
+            <span id="f-wa-hint" class="fhint">Include your country code.</span>
           </div>
         </div>
         <div class="ffield">
           <label class="flabel" for="f-bring">What is bringing you here?</label>
           <textarea class="finput" id="f-bring" name="bringing" required rows="4" maxlength="4000"></textarea>
         </div>
-        <fieldset style="border:0;margin:0;padding:0;display:grid;gap:10px">
-          <legend style="font-weight:500;padding:0;margin-bottom:10px">Is there a doorway you feel drawn toward?</legend>
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <fieldset>
+          <legend>Is there a doorway you feel drawn toward?</legend>
+          <div class="choices">
             <label class="choice"><input type="checkbox" name="doorway[]" value="Body">Body</label>
             <label class="choice"><input type="checkbox" name="doorway[]" value="Mind">Mind</label>
             <label class="choice"><input type="checkbox" name="doorway[]" value="Emotion">Emotion</label>
@@ -246,13 +226,12 @@
             <label class="choice"><input type="checkbox" name="doorway[]" value="I'm not sure yet">I&rsquo;m not sure yet</label>
           </div>
         </fieldset>
-        <fieldset style="border:0;margin:0;padding:0;display:grid;gap:10px">
-          <legend style="font-weight:500;padding:0;margin-bottom:6px">Preferred day &amp; time for the call</legend>
-          <p id="call-tz-note" style="margin:0;color:var(--muted)">Shown in your time.</p>
-          <div id="call-slots" style="display:grid;border-top:1px solid var(--line)"></div>
+        <fieldset>
+          <legend>Preferred day &amp; time for the call</legend>
+          <p id="call-tz-note" class="fhint">Shown in your time.</p>
+          <div id="call-slots"></div>
         </fieldset>
-        <p style="margin:0;color:var(--muted)">This requests a conversation. Nothing is scheduled until we speak.</p>
-        <button class="btn btn--solid" type="submit" style="justify-self:start;border:0">Request an Alignment Call <span aria-hidden="true">&rarr;</span></button>
+        <button class="btn btn--solid" type="submit">Request an Alignment Call <span aria-hidden="true">&rarr;</span></button>
       </form>
     </div>
   </div>
@@ -267,17 +246,25 @@
       <p>Welcoming all of life.</p>
     </div>
     <nav class="site-foot__nav" aria-label="Footer">
-      <a href="approach.html">The Approach</a>
-      <a href="offerings.html">1:1 Offerings</a>
-      <a href="groupwork.html">Group Work</a>
-      <a href="about.html">About</a>
-      <a href="training.html">Training &amp; Background</a>
+      <ul>
+        <li><a href="about.html">About</a></li>
+        <li><a href="approach.html">Approach</a></li>
+        <li><a href="training.html">Training</a></li>
+      </ul>
+      <ul>
+        <li><a href="offerings.html">1:1</a></li>
+        <li><a href="groupwork.html">Group</a></li>
+        <li><a href="index.html#alignment-call">Alignment Call</a></li>
+      </ul>
+    </nav>
+    <nav class="site-foot__closing" aria-label="Footer">
       <a href="index.html#alignment-call">Alignment Call</a>
+      <a href="privacy.html">Privacy &amp; Scope</a>
     </nav>
   </div>
   <div class="site-foot__bottom">
     <span>&copy; 2026 Vinay Swaminathan &middot; Auroville</span>
-    <span><a href="privacy.html">Privacy &amp; Scope</a></span>
+    <span class="site-foot__privacy"><a href="privacy.html">Privacy &amp; Scope</a></span>
   </div>
 </footer>
 

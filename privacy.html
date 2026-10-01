@@ -18,11 +18,13 @@
 <meta property="og:image" content="https://vinayswaminathan.com/assets/images/sigil.png">
 <meta name="twitter:card" content="summary_large_image">
 
+<script>document.documentElement.classList.add('js')</script>
 <link rel="icon" href="assets/images/sigil-small.png" type="image/png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/GilliusADFNo2-Regular.otf" as="font" type="font/otf" crossorigin>
 <link rel="stylesheet" href="assets/css/site.css">
 </head>
 <body>
@@ -37,7 +39,7 @@
     <nav class="nav" aria-label="Primary">
       <a class="nav__link" href="approach.html">The Approach</a>
       <a class="nav__link" href="offerings.html">1:1 Offerings</a>
-      <a class="nav__link" href="groupwork.html">Group Work</a>
+      <a class="nav__link" href="groupwork.html">Group Offerings</a>
       <a class="nav__link" href="about.html">About</a>
       <a class="nav__link" href="training.html">Training</a>
       <a class="btn btn--solid" href="index.html#alignment-call">Request an Alignment Call</a>
@@ -47,35 +49,36 @@
       <span data-label>Menu</span>
     </button>
   </div>
-  <nav class="nav-mobile" id="nav-mobile" aria-label="Primary">
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Primary mobile">
     <a href="approach.html">The Approach <span aria-hidden="true">&rarr;</span></a>
     <a href="offerings.html">1:1 Offerings <span aria-hidden="true">&rarr;</span></a>
-    <a href="groupwork.html">Group Work <span aria-hidden="true">&rarr;</span></a>
+    <a href="groupwork.html">Group Offerings <span aria-hidden="true">&rarr;</span></a>
     <a href="about.html">About <span aria-hidden="true">&rarr;</span></a>
     <a href="training.html">Training <span aria-hidden="true">&rarr;</span></a>
-    <a class="btn btn--solid" style="margin-top:16px;justify-content:center" href="index.html#alignment-call">Request an Alignment Call</a>
+    <a class="btn btn--solid" href="index.html#alignment-call">Request an Alignment Call</a>
   </nav>
 </header>
 
+
 <main id="main">
 
-<section id="privacy" class="page-hero" aria-labelledby="p1" style="background:var(--ink-1);padding:36px 20px 52px;display:flex;align-items:center">
-  <div class="wrap" style="display:grid;gap:20px;max-width:640px;width:100%">
-    <p style="margin:0;color:var(--muted);letter-spacing:.02em">Privacy &amp; Scope</p>
-    <h1 data-seq id="p1" style="font-size:var(--t-h1);line-height:1.1">What happens to what you share.</h1>
-
-    <div style="display:grid;gap:16px;margin-top:8px">
-      <p data-reveal style="margin:0;font-size:var(--t-h3);line-height:1.4;color:var(--text)">The Alignment Call form asks only for what helps a first conversation go well: how to reach you, and a first sketch of what brought you here.</p>
-      <p data-reveal style="margin:0;color:var(--text)">It is <strong>read by Vinay alone</strong>, used to prepare for your call, and <strong>not shared with anyone else</strong>.</p>
-      <p data-reveal style="margin:0;color:var(--text)">You are only ever asked to share what feels necessary for a first conversation. More detailed personal history can be discussed later, once trust and context make that appropriate &mdash; never before.</p>
-      <p data-reveal style="margin:0;color:var(--text)">Submitting the form is a request for a conversation, <strong>not an automatic booking</strong>. Nothing is scheduled until you and Vinay speak.</p>
-      <blockquote data-reveal style="margin:8px 0 0;padding:16px 20px;border-left:2px solid var(--accent);background:var(--ink-2);border-radius:0 12px 12px 0;font-size:var(--t-h3);line-height:1.4;font-style:italic;color:var(--text)">
-        <p style="margin:0">This work does not replace medical care, psychiatric treatment, or psychotherapy.</p>
-      </blockquote>
-      <p data-reveal style="margin:0;color:var(--text)">If you are in crisis or need clinical care, please reach a qualified medical professional or local emergency services first.</p>
-      <p data-reveal style="margin:0;color:var(--muted)">Questions about privacy or scope can be raised directly with Vinay, through the same Alignment Call pathway or by replying to any message you receive.</p>
-      <p data-reveal style="margin:16px 0 0;color:var(--muted);font-size:.9rem">Last reviewed: not yet published.</p>
+<section id="privacy" class="page-hero" aria-labelledby="p1">
+  <div class="wrap--narrow stack stack--lg">
+    <p class="eyebrow">Privacy &amp; Scope</p>
+    <h1 data-seq id="p1">What happens to what you share.</h1>
+    <div class="prose">
+      <p class="lede lede--wide">The Alignment Call form asks only for what helps a first conversation go well: how to reach you, and a first sketch of what brought you here.</p>
+      <p>It is <strong>read by Vinay alone</strong>, used to prepare for your call, and <strong>not shared with anyone else</strong>.</p>
+      <p>More detailed personal history can be discussed later once we co-sign the consent and confidentiality form.</p>
     </div>
+  </div>
+</section>
+
+<section id="scope" class="section section--alt" aria-labelledby="p2">
+  <div class="wrap--narrow stack stack--lg">
+    <h2 id="p2" class="visually-hidden">Scope</h2>
+    <p class="statement" style="max-width:22ch">This work does not replace medical care, psychiatric treatment, or psychotherapy.</p>
+    <p class="prose">If you are in crisis or need clinical care, please reach a qualified medical professional or local emergency services first.</p>
   </div>
 </section>
 
@@ -88,17 +91,25 @@
       <p>Welcoming all of life.</p>
     </div>
     <nav class="site-foot__nav" aria-label="Footer">
-      <a href="approach.html">The Approach</a>
-      <a href="offerings.html">1:1 Offerings</a>
-      <a href="groupwork.html">Group Work</a>
-      <a href="about.html">About</a>
-      <a href="training.html">Training &amp; Background</a>
+      <ul>
+        <li><a href="about.html">About</a></li>
+        <li><a href="approach.html">Approach</a></li>
+        <li><a href="training.html">Training</a></li>
+      </ul>
+      <ul>
+        <li><a href="offerings.html">1:1</a></li>
+        <li><a href="groupwork.html">Group</a></li>
+        <li><a href="index.html#alignment-call">Alignment Call</a></li>
+      </ul>
+    </nav>
+    <nav class="site-foot__closing" aria-label="Footer">
       <a href="index.html#alignment-call">Alignment Call</a>
+      <a href="privacy.html">Privacy &amp; Scope</a>
     </nav>
   </div>
   <div class="site-foot__bottom">
     <span>&copy; 2026 Vinay Swaminathan &middot; Auroville</span>
-    <span><a href="privacy.html">Privacy &amp; Scope</a></span>
+    <span class="site-foot__privacy"><a href="privacy.html">Privacy &amp; Scope</a></span>
   </div>
 </footer>
 

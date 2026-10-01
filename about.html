@@ -18,14 +18,16 @@
 <meta property="og:image" content="https://vinayswaminathan.com/assets/images/sigil.png">
 <meta name="twitter:card" content="summary_large_image">
 
+<script>document.documentElement.classList.add('js')</script>
 <link rel="icon" href="assets/images/sigil-small.png" type="image/png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/GilliusADFNo2-Regular.otf" as="font" type="font/otf" crossorigin>
 <link rel="stylesheet" href="assets/css/site.css">
 </head>
-<body>
+<body class="has-subnav">
 <a class="skip-link" href="#main">Skip to content</a>
 
 <header class="site-head" id="site-head">
@@ -37,7 +39,7 @@
     <nav class="nav" aria-label="Primary">
       <a class="nav__link" href="approach.html">The Approach</a>
       <a class="nav__link" href="offerings.html">1:1 Offerings</a>
-      <a class="nav__link" href="groupwork.html">Group Work</a>
+      <a class="nav__link" href="groupwork.html">Group Offerings</a>
       <a class="nav__link" href="about.html" aria-current="page">About</a>
       <a class="nav__link" href="training.html">Training</a>
       <a class="btn btn--solid" href="index.html#alignment-call">Request an Alignment Call</a>
@@ -47,82 +49,118 @@
       <span data-label>Menu</span>
     </button>
   </div>
-  <nav class="nav-mobile" id="nav-mobile" aria-label="Primary">
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Primary mobile">
     <a href="approach.html">The Approach <span aria-hidden="true">&rarr;</span></a>
     <a href="offerings.html">1:1 Offerings <span aria-hidden="true">&rarr;</span></a>
-    <a href="groupwork.html">Group Work <span aria-hidden="true">&rarr;</span></a>
+    <a href="groupwork.html">Group Offerings <span aria-hidden="true">&rarr;</span></a>
     <a href="about.html" aria-current="page">About <span aria-hidden="true">&rarr;</span></a>
     <a href="training.html">Training <span aria-hidden="true">&rarr;</span></a>
-    <a class="btn btn--solid" style="margin-top:16px;justify-content:center" href="index.html#alignment-call">Request an Alignment Call</a>
+    <a class="btn btn--solid" href="index.html#alignment-call">Request an Alignment Call</a>
   </nav>
 </header>
 
+<nav class="subnav" aria-label="Sections of this page">
+  <ul>
+    <li><a data-section="path" href="#path">My path</a></li>
+    <li><a data-section="door" href="#door">A door opened</a></li>
+    <li><a data-section="ordinary" href="#ordinary">Ordinary life</a></li>
+    <li><a data-section="today" href="#today">Today</a></li>
+    <li><a data-section="dream" href="#dream">The dream</a></li>
+  </ul>
+</nav>
+
+
 <main id="main">
 
-<section id="path" class="page-hero" aria-labelledby="a1" style="background:var(--ink-1);padding:36px 20px 52px;display:flex;align-items:center">
-  <div class="wrap" style="display:grid;gap:16px;max-width:640px;width:100%">
-    <p style="margin:0;color:var(--muted);letter-spacing:.02em">About &middot; My Path</p>
-    <h1 data-seq id="a1" style="font-size:var(--t-h1);line-height:1.05">Checking out was once my default.</h1>
-    <p data-reveal style="margin:0;color:var(--text)">For a long time, I coped by making my world smaller.</p>
-    <p data-reveal style="margin:0;color:var(--text)">I disappeared into games, drugs and other forms of escape. Dishonesty became a reflex. Much of that time is hazy in my memory.</p>
-    <p data-reveal style="margin:0;color:var(--muted)">Discipline was difficult. So were relationships, commitments and everyday tasks. Outside the environments I could control, ordinary situations could overwhelm me and become crises.</p>
-    <p data-reveal style="margin:0;color:var(--text)">By 24, I had dropped out of university and had almost no trust in myself.</p>
-    <p data-reveal style="margin:12px 0 0;padding-top:16px;border-top:1px solid var(--line);color:var(--text);font-size:var(--t-h2);line-height:1.35;font-weight:500">I could know what mattered.<br>I could want change with everything in me.<br>Still, I felt unable to follow through.</p>
-    <p data-reveal style="margin:0;color:var(--text)">I felt helpless. Life felt hopeless.</p>
-    <p data-reveal style="margin:0;color:var(--muted)">I had searched for relief, but the misery underneath remained.</p>
-    <p data-reveal style="margin:0;color:var(--text)">In that state, I returned to something from my childhood that I had long dismissed: pranayama and meditation.</p>
-    <svg data-reveal viewBox="0 0 48 64" width="48" height="64" aria-hidden="true" style="display:block;margin:8px auto 0;fill:none;stroke:var(--accent);stroke-width:1.4">
-      <path d="M10 60V28a14 14 0 0 1 28 0v32"/>
-      <line x1="24" y1="12" x2="24" y2="26" stroke-dasharray="2 3"/>
-      <circle cx="24" cy="8" r="2.2" fill="var(--accent)" stroke="none"/>
-    </svg>
-    <p data-reveal style="margin:0;color:var(--text);font-size:var(--t-h2);line-height:1.35;font-weight:500;text-wrap:pretty">One morning, I woke with a sense that <span style="background:var(--accent-bg);color:var(--text);padding:0 .12em;border-radius:2px;box-decoration-break:clone;-webkit-box-decoration-break:clone">life was beautiful and that I still had a place in it.</span></p>
-    <p data-reveal style="margin:0;color:var(--text)">That experience opened a door.</p>
-    <p data-reveal style="margin:0;color:var(--text)">I began years of healing, personal development and spiritual practice. Slowly, I understood that my patterns had histories, and that what had felt fixed could move.</p>
-    <p data-reveal style="margin:0;color:var(--muted)">Much of the early change happened within practices, workshops and healing spaces.</p>
-    <p data-reveal style="margin:12px 0 0;color:var(--text);font-size:var(--t-h1);line-height:1.05">Then ordinary life took the work further.</p>
-    <p data-reveal style="margin:0;color:var(--text)">Relationships. Responsibility. Keeping my word. Telling the truth. Repairing harm. Staying when I wanted to disappear.</p>
-    <p data-reveal style="margin:0;padding-top:16px;border-top:1px solid var(--line);color:var(--text)">These showed me layers of avoidance that no session could reach on its own.</p>
-    <div data-reveal style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:12px;overflow:hidden">
-      <div style="padding:20px;color:var(--muted);border-right:1px solid var(--line)">The challenges did not disappear. They grew in scale and consequence.</div>
-      <div style="padding:20px;background:var(--accent-bg);color:var(--text)">So did my capacity to meet them.</div>
+<section id="path" class="page-hero" aria-labelledby="a1">
+  <div class="wrap--narrow stack stack--lg">
+    <p class="eyebrow">About &middot; My Path</p>
+    <h1 data-seq id="a1">Checking out was once my default.</h1>
+    <p data-seq class="lede">For a long time, I coped by making my world smaller.</p>
+    <details class="accordion">
+      <summary><span class="accordion__label">What life looked like then</span></summary>
+      <div class="accordion__body">
+        <p>I disappeared into games, drugs and other forms of escape. Dishonesty became a reflex. Much of that time is hazy in my memory.</p>
+        <p>Discipline was difficult. So were relationships, commitments and everyday tasks. Outside the environments I could control, ordinary situations could overwhelm me and become crises.</p>
+        <p>By 24, I had dropped out of university and had almost no trust in myself.</p>
+        <p class="quote">I could know what mattered.<br>I could want change with everything in me.<br>Still, I felt unable to follow through.</p>
+        <p>I felt helpless. Life felt hopeless.</p>
+        <p>I had searched for relief, but the misery underneath remained.</p>
+        <p>In that state, I returned to something from my childhood that I had long dismissed: pranayama and meditation.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section id="door" class="section section--alt" aria-labelledby="a-door">
+  <div class="wrap--narrow stack stack--lg">
+    <h2 id="a-door" data-reveal>One morning, I woke with a sense that life was beautiful and that I still had a place in it.</h2>
+    <div data-reveal class="prose">
+      <p class="lede">That experience opened a door.</p>
+      <p>I began years of healing, personal development and spiritual practice. Slowly, I understood that my patterns had histories, and that what had felt fixed could move.</p>
+      <p>Much of the early change happened within practices, workshops and healing spaces.</p>
     </div>
   </div>
 </section>
 
-<section id="today" aria-labelledby="a2" style="background:var(--ink-2);padding:48px 20px 52px">
-  <div class="wrap" style="display:grid;gap:16px;max-width:640px">
-    <h2 id="a2" style="font-size:var(--t-h1);line-height:1.05">Today, blind spots and overwhelm still arise.</h2>
-    <p data-reveal style="margin:0;color:var(--text);font-size:var(--t-h2);line-height:1.35;font-weight:500">What has changed is <span style="background:var(--accent-bg);color:var(--text);padding:0 .12em;border-radius:2px;box-decoration-break:clone;-webkit-box-decoration-break:clone">the trust I carry into them.</span></p>
-    <p data-reveal style="margin:0;color:var(--text)">I trust my capacity to digest what comes, find a way through and do what is needed.</p>
-    <p data-reveal style="margin:0;color:var(--text)">I love my life and am grateful for its range.</p>
-    <p data-reveal style="margin:0;color:var(--text);line-height:1.6">Deep rest and full intensity.<br>Peace and movement.<br>The ordinary rhythms of home and the larger work I feel called to.</p>
-    <p data-reveal style="margin:0;color:var(--text)">Life invigorates me. I feel at home in it.</p>
-    <p data-reveal style="margin:0;color:var(--text)">What I have learned comes from a path I am still walking.</p>
-    <p data-reveal style="margin:0;color:var(--text)">I feel a responsibility to offer it where it may support another.</p>
-    <a class="link-u" href="training.html" style="margin-top:4px">Training &amp; Background <span aria-hidden="true">&rarr;</span></a>
+<section id="ordinary" class="section" aria-labelledby="a-ordinary">
+  <div class="wrap split">
+    <figure data-reveal class="photo photo--field">
+      <img src="assets/images/field-700.jpg" srcset="assets/images/field-700.jpg 700w, assets/images/field-1400.jpg 1400w" sizes="(min-width: 860px) 420px, 100vw" alt="Vinay crouching on a paved path, stroking a sleeping ginger cat" width="700" height="933" loading="lazy">
+    </figure>
+    <div class="stack stack--lg">
+      <h2 id="a-ordinary" data-reveal>Then ordinary life took the work further.</h2>
+      <p data-reveal class="lede">Relationships. Responsibility. Keeping my word. Telling the truth. Repairing harm. Staying when I wanted to disappear.</p>
+      <p data-reveal>These showed me layers of avoidance that no session could reach on its own.</p>
+      <div data-reveal class="stack stack--sm">
+        <p>The challenges did not disappear.<br>They grew in scale and consequence.</p>
+        <hr class="rule">
+        <p class="closing-line">So did my capacity to meet them.</p>
+      </div>
+    </div>
   </div>
 </section>
 
-<section aria-labelledby="a3" style="position:relative;overflow:hidden;background:var(--ink-1);padding:48px 20px 56px">
-  <img src="assets/images/sigil.png" alt="" aria-hidden="true" width="1100" height="1132" loading="lazy" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(640px,98vw);height:auto;opacity:.07;pointer-events:none">
-  <div class="wrap" style="position:relative;display:grid;gap:16px;max-width:640px">
-    <p style="margin:0;color:var(--muted);letter-spacing:.02em">The Dream</p>
-    <h2 id="a3" style="font-size:var(--t-h1);line-height:1.05">I dream of a tipping point where enough of the people shaping our world are willing to face what is difficult.</h2>
-    <p data-reveal style="margin:0;color:var(--text);line-height:1.6">Within themselves.<br>Within the systems they lead.</p>
-    <p data-reveal style="margin:0;color:var(--text)">That willingness changes how power is held.</p>
-    <p data-reveal style="margin:0;color:var(--text)">Accountability, responsibility and integrity begin with the questions we are willing to ask before a decision is made:</p>
-    <blockquote data-reveal style="margin:8px 0 0;padding:16px 20px;border-left:2px solid var(--accent);background:var(--ink-2);border-radius:0 12px 12px 0;font-size:var(--t-h3);line-height:1.5;color:var(--text)">
-      <p style="margin:0"><strong style="font-weight:500">What does this serve?<br>Whom will it affect?<br>What will it cost?</strong></p>
-    </blockquote>
-    <p data-reveal style="margin:0;color:var(--text)">What we refuse to face does not disappear.</p>
-    <p data-reveal style="margin:0;color:var(--text)">Its cost is carried somewhere, often by other people, other species or those who come after us.</p>
-    <p data-reveal style="margin:0;color:var(--text)">As more becomes visible, the frame widens.</p>
-    <p data-reveal style="margin:0;color:var(--text)">We begin to see human lives, other species, ecosystems and future generations as part of the same whole.</p>
-    <p data-reveal style="margin:0;color:var(--text)">And we shape what we create with that whole in mind.</p>
-    <p data-reveal style="margin:8px 0 0;font-size:var(--t-h2);line-height:1.3;font-weight:500;text-wrap:pretty"><span style="background:var(--accent-bg);color:var(--text);padding:0 .12em;border-radius:2px;box-decoration-break:clone;-webkit-box-decoration-break:clone">I envision a world where power serves life.</span></p>
-    <p data-reveal style="margin:0;color:var(--text)">If this is a future you want to help shape, how you meet your own life is part of the work.</p>
-    <a class="btn btn--solid" href="index.html#alignment-call" style="margin-top:8px">Request an Alignment Call <span aria-hidden="true">&rarr;</span></a>
+<section id="today" class="section section--alt" aria-labelledby="a2">
+  <div class="wrap--narrow stack stack--lg">
+    <h2 id="a2" data-reveal>Today, blind spots and overwhelm still arise.</h2>
+    <p data-reveal class="lede">What has changed is <span data-hl>the trust I carry into them.</span></p>
+    <details class="accordion">
+      <summary><span class="accordion__label">How I meet life now</span></summary>
+      <div class="accordion__body">
+        <p>I trust my capacity to digest what comes, find a way through and do what is needed.</p>
+        <p>I love my life and am grateful for its range.</p>
+        <p class="lines">Deep rest and full intensity.<br>Peace and movement.<br>The ordinary rhythms of home and the larger work I feel called to.</p>
+        <p>Life invigorates me. I feel at home in it.</p>
+        <p>What I have learned comes from a path I am still walking.</p>
+        <p>I feel a responsibility to offer it where it may support another.</p>
+      </div>
+    </details>
+    <a class="btn btn--outline" href="training.html">Training &amp; Background <span aria-hidden="true">&rarr;</span></a>
+  </div>
+</section>
+
+<section id="dream" class="section watermark" aria-labelledby="a3">
+  <div class="wrap--narrow stack stack--lg">
+    <p class="eyebrow">The Dream</p>
+    <h2 id="a3" data-reveal>I dream of a tipping point where enough of the people shaping our world are willing to face what is difficult.</h2>
+    <p data-reveal class="lede lines">Within themselves.<br>Within the systems they lead.</p>
+    <details class="accordion">
+      <summary><span class="accordion__label">The wider dream</span></summary>
+      <div class="accordion__body">
+        <p>That willingness changes how power is held.</p>
+        <p>Accountability, responsibility and integrity begin with the questions we are willing to ask before a decision is made:</p>
+        <p class="quote">What does this serve?<br>Whom will it affect?<br>What will it cost?</p>
+        <p>What we refuse to face does not disappear.</p>
+        <p>Its cost is carried somewhere, often by other people, other species or those who come after us.</p>
+        <p>As more becomes visible, the frame widens.</p>
+        <p>We begin to see human lives, other species, ecosystems and future generations as part of the same whole.</p>
+        <p>And we shape what we create with that whole in mind.</p>
+      </div>
+    </details>
+    <p data-reveal class="closing-line">I envision a world where power serves life.</p>
+    <p data-reveal class="prose">If this is a future you want to help shape, how you meet your own life is part of the work.</p>
+    <a class="btn btn--solid" href="index.html#alignment-call">Request an Alignment Call <span aria-hidden="true">&rarr;</span></a>
   </div>
 </section>
 
@@ -135,17 +173,25 @@
       <p>Welcoming all of life.</p>
     </div>
     <nav class="site-foot__nav" aria-label="Footer">
-      <a href="approach.html">The Approach</a>
-      <a href="offerings.html">1:1 Offerings</a>
-      <a href="groupwork.html">Group Work</a>
-      <a href="about.html">About</a>
-      <a href="training.html">Training &amp; Background</a>
+      <ul>
+        <li><a href="about.html">About</a></li>
+        <li><a href="approach.html">Approach</a></li>
+        <li><a href="training.html">Training</a></li>
+      </ul>
+      <ul>
+        <li><a href="offerings.html">1:1</a></li>
+        <li><a href="groupwork.html">Group</a></li>
+        <li><a href="index.html#alignment-call">Alignment Call</a></li>
+      </ul>
+    </nav>
+    <nav class="site-foot__closing" aria-label="Footer">
       <a href="index.html#alignment-call">Alignment Call</a>
+      <a href="privacy.html">Privacy &amp; Scope</a>
     </nav>
   </div>
   <div class="site-foot__bottom">
     <span>&copy; 2026 Vinay Swaminathan &middot; Auroville</span>
-    <span><a href="privacy.html">Privacy &amp; Scope</a></span>
+    <span class="site-foot__privacy"><a href="privacy.html">Privacy &amp; Scope</a></span>
   </div>
 </footer>
 

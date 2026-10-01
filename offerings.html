@@ -18,14 +18,16 @@
 <meta property="og:image" content="https://vinayswaminathan.com/assets/images/sigil.png">
 <meta name="twitter:card" content="summary_large_image">
 
+<script>document.documentElement.classList.add('js')</script>
 <link rel="icon" href="assets/images/sigil-small.png" type="image/png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/GilliusADFNo2-Regular.otf" as="font" type="font/otf" crossorigin>
 <link rel="stylesheet" href="assets/css/site.css">
 </head>
-<body>
+<body class="has-subnav">
 <a class="skip-link" href="#main">Skip to content</a>
 
 <header class="site-head" id="site-head">
@@ -37,7 +39,7 @@
     <nav class="nav" aria-label="Primary">
       <a class="nav__link" href="approach.html">The Approach</a>
       <a class="nav__link" href="offerings.html" aria-current="page">1:1 Offerings</a>
-      <a class="nav__link" href="groupwork.html">Group Work</a>
+      <a class="nav__link" href="groupwork.html">Group Offerings</a>
       <a class="nav__link" href="about.html">About</a>
       <a class="nav__link" href="training.html">Training</a>
       <a class="btn btn--solid" href="index.html#alignment-call">Request an Alignment Call</a>
@@ -47,215 +49,223 @@
       <span data-label>Menu</span>
     </button>
   </div>
-  <nav class="nav-mobile" id="nav-mobile" aria-label="Primary">
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Primary mobile">
     <a href="approach.html">The Approach <span aria-hidden="true">&rarr;</span></a>
     <a href="offerings.html" aria-current="page">1:1 Offerings <span aria-hidden="true">&rarr;</span></a>
-    <a href="groupwork.html">Group Work <span aria-hidden="true">&rarr;</span></a>
+    <a href="groupwork.html">Group Offerings <span aria-hidden="true">&rarr;</span></a>
     <a href="about.html">About <span aria-hidden="true">&rarr;</span></a>
     <a href="training.html">Training <span aria-hidden="true">&rarr;</span></a>
-    <a class="btn btn--solid" style="margin-top:16px;justify-content:center" href="index.html#alignment-call">Request an Alignment Call</a>
+    <a class="btn btn--solid" href="index.html#alignment-call">Request an Alignment Call</a>
   </nav>
 </header>
 
+<nav class="subnav" aria-label="Sections of this page">
+  <ul>
+    <li><a data-section="healing" href="#healing">Healing simplified</a></li>
+    <li><a data-section="doorways" href="#doorways">Five doorways</a></li>
+    <li><a data-section="together" href="#together">Working together</a></li>
+    <li><a data-section="longer" href="#longer">Longer support</a></li>
+    <li><a data-section="alignment" href="#alignment">How to start</a></li>
+    <li><a data-section="scope" href="#scope">Scope</a></li>
+  </ul>
+</nav>
+
+
 <main id="main">
 
-<section class="page-hero" aria-labelledby="o1" style="background:var(--ink-1);padding:36px 20px 48px;display:flex;align-items:center">
-  <div class="wrap" style="display:grid;gap:16px;width:100%">
-    <p style="margin:0;color:var(--muted);letter-spacing:.02em">1:1 Offerings</p>
-    <h1 data-seq id="o1" style="font-size:var(--t-h1);line-height:1.02">Healing simplified</h1>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px 56px;align-items:start">
-      <div style="display:grid;gap:10px;color:var(--text)">
-        <p style="margin:0">Healing is our natural capacity to regenerate, adapt and grow.</p>
-        <p style="margin:0">When something gets stuck, this can help create movement.</p>
-        <p style="margin:0;color:var(--muted)">A healer works with this process through what they have embodied, alongside tools, skills and interventions.</p>
-        <svg data-reveal viewBox="0 0 120 120" width="120" height="120" aria-hidden="true" style="display:block">
-          <path data-draw d="M60 60 L62.0 60.4 L62.3 61.0 L62.5 61.7 L62.5 62.6 L62.2 63.5 L61.7 64.3 L60.9 65.1 L59.8 65.7 L58.6 66.0 L57.2 66.1 L55.8 65.8 L54.3 65.2 L52.9 64.3 L51.7 62.9 L50.8 61.3 L50.2 59.4 L50.0 57.4 L50.3 55.2 L51.0 53.0 L52.2 51.0 L53.9 49.2 L56.0 47.7 L58.5 46.6 L61.2 46.1 L64.1 46.1 L67.0 46.7 L69.9 48.0 L72.5 49.9 L74.7 52.3 L76.4 55.2 L77.6 58.5 L78.0 62.1 L77.7 65.8 L76.7 69.5 L74.9 72.9 L72.3 76.0 L69.1 78.6 L65.3 80.6 L61.2 81.7 L56.8 82.1 L52.3 81.5 L47.9 79.9 L43.8 77.5 L40.2 74.3 L37.3 70.3 L35.2 65.7 L34.1 60.6 L33.9 55.4 L34.9 50.1 L36.9 45.0 L40.0 40.4 L44.0 36.4 L48.8 33.2 L54.3 31.0 L60.1 29.9 L66.2 30.0 L72.3 31.4 L78.0 33.9 L83.2 37.7 L87.6 42.5 L91.0 48.1 L93.3 54.4 L94.2 61.2 L93.8 68.1 L92.0 74.8 L88.9 81.2 L84.4 86.9 L78.9 91.7 L72.4 95.3 L65.2 97.5 L57.6 98.3 L49.9 97.6 L42.4 95.3 L35.4 91.5 L29.2 86.3 L24.2 80.0 L20.4 72.6 L18.2 64.5 L17.6 56.1 L18.7 47.6 L21.6 39.4 L26.0 31.8 L32.0 25.2 L39.2 19.9 L47.4 16.1 L56.4 13.9 L65.7 13.6 L74.9 15.2 L83.8 18.6 L91.9 23.7 L98.9 30.5 L104.4 38.6 L108.3 47.7 L110.3 57.5" fill="none" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round"/>
-          <circle cx="60" cy="60" r="3.5" fill="var(--text)"><animate attributeName="r" values="3;5;3" dur="4s" repeatCount="indefinite"/></circle>
-        </svg>
-      </div>
-      <p data-reveal style="margin:0;font-size:var(--t-h2);line-height:1.22;font-weight:500;text-wrap:pretty;border-top:2px solid var(--accent);padding-top:16px">A healer does not heal you. They help you <span data-hl>access and expand your own capacity to heal.</span></p>
+<section id="healing" class="page-hero" aria-labelledby="o1">
+  <div class="wrap stack stack--lg">
+    <p class="eyebrow">1:1 Offerings</p>
+    <h1 data-seq id="o1">Healing simplified</h1>
+    <div class="stack">
+      <p data-seq class="lede lede--wide">Healing is our natural capacity to regenerate, adapt and grow.</p>
+      <p data-seq class="lede lede--wide">A healer does not heal you. They help you <span data-hl>access and expand your own capacity to heal.</span></p>
     </div>
   </div>
 </section>
 
-<section aria-labelledby="o2" style="background:var(--ink-2);padding:48px 20px 52px">
-  <div class="wrap" style="display:grid;gap:14px">
-    <h2 id="o2" style="font-size:var(--t-h2);line-height:1.2;font-weight:500">When we work together</h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px 56px;color:var(--text)">
-      <p style="margin:0"><strong style="font-weight:500;color:var(--text)">The work is a collaboration.</strong> I bring care, skill and discernment, while staying attentive to your pace, boundaries and what is changing as we go.</p>
-      <p style="margin:0"><span data-hl>You remain in charge of your life and your choices.</span></p>
+<section id="doorways" class="section section--alt" aria-labelledby="o3">
+  <div class="wrap stack stack--lg">
+    <div class="stack">
+      <h2 id="o3">Five doorways</h2>
+      <p class="muted prose">Different needs call for different ways of working. We begin with what is most alive, stuck or asking for attention.</p>
     </div>
-    <p style="margin:12px 0 0;font-weight:500;color:var(--text)">What helps the work go deeper:</p>
-    <dl style="margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0 40px;border-top:1px solid var(--line)">
-      <div data-reveal style="display:grid;grid-template-columns:minmax(190px,auto) 1fr;gap:4px 16px;padding:12px 0;border-bottom:1px solid var(--line)">
-        <dt style="display:flex;align-items:center;gap:10px;font-weight:500;color:var(--text)"><svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true" style="flex:none;color:var(--accent)" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h22v14H14l-6 5v-5H5z"/></svg>Honesty</dt>
-        <dd style="margin:0;color:var(--muted);line-height:1.5">Say what is true, including doubt, resistance, disagreement and what is hard to name.</dd>
-      </div>
-      <div data-reveal style="display:grid;grid-template-columns:minmax(190px,auto) 1fr;gap:4px 16px;padding:12px 0;border-bottom:1px solid var(--line)">
-        <dt style="display:flex;align-items:center;gap:10px;font-weight:500;color:var(--text)"><svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true" style="flex:none;color:var(--accent)" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6M16 11v16M8 19a8 8 0 0 0 16 0M11 15h10"/></svg>Responsibility</dt>
-        <dd style="margin:0;color:var(--muted);line-height:1.5">Take ownership of your choices, needs, boundaries and impact.</dd>
-      </div>
-      <div data-reveal style="display:grid;grid-template-columns:minmax(190px,auto) 1fr;gap:4px 16px;padding:12px 0;border-bottom:1px solid var(--line)">
-        <dt style="display:flex;align-items:center;gap:10px;font-weight:500;color:var(--text)"><svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true" style="flex:none;color:var(--accent)" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h15v10H9l-4 3v-3H3zM21 12h8v10h-2v3l-3-3h-6v-3"/></svg>Communication</dt>
-        <dd style="margin:0;color:var(--muted);line-height:1.5">Speak up when something feels off. Give notice when plans change. Address misunderstandings early.</dd>
-      </div>
-      <div data-reveal style="display:grid;grid-template-columns:minmax(190px,auto) 1fr;gap:4px 16px;padding:12px 0;border-bottom:1px solid var(--line)">
-        <dt style="display:flex;align-items:center;gap:10px;font-weight:500;color:var(--text)"><svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true" style="flex:none;color:var(--accent)" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4a12 12 0 1 1 0 24 12 12 0 0 1 0-24M16 10a6 6 0 1 1 0 12 6 6 0 0 1 0-12M16 15.5v1"/></svg>Commitment</dt>
-        <dd style="margin:0;color:var(--muted);line-height:1.5">Keep returning to what you chose to work on, especially when it becomes difficult.</dd>
-      </div>
-      <div data-reveal style="display:grid;grid-template-columns:minmax(190px,auto) 1fr;gap:4px 16px;padding:12px 0;border-bottom:1px solid var(--line)">
-        <dt style="display:flex;align-items:center;gap:10px;font-weight:500;color:var(--text)"><svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true" style="flex:none;color:var(--accent)" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 24l7-7 5 5 9-10M20 12h6v6"/></svg>Action</dt>
-        <dd style="margin:0;color:var(--muted);line-height:1.5">Let inner shifts become lived changes: a conversation, a boundary, a decision, a period of rest, a new habit, a practical step.</dd>
-      </div>
-    </dl>
-    <p style="margin:4px 0 0;color:var(--text)">You do not need to do any of this perfectly. These are values we keep working on.</p>
+
+    <div class="offering-list">
+
+      <article id="body" class="offering" aria-labelledby="body-t">
+        <div class="offering__head">
+          <h3 id="body-t" class="offering__name"><svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M6 22c3-8 8-12 10-12s7 4 10 12"/><line x1="4" y1="24" x2="28" y2="24"/></svg>Body</h3>
+          <p class="offering__subtitle">Rest &amp; Reconnection</p>
+          <p class="offering__desc">Subtle-touch bodywork to support deep rest, integration and the body&rsquo;s natural capacity to rebalance.</p>
+          <p class="offering__meta"><span>90 minutes</span><span class="offering__price">&#8377;1,000</span></p>
+        </div>
+        <details class="accordion">
+          <summary><span class="accordion__label">Session details<span class="visually-hidden"> for Body</span></span></summary>
+          <div class="accordion__body">
+            <dl class="facts">
+              <div><dt>For</dt><dd>When your system needs space to settle, unwind, release and reconnect.</dd></div>
+              <div><dt>You may leave with</dt><dd>More lightness, clarity and energy, with greater access to your body, feelings and thoughts.</dd></div>
+              <div><dt>The session may include</dt><dd>Optional smudging, an opening mantra, space to speak, osteopathic techniques, fascial massage, craniosacral touch and Access Bars.</dd></div>
+            </dl>
+            <p class="muted">The structure stays flexible and responds to what your body needs.</p>
+          </div>
+        </details>
+      </article>
+
+      <article id="mind" class="offering" aria-labelledby="mind-t">
+        <div class="offering__head">
+          <h3 id="mind-t" class="offering__name"><svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="16" cy="16" r="10"/><path d="M16 8a8 8 0 0 1 6.9 4M24 16a8 8 0 0 1-4 6.9M16 24a8 8 0 0 1-6.9-4M8 16a8 8 0 0 1 4-6.9" opacity=".6"/></svg>Mind</h3>
+          <p class="offering__subtitle">Clarity &amp; Confidence</p>
+          <p class="offering__desc">Clarifying what is happening, widening perspective and untangling what feels stuck.</p>
+          <p class="offering__meta"><span>60 minutes</span><span class="offering__price">&#8377;750</span></p>
+        </div>
+        <details class="accordion">
+          <summary><span class="accordion__label">Session details<span class="visually-hidden"> for Mind</span></span></summary>
+          <div class="accordion__body">
+            <dl class="facts">
+              <div><dt>For</dt><dd>Mental turmoil, confusion, dilemmas, limiting beliefs, or situations you cannot see clearly.</dd></div>
+              <div><dt>You may leave with</dt><dd>A clearer understanding of yourself, your options and what matters most.</dd></div>
+              <div><dt>The session may include</dt><dd>NLP, Breakthrough Coaching, guided inquiry, perspective work and reflective conversation.</dd></div>
+            </dl>
+            <p class="muted">We work to untangle what is happening and widen perspective.</p>
+          </div>
+        </details>
+      </article>
+
+      <article id="emotion" class="offering" aria-labelledby="emotion-t">
+        <div class="offering__head">
+          <h3 id="emotion-t" class="offering__name"><svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M4 18c3-6 6 6 9 0s6-10 9-4 4 8 6 4"/></svg>Emotion</h3>
+          <p class="offering__subtitle">Peace &amp; Freedom</p>
+          <p class="offering__desc">In-depth guided processes to move through emotional layers and complete what remains unfinished.</p>
+          <p class="offering__meta"><span>2 to 4 hours</span><span class="offering__price">&#8377;2,500</span></p>
+        </div>
+        <details class="accordion">
+          <summary><span class="accordion__label">Session details<span class="visually-hidden"> for Emotion</span></span></summary>
+          <div class="accordion__body">
+            <dl class="facts">
+              <div><dt>For</dt><dd>When something beneath the surface continues to shape the present.</dd></div>
+              <div><dt>You may leave with</dt><dd>More peace with what has been and more freedom in how you respond now.</dd></div>
+              <div><dt>The session may include</dt><dd>The Journey, EFT, inner child work, conscious connected breathing and other trauma informed emotional processing techniques.</dd></div>
+            </dl>
+            <p class="muted">These sessions require prior screening and enough space for preparation and integration.</p>
+          </div>
+        </details>
+      </article>
+
+      <article id="action" class="offering" aria-labelledby="action-t">
+        <div class="offering__head">
+          <h3 id="action-t" class="offering__name"><svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M8 8l12 8-12 8"/><path d="M22 12a6 6 0 0 1 0 8" opacity=".6"/></svg>Action</h3>
+          <p class="offering__subtitle">Momentum &amp; Motivation</p>
+          <p class="offering__desc">Turning what you know into decisions, conversations, boundaries and real-world movement.</p>
+          <p class="offering__meta"><span>1 &times; 60 minute session + 4 &times; 15 minute follow ups</span><span class="offering__price">&#8377;1,500</span></p>
+        </div>
+        <details class="accordion">
+          <summary><span class="accordion__label">Session details<span class="visually-hidden"> for Action</span></span></summary>
+          <div class="accordion__body">
+            <dl class="facts">
+              <div><dt>For</dt><dd>When something you care about needs to become real.</dd></div>
+              <div><dt>You may leave with</dt><dd>A clear plan, greater momentum and stronger follow through.</dd></div>
+              <div><dt>The process may include</dt><dd>Clarifying the goal, identifying friction, building practical structure and using short follow up calls to keep the plan moving in real life.</dd></div>
+            </dl>
+          </div>
+        </details>
+      </article>
+
+      <article id="breath" class="offering" aria-labelledby="breath-t">
+        <div class="offering__head">
+          <h3 id="breath-t" class="offering__name"><svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="16" cy="16" r="10"/><circle cx="16" cy="16" r="5.5" opacity=".6"/></svg>Breath</h3>
+          <p class="offering__subtitle">Range &amp; Regulation</p>
+          <p class="offering__desc">Tailored breathwork to support regulation, emotional release, insight and transformation.</p>
+          <p class="offering__meta"><span>60 minutes</span><span class="offering__price">&#8377;750</span></p>
+        </div>
+        <details class="accordion">
+          <summary><span class="accordion__label">Session details<span class="visually-hidden"> for Breath</span></span></summary>
+          <div class="accordion__body">
+            <dl class="facts">
+              <div><dt>For</dt><dd>Developing a more conscious relationship with your breath and expanding the states you can access and move through.</dd></div>
+              <div><dt>You may leave with</dt><dd>Greater ability to regulate, focus, energise, settle or move emotion through the breath.</dd></div>
+              <div><dt>The session may include</dt><dd>Breath education, pranayama, regulation practices, activation, movement, sound and conscious connected breathing.</dd></div>
+            </dl>
+            <p class="muted">The session is shaped around what is most useful for you.</p>
+          </div>
+        </details>
+      </article>
+
+    </div>
+
+    <p class="note"><strong>Introductory pricing:</strong> I want this work to remain accessible while I build the practice. Rates will increase gradually as my schedule fills.</p>
+    <a class="btn btn--solid" href="index.html#alignment-call">Request an Alignment Call <span aria-hidden="true">&rarr;</span></a>
   </div>
 </section>
 
-<section id="doorways" aria-labelledby="o3" style="background:var(--ink-1);padding:48px 20px 52px">
-  <div class="wrap" style="display:grid;gap:14px">
-    <h2 id="o3" style="font-size:var(--t-h2);line-height:1.2;font-weight:500">Five doorways</h2>
-    <p style="margin:0;max-width:52ch;color:var(--muted)">Each session is shaped around a particular need rather than a fixed procedure. What any one draws on depends on the person and on what emerges.</p>
-    <nav aria-label="Jump to a doorway" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
-      <a class="choice" href="#body"><span aria-hidden="true" style="width:24px;height:24px;color:var(--accent)"><svg viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M6 22c3-8 8-12 10-12s7 4 10 12"/><line x1="4" y1="24" x2="28" y2="24"/></svg></span>Body</a>
-      <a class="choice" href="#mind"><span aria-hidden="true" style="width:24px;height:24px;color:var(--accent)"><svg viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="16" cy="16" r="10"/><path d="M16 8a8 8 0 0 1 6.9 4M24 16a8 8 0 0 1-4 6.9M16 24a8 8 0 0 1-6.9-4M8 16a8 8 0 0 1 4-6.9" opacity=".6"/></svg></span>Mind</a>
-      <a class="choice" href="#emotion"><span aria-hidden="true" style="width:24px;height:24px;color:var(--accent)"><svg viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M4 18c3-6 6 6 9 0s6-10 9-4 4 8 6 4"/></svg></span>Emotion</a>
-      <a class="choice" href="#action"><span aria-hidden="true" style="width:24px;height:24px;color:var(--accent)"><svg viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M8 8l12 8-12 8"/><path d="M22 12a6 6 0 0 1 0 8" opacity=".6"/></svg></span>Action</a>
-      <a class="choice" href="#breath"><span aria-hidden="true" style="width:24px;height:24px;color:var(--accent)"><svg viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="16" cy="16" r="10"/><circle cx="16" cy="16" r="5.5" opacity=".6"/></svg></span>Breath</a>
-    </nav>
-    <p style="margin:4px 0 0;padding:12px 14px;background:var(--ink-1);border-left:2px solid var(--accent);color:var(--muted);max-width:720px"><strong style="font-weight:500;color:var(--text)">Introductory pricing:</strong> I want this work to remain accessible while I build the practice. Rates will increase gradually as my schedule fills.</p>
-
-    <div style="display:grid;gap:0;margin-top:12px;border-top:1px solid var(--line)">
-
-      <article id="body" aria-labelledby="body-t" data-reveal style="display:flex;flex-wrap:wrap;gap:16px 48px;padding:28px 0;border-bottom:1px solid var(--line)">
-        <header style="flex:1 1 280px;display:grid;gap:10px;align-content:start">
-          <p style="margin:0;display:flex;align-items:center;gap:10px;font-weight:500;color:var(--text)"><span aria-hidden="true" style="width:28px;height:28px;color:var(--accent)"><svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M6 22c3-8 8-12 10-12s7 4 10 12"/><line x1="4" y1="24" x2="28" y2="24"/></svg></span>Body</p>
-          <h3 id="body-t" style="margin:0;font-weight:500;font-size:var(--t-h2);line-height:1.15">Rest &amp; Reconnection</h3>
-          <p style="margin:0;display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;padding:10px 12px;background:var(--ink-2);border-radius:14px"><span style="color:var(--text)">90 minutes</span><strong style="font-weight:500;color:var(--text)">&#8377;1,000</strong></p>
-        </header>
-        <div style="flex:1.6 1 340px;min-width:0;display:grid;gap:14px;align-content:start">
-          <div style="display:grid;gap:2px"><p style="margin:0;color:var(--muted);letter-spacing:.02em">For</p><p style="margin:0;font-weight:500;color:var(--text)">When your system needs space to settle, unwind, release and reconnect.</p></div>
-          <div style="display:grid;gap:2px"><p style="margin:0;font-weight:500;color:var(--muted)">You may leave with</p><p style="margin:0;color:var(--text)">More lightness, clarity and energy, with greater access to your body, feelings and thoughts.</p></div>
-          <details class="doorway-detail" style="border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
-            <summary>The session may include<span class="chev" aria-hidden="true">&darr;</span></summary>
-            <p style="margin:0 0 14px;color:var(--muted)">Optional smudging, an opening mantra, space to speak, osteopathic techniques, fascial massage, craniosacral touch and Access Bars.</p>
-          </details>
-          <p style="margin:0;color:var(--muted)">The structure stays flexible and responds to what your body needs.</p>
-        </div>
-      </article>
-
-      <article id="mind" aria-labelledby="mind-t" data-reveal style="display:flex;flex-wrap:wrap;gap:16px 48px;padding:28px 0;border-bottom:1px solid var(--line)">
-        <header style="flex:1 1 280px;display:grid;gap:10px;align-content:start">
-          <p style="margin:0;display:flex;align-items:center;gap:10px;font-weight:500;color:var(--text)"><span aria-hidden="true" style="width:28px;height:28px;color:var(--accent)"><svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="16" cy="16" r="10"/><path d="M16 8a8 8 0 0 1 6.9 4M24 16a8 8 0 0 1-4 6.9M16 24a8 8 0 0 1-6.9-4M8 16a8 8 0 0 1 4-6.9" opacity=".6"/></svg></span>Mind</p>
-          <h3 id="mind-t" style="margin:0;font-weight:500;font-size:var(--t-h2);line-height:1.15">Clarity &amp; Confidence</h3>
-          <p style="margin:0;display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;padding:10px 12px;background:var(--ink-2);border-radius:14px"><span style="color:var(--text)">60 minutes</span><strong style="font-weight:500;color:var(--text)">&#8377;750</strong></p>
-        </header>
-        <div style="flex:1.6 1 340px;min-width:0;display:grid;gap:14px;align-content:start">
-          <div style="display:grid;gap:2px"><p style="margin:0;color:var(--muted);letter-spacing:.02em">For</p><p style="margin:0;font-weight:500;color:var(--text)">Mental turmoil, confusion, dilemmas, limiting beliefs, or situations you cannot see clearly.</p></div>
-          <div style="display:grid;gap:2px"><p style="margin:0;font-weight:500;color:var(--muted)">You may leave with</p><p style="margin:0;color:var(--text)">A clearer understanding of yourself, your options and what matters most.</p></div>
-          <details class="doorway-detail" style="border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
-            <summary>The session may include<span class="chev" aria-hidden="true">&darr;</span></summary>
-            <p style="margin:0 0 14px;color:var(--muted)">NLP, Breakthrough Coaching, guided inquiry, perspective work and reflective conversation.</p>
-          </details>
-          <p style="margin:0;color:var(--muted)">We work to untangle what is happening and widen perspective.</p>
-        </div>
-      </article>
-
-      <article id="emotion" aria-labelledby="emotion-t" data-reveal style="display:flex;flex-wrap:wrap;gap:16px 48px;padding:28px 0;border-bottom:1px solid var(--line)">
-        <header style="flex:1 1 280px;display:grid;gap:10px;align-content:start">
-          <p style="margin:0;display:flex;align-items:center;gap:10px;font-weight:500;color:var(--text)"><span aria-hidden="true" style="width:28px;height:28px;color:var(--accent)"><svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M4 18c3-6 6 6 9 0s6-10 9-4 4 8 6 4"/></svg></span>Emotion</p>
-          <h3 id="emotion-t" style="margin:0;font-weight:500;font-size:var(--t-h2);line-height:1.15">Peace &amp; Freedom</h3>
-          <p style="margin:0;display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;padding:10px 12px;background:var(--ink-2);border-radius:14px"><span style="color:var(--text)">2 to 4 hours</span><strong style="font-weight:500;color:var(--text)">&#8377;2,500</strong></p>
-        </header>
-        <div style="flex:1.6 1 340px;min-width:0;display:grid;gap:14px;align-content:start">
-          <div style="display:grid;gap:2px"><p style="margin:0;color:var(--muted);letter-spacing:.02em">For</p><p style="margin:0;font-weight:500;color:var(--text)">When something beneath the surface continues to shape the present.</p></div>
-          <div style="display:grid;gap:2px"><p style="margin:0;font-weight:500;color:var(--muted)">You may leave with</p><p style="margin:0;color:var(--text)">More peace with what has been and more freedom in how you respond now.</p></div>
-          <details class="doorway-detail" style="border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
-            <summary>The session may include<span class="chev" aria-hidden="true">&darr;</span></summary>
-            <p style="margin:0 0 14px;color:var(--muted)">The Journey, EFT, inner child work, conscious connected breathing and other trauma informed emotional processing techniques.</p>
-          </details>
-          <p style="margin:0;color:var(--muted)">These sessions require prior screening and enough space for preparation and integration.</p>
-        </div>
-      </article>
-
-      <article id="action" aria-labelledby="action-t" data-reveal style="display:flex;flex-wrap:wrap;gap:16px 48px;padding:28px 0;border-bottom:1px solid var(--line)">
-        <header style="flex:1 1 280px;display:grid;gap:10px;align-content:start">
-          <p style="margin:0;display:flex;align-items:center;gap:10px;font-weight:500;color:var(--text)"><span aria-hidden="true" style="width:28px;height:28px;color:var(--accent)"><svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M8 8l12 8-12 8"/><path d="M22 12a6 6 0 0 1 0 8" opacity=".6"/></svg></span>Action</p>
-          <h3 id="action-t" style="margin:0;font-weight:500;font-size:var(--t-h2);line-height:1.15">Momentum &amp; Motivation</h3>
-          <p style="margin:0;display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;padding:10px 12px;background:var(--ink-2);border-radius:14px"><span style="color:var(--text)">1 &times; 60 minute session + 4 &times; 15 minute follow ups</span><strong style="font-weight:500;color:var(--text)">&#8377;1,500</strong></p>
-        </header>
-        <div style="flex:1.6 1 340px;min-width:0;display:grid;gap:14px;align-content:start">
-          <div style="display:grid;gap:2px"><p style="margin:0;color:var(--muted);letter-spacing:.02em">For</p><p style="margin:0;font-weight:500;color:var(--text)">When something you care about needs to become real.</p></div>
-          <div style="display:grid;gap:2px"><p style="margin:0;font-weight:500;color:var(--muted)">You may leave with</p><p style="margin:0;color:var(--text)">A clear plan, greater momentum and stronger follow through.</p></div>
-          <details class="doorway-detail" style="border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
-            <summary>The process may include<span class="chev" aria-hidden="true">&darr;</span></summary>
-            <p style="margin:0 0 14px;color:var(--muted)">Clarifying the goal, identifying friction, building practical structure and using short follow up calls to keep the plan moving in real life.</p>
-          </details>
-        </div>
-      </article>
-
-      <article id="breath" aria-labelledby="breath-t" data-reveal style="display:flex;flex-wrap:wrap;gap:16px 48px;padding:28px 0;border-bottom:1px solid var(--line)">
-        <header style="flex:1 1 280px;display:grid;gap:10px;align-content:start">
-          <p style="margin:0;display:flex;align-items:center;gap:10px;font-weight:500;color:var(--text)"><span aria-hidden="true" style="width:28px;height:28px;color:var(--accent)"><svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="16" cy="16" r="10"/><circle cx="16" cy="16" r="5.5" opacity=".6"/></svg></span>Breath</p>
-          <h3 id="breath-t" style="margin:0;font-weight:500;font-size:var(--t-h2);line-height:1.15">Range &amp; Regulation</h3>
-          <p style="margin:0;display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;padding:10px 12px;background:var(--ink-2);border-radius:14px"><span style="color:var(--text)">60 minutes</span><strong style="font-weight:500;color:var(--text)">&#8377;750</strong></p>
-        </header>
-        <div style="flex:1.6 1 340px;min-width:0;display:grid;gap:14px;align-content:start">
-          <div style="display:grid;gap:2px"><p style="margin:0;color:var(--muted);letter-spacing:.02em">For</p><p style="margin:0;font-weight:500;color:var(--text)">Developing a more conscious relationship with your breath and expanding the states you can access and move through.</p></div>
-          <div style="display:grid;gap:2px"><p style="margin:0;font-weight:500;color:var(--muted)">You may leave with</p><p style="margin:0;color:var(--text)">Greater ability to regulate, focus, energise, settle or move emotion through the breath.</p></div>
-          <details class="doorway-detail" style="border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
-            <summary>The session may include<span class="chev" aria-hidden="true">&darr;</span></summary>
-            <p style="margin:0 0 14px;color:var(--muted)">Breath education, pranayama, regulation practices, activation, movement, sound and conscious connected breathing.</p>
-          </details>
-          <p style="margin:0;color:var(--muted)">The session is shaped around what is most useful for you.</p>
-        </div>
-      </article>
-
+<section id="together" class="section" aria-labelledby="o2">
+  <div class="wrap stack stack--lg">
+    <h2 id="o2">When we work together</h2>
+    <div class="prose">
+      <p>The work is a collaboration. I bring care, skill and discernment, while staying attentive to your pace, boundaries and what is changing as we go.</p>
+      <p>You remain in charge of your life and your choices.</p>
     </div>
-    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px 32px;margin-top:20px">
-      <p style="margin:0;flex:1 1 320px;max-width:52ch;color:var(--muted)">The exchange for each session is discussed on the Alignment Call, so it can be matched to what you actually need rather than to a list.</p>
-      <a class="btn btn--solid" href="index.html#alignment-call">Request an Alignment Call <span aria-hidden="true">&rarr;</span></a>
-    </div>
-  </div>
-</section>
-
-<section id="longer" aria-labelledby="o4" style="background:var(--ink-2);padding:48px 20px 52px">
-  <div class="wrap" style="display:grid;gap:14px">
-    <h2 id="o4" style="font-size:var(--t-h2);line-height:1.2;font-weight:500">Longer support</h2>
-    <p style="margin:0;max-width:52ch;color:var(--muted)">For when the work needs more time, continuity and support than a single session can hold.</p>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:8px">
-      <article data-reveal aria-labelledby="l1" style="background:var(--ink-1);border:1px solid var(--line);border-radius:16px;padding:20px 18px;display:grid;gap:12px;align-content:start">
-        <div style="display:grid;grid-template-columns:auto 1fr;gap:0 14px;align-items:start">
-          <svg viewBox="0 0 32 32" width="34" height="34" aria-hidden="true" style="flex:none;fill:none;stroke:var(--accent);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M5 8h22v19H5zM5 13h22M11 4v6M21 4v6"/></svg>
-          <div><h3 id="l1" style="margin:0;font-weight:500;font-size:var(--t-h2);line-height:1.15">30-Day Intensive</h3><p style="margin:4px 0 0;font-weight:500;color:var(--text)">Continuity &amp; Momentum</p></div>
-        </div>
-        <dl style="margin:0;display:grid;gap:10px">
-          <div><dt style="font-weight:500;color:var(--text)">For</dt><dd style="margin:0;color:var(--text)">A period when one area of life needs sustained attention, whether to help something new take root or stay with an issue long enough for real change to happen.</dd></div>
-          <div><dt style="font-weight:500;color:var(--muted)">How we work</dt><dd style="margin:0;color:var(--text)">We begin with a clear intention and shape the month around what unfolds.</dd></div>
-          <div><dt style="font-weight:500;color:var(--muted)">Between sessions</dt><dd style="margin:0;color:var(--text)">You can message by text or voice note of up to 2.5 minutes. I respond within 24 hours.</dd></div>
-          <div><dt style="font-weight:500;color:var(--muted)">Exchange</dt><dd style="margin:0;color:var(--text)">Depends on the number and type of sessions we choose.</dd></div>
+    <details class="accordion">
+      <summary><span class="accordion__label">What I ask of you</span></summary>
+      <div class="accordion__body">
+        <dl class="ruled">
+          <div><dt>Honesty</dt><dd>Say what is true, including doubt, resistance, disagreement and what is hard to name.</dd></div>
+          <div><dt>Responsibility</dt><dd>Take ownership of your choices, needs, boundaries and impact.</dd></div>
+          <div><dt>Communication</dt><dd>Speak up when something feels off. Give notice when plans change. Address misunderstandings early.</dd></div>
+          <div><dt>Commitment</dt><dd>Keep returning to what you chose to work on, especially when it becomes difficult.</dd></div>
+          <div><dt>Action</dt><dd>Let inner shifts become lived changes: a conversation, a boundary, a decision, a period of rest, a new habit, a practical step.</dd></div>
         </dl>
-      </article>
-      <article data-reveal aria-labelledby="l2" style="background:var(--ink-1);border:1px solid var(--line);border-radius:16px;padding:20px 18px;display:grid;gap:12px;align-content:start">
-        <div style="display:grid;grid-template-columns:auto 1fr;gap:0 14px;align-items:start">
-          <svg viewBox="0 0 32 32" width="34" height="34" aria-hidden="true" style="flex:none;fill:none;stroke:var(--accent);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M26 16a10 10 0 1 1-3-7.1M26 5v5h-5"/></svg>
-          <div><h3 id="l2" style="margin:0;font-weight:500;font-size:var(--t-h2);line-height:1.15">90-Day Crucible</h3><p style="margin:4px 0 0;font-weight:500;color:var(--text)">Death &middot; Rebirth &middot; Integration</p></div>
+        <p>You do not need to do any of this perfectly. These are values we keep working on.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section id="longer" class="section section--alt" aria-labelledby="o4">
+  <div class="wrap stack stack--lg">
+    <div class="stack">
+      <h2 id="o4">Longer support</h2>
+      <p class="muted prose">For when the work needs more time, continuity and support than a single session can hold.</p>
+    </div>
+    <div class="offering-list">
+      <article class="offering" aria-labelledby="l1">
+        <div class="offering__head">
+          <h3 id="l1" class="offering__name">30-Day Intensive</h3>
+          <p class="offering__subtitle">Continuity &middot; Momentum</p>
+          <p class="offering__desc">A period when one area of life needs sustained attention, whether to help something new take root or stay with an issue long enough for real change to happen.</p>
         </div>
-        <dl style="margin:0;display:grid;gap:10px">
-          <div><dt style="font-weight:500;color:var(--text)">For</dt><dd style="margin:0;color:var(--text)">A deeper commitment to your path, with greater responsibility and accountability over three concentrated months.</dd></div>
-          <div><dt style="font-weight:500;color:var(--muted)">The intention</dt><dd style="margin:0;color:var(--text)">To create the conditions for significant growth, healing and transformation in a shorter period of time.</dd></div>
-        </dl>
-        <details class="crucible" style="border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
-          <summary>What the Crucible asks and offers<span class="chev" aria-hidden="true">&darr;</span></summary>
-          <div style="display:grid;gap:12px;padding-bottom:16px">
-            <p style="margin:0;color:var(--muted)">The Crucible is forged around a death and rebirth cycle:</p>
-            <ol style="list-style:none;margin:0;padding:0;display:grid;border-left:1px solid var(--accent)">
-              <li style="padding:4px 0 4px 14px">What has completed?</li>
-              <li style="padding:4px 0 4px 14px">What needs to end?</li>
-              <li style="padding:4px 0 4px 14px">What future version of you is asking to be birthed?</li>
+        <details class="accordion">
+          <summary><span class="accordion__label">More about the 30-Day Intensive</span></summary>
+          <div class="accordion__body">
+            <dl class="facts">
+              <div><dt>How we work</dt><dd>We begin with a clear intention and shape the month around what unfolds.</dd></div>
+              <div><dt>Between sessions</dt><dd>You can message by text or voice note of up to 2.5 minutes. I respond within 24 hours.</dd></div>
+              <div><dt>Exchange</dt><dd>Depends on the number and type of sessions we choose.</dd></div>
+            </dl>
+          </div>
+        </details>
+      </article>
+      <article class="offering" aria-labelledby="l2">
+        <div class="offering__head">
+          <h3 id="l2" class="offering__name">90-Day Crucible</h3>
+          <p class="offering__subtitle">Death &middot; Rebirth &middot; Integration</p>
+          <p class="offering__desc">A deeper commitment to your path, with greater responsibility and accountability over three concentrated months.</p>
+        </div>
+        <details class="accordion">
+          <summary><span class="accordion__label">What the Crucible asks and offers</span></summary>
+          <div class="accordion__body">
+            <dl class="facts">
+              <div><dt>The intention</dt><dd>To create the conditions for significant growth, healing and transformation in a shorter period of time.</dd></div>
+            </dl>
+            <p class="muted">The Crucible is forged around a death and rebirth cycle:</p>
+            <ol class="ruled">
+              <li>What has completed?</li>
+              <li>What needs to end?</li>
+              <li>What future version of you is asking to be birthed?</li>
             </ol>
-            <p style="margin:0;color:var(--muted)">Alongside whatever intention you enter with, we build your capacity to notice when something is off, respond, repair, integrate and find movement again.</p>
-            <p style="margin:0;font-weight:500;color:var(--text)">Your real contribution is the ferocity of your commitment to the container and to yourself.</p>
+            <p class="muted">Alongside whatever intention you enter with, we build your capacity to notice when something is off, respond, repair, integrate and find movement again.</p>
+            <p>Your real contribution is the ferocity of your commitment to the container and to yourself.</p>
           </div>
         </details>
       </article>
@@ -263,59 +273,49 @@
   </div>
 </section>
 
-<section id="alignment" aria-labelledby="o5" style="background:var(--ink-1);padding:48px 20px 52px">
-  <div class="wrap" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:32px 56px">
-    <div style="display:grid;gap:14px;align-content:start">
-      <p style="margin:0;color:var(--muted);letter-spacing:.02em">Alignment Call</p>
-      <h2 id="o5" style="font-weight:500;font-size:var(--t-h2);line-height:1.2">A first conversation to see if this fits.</h2>
-      <ol style="list-style:none;margin:0;padding:0;display:grid;border-top:1px solid var(--line)">
-        <li style="display:grid;grid-template-columns:36px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)"><span aria-hidden="true" style="width:32px;height:32px;border:1px solid var(--accent);border-radius:50%;display:grid;place-items:center;color:var(--accent);line-height:1">1</span><span><strong style="font-weight:500">Complete a short form</strong><br><span style="color:var(--muted)">Before we confirm the call, I&rsquo;ll ask you to complete a form so I can understand your situation, what you are looking for, and whether what I offer is appropriate for where you are.</span></span></li>
-        <li style="display:grid;grid-template-columns:36px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)"><span aria-hidden="true" style="width:32px;height:32px;border:1px solid var(--accent);border-radius:50%;display:grid;place-items:center;color:var(--accent);line-height:1">2</span><span><strong style="font-weight:500">We talk it through</strong><br><span style="color:var(--muted)">On the call, we&rsquo;ll clarify expectations and align on which intervention feels most relevant to you and your life right now.</span></span></li>
+<section id="alignment" class="section" aria-labelledby="o5">
+  <div class="wrap split">
+    <div class="stack stack--lg">
+      <div class="stack stack--sm">
+        <p class="eyebrow">The Alignment Call</p>
+        <h2 id="o5">How to start</h2>
+      </div>
+      <ol class="steps">
+        <li><span><strong>Complete a short form</strong><span>So I can understand your situation and context.</span></span></li>
+        <li><span><strong>We talk it through</strong><span>For deeper clarity and alignment.</span></span></li>
       </ol>
       <a class="btn btn--solid" href="index.html#alignment-call">Request a 30-Min Alignment Call <span aria-hidden="true">&rarr;</span></a>
     </div>
-    <div id="availability" style="display:grid;gap:12px;align-content:start">
-      <h2 style="margin:0;font-weight:500;color:var(--text);font-size:var(--t-h3)">Availability</h2>
-      <h3 style="margin:0;font-size:var(--t-h2);line-height:1.2;font-weight:500">Practical details</h3>
-      <dl style="margin:0;display:grid;border-top:1px solid var(--line)">
-        <div style="display:grid;grid-template-columns:minmax(170px,auto) 1fr;gap:4px 16px;padding:14px 0;border-bottom:1px solid var(--line)">
-          <dt style="font-weight:500;display:flex;gap:10px;align-items:center"><svg viewBox="0 0 32 32" width="24" height="24" aria-hidden="true" style="flex:none;fill:none;stroke:var(--accent);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M16 4a12 12 0 1 1 0 24 12 12 0 0 1 0-24M16 9v7l5 3"/></svg>Sessions</dt>
-          <dd style="margin:0">Monday to Saturday at <strong style="font-weight:500">11:00 AM</strong> India time.</dd>
-        </div>
-        <div style="display:grid;grid-template-columns:minmax(170px,auto) 1fr;gap:4px 16px;padding:14px 0;border-bottom:1px solid var(--line)">
-          <dt style="font-weight:500;display:flex;gap:10px;align-items:center"><svg viewBox="0 0 32 32" width="24" height="24" aria-hidden="true" style="flex:none;fill:none;stroke:var(--accent);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M8 5l4 1 2 5-3 2a14 14 0 0 0 8 8l2-3 5 2 1 4c-1 2-3 3-5 3C12 27 5 20 5 10c0-2 1-4 3-5z"/></svg>Alignment Calls</dt>
-          <dd style="margin:0">Monday to Saturday at <strong style="font-weight:500">3:00 PM</strong> or <strong style="font-weight:500">3:45 PM</strong> India time.</dd>
-        </div>
-        <div style="display:grid;grid-template-columns:minmax(170px,auto) 1fr;gap:4px 16px;padding:14px 0;border-bottom:1px solid var(--line)">
-          <dt style="font-weight:500;display:flex;gap:10px;align-items:center"><svg viewBox="0 0 32 32" width="24" height="24" aria-hidden="true" style="flex:none;fill:none;stroke:var(--accent);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M16 28s9-8.5 9-15a9 9 0 0 0-18 0c0 6.5 9 15 9 15zM16 10a3 3 0 1 1 0 6 3 3 0 0 1 0-6"/></svg>Where</dt>
-          <dd style="margin:0;color:var(--text)">Sessions are available in person in Auroville and online, depending on the nature of the work.</dd>
-        </div>
+    <div id="availability" class="stack stack--lg">
+      <h2>Availability</h2>
+      <dl class="ruled">
+        <div><dt>Sessions</dt><dd>Monday to Saturday at 11:00 AM India time.</dd></div>
+        <div><dt>Alignment Calls</dt><dd>Monday to Saturday at 3:00 PM or 3:45 PM India time.</dd></div>
+        <div><dt>Where</dt><dd>Sessions are available in person in Auroville and online, depending on the nature of the work.</dd></div>
       </dl>
     </div>
   </div>
 </section>
 
-<section id="scope" aria-labelledby="o6" style="background:var(--ink-2);color:var(--text);padding:40px 20px 44px">
-  <div class="wrap" style="display:flex;flex-wrap:wrap;gap:16px 56px">
-    <div style="flex:1 1 260px;display:grid;gap:8px;align-content:start">
-      <svg viewBox="0 0 32 32" width="36" height="36" aria-hidden="true" style="flex:none;fill:none;stroke:var(--accent);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M16 4l10 4v7c0 7-4.5 11-10 13C10.5 26 6 22 6 15V8zM12 16l3 3 5-6"/></svg>
-      <p style="margin:0;color:var(--muted);letter-spacing:.02em">Scope &amp; Suitability</p>
-      <h2 id="o6" style="font-size:var(--t-h2);line-height:1.2;font-weight:500">What this work is, and is not</h2>
+<section id="scope" class="section section--alt" aria-labelledby="o6">
+  <div class="wrap stack stack--lg">
+    <div class="stack stack--sm">
+      <p class="eyebrow">Scope &amp; Suitability</p>
+      <h2 id="o6">What this work is, and is not</h2>
     </div>
-    <div style="flex:1.6 1 360px;min-width:0;display:grid;gap:12px;color:var(--text)">
-      <p style="margin:0">This work can support healing, self-understanding, emotional processing, embodiment, clarity, behaviour change and personal growth.</p>
-      <p style="margin:0;padding:12px 14px;border-left:2px solid var(--accent);background:var(--ink-1)">It does not replace medical care, psychiatric treatment, psychotherapy, emergency support or other licensed professional services where those are needed. <strong style="font-weight:500;color:var(--text)">If you are in crisis or need clinical care, please reach a qualified medical professional or local emergency services first.</strong></p>
-      <p style="margin:0">The form and Alignment Call help us assess whether what I offer is appropriate for your situation. If it is not, I will say so clearly and, where possible, point you toward a more suitable kind of support.</p>
+    <div class="prose">
+      <p>This work can support healing, self-understanding, emotional processing, embodiment, clarity, behaviour change and personal growth.</p>
+      <p class="note">It does not replace medical care, psychiatric treatment, psychotherapy, emergency support or other licensed professional services where those are needed. <strong style="color:var(--text)">If you are in crisis or need clinical care, please reach a qualified medical professional or local emergency services first.</strong></p>
+      <p class="muted">The form and Alignment Call help us assess whether what I offer is appropriate for your situation. If it is not, I will say so clearly and, where possible, point you toward a more suitable kind of support.</p>
     </div>
   </div>
 </section>
 
-<section aria-labelledby="o7" style="position:relative;overflow:hidden;background:var(--ink-1);padding:48px 20px 56px">
-  <img src="assets/images/sigil.png" alt="" aria-hidden="true" width="1100" height="1132" loading="lazy" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(600px,96vw);height:auto;opacity:.07;pointer-events:none">
-  <div class="wrap" style="position:relative;display:grid;gap:12px;justify-items:start">
-    <h2 id="o7" style="font-size:var(--t-h2);line-height:1.2;font-weight:500">Ready to begin?</h2>
-    <p style="margin:0;color:var(--muted);max-width:40ch">You do not need to know which session you need. We work that out together.</p>
-    <a class="btn btn--solid" href="index.html#alignment-call" style="margin-top:8px">Request an Alignment Call <span aria-hidden="true">&rarr;</span></a>
+<section class="section section--center watermark" aria-labelledby="o7">
+  <div class="wrap stack">
+    <h2 id="o7">Ready to begin?</h2>
+    <p class="muted">You do not need to know which session you need. We work that out together.</p>
+    <a class="btn btn--solid" href="index.html#alignment-call">Request an Alignment Call <span aria-hidden="true">&rarr;</span></a>
   </div>
 </section>
 
@@ -328,17 +328,25 @@
       <p>Welcoming all of life.</p>
     </div>
     <nav class="site-foot__nav" aria-label="Footer">
-      <a href="approach.html">The Approach</a>
-      <a href="offerings.html">1:1 Offerings</a>
-      <a href="groupwork.html">Group Work</a>
-      <a href="about.html">About</a>
-      <a href="training.html">Training &amp; Background</a>
+      <ul>
+        <li><a href="about.html">About</a></li>
+        <li><a href="approach.html">Approach</a></li>
+        <li><a href="training.html">Training</a></li>
+      </ul>
+      <ul>
+        <li><a href="offerings.html">1:1</a></li>
+        <li><a href="groupwork.html">Group</a></li>
+        <li><a href="index.html#alignment-call">Alignment Call</a></li>
+      </ul>
+    </nav>
+    <nav class="site-foot__closing" aria-label="Footer">
       <a href="index.html#alignment-call">Alignment Call</a>
+      <a href="privacy.html">Privacy &amp; Scope</a>
     </nav>
   </div>
   <div class="site-foot__bottom">
     <span>&copy; 2026 Vinay Swaminathan &middot; Auroville</span>
-    <span><a href="privacy.html">Privacy &amp; Scope</a></span>
+    <span class="site-foot__privacy"><a href="privacy.html">Privacy &amp; Scope</a></span>
   </div>
 </footer>
 
