@@ -170,6 +170,7 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 .statement { font-family: var(--serif); font-size: var(--t-heading); line-height: 1.12; text-wrap: balance; max-width: 18ch; }
 .lede { font-size: var(--t-sub); line-height: 1.4; color: var(--text); text-wrap: pretty; max-width: 30ch; }
 .lede--wide { max-width: var(--measure); }
+.narrative { max-width: 640px; }
 /* Emphasis system. Gillius = explanation, EB Garamond = distilled insight.
    Level 2a (.anchor): semibold warm-white, for dense rows and paired phrases.
    Level 2b (.scan-mark): semibold over a faint accent wash; the default
@@ -544,9 +545,18 @@ html:not(.js) .nav-toggle { display: none !important; }
    Alignment Call form
    -------------------------------------------------------------------------- */
 .call { max-width: 620px; margin: 0 auto; display: grid; gap: var(--s-4); }
+.call__intro .steps { width: 100%; }
 .call__intro { display: grid; gap: var(--s-2); justify-items: center; text-align: center; }
 .form { display: grid; gap: 20px; }
-.form__row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; align-items: start; }
+.form__row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; align-items: start; }
+/* Desktop: a wider form; the three short contact fields share one row, every
+   longer field spans the full width; the two steps sit side by side. */
+@media (min-width: 900px) {
+  .call { max-width: 920px; gap: var(--s-3); }
+  .call__intro .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s-4); }
+  .form { gap: 18px; }
+  .form__row--contact { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+}
 .form fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; min-width: 0; }
 .form legend { padding: 0; margin-bottom: 8px; }
 .form .btn { justify-self: start; }
@@ -767,15 +777,28 @@ textarea.finput { min-height: 112px; resize: vertical; }
   /* Balanced pairs: site.js measures the text block and sets --balance-h,
      so the photo's height matches the copy (natural ratio, no crop). */
   .editorial--balanced .editorial__media img { width: min(100%, calc(var(--balance-h, 760px) * var(--balance-scale, 1) * var(--ar, 1))); }
-  /* Media-first + balanced (1:1 opening): the photo column is sized to the
-     photo, so it sits beside the copy as one unit instead of floating in an
-     empty column. */
-  .editorial--media-first.editorial--balanced {
-    --balance-scale: 1.1;
-    grid-template-columns: minmax(0, 36rem) auto; justify-content: start;
+  /* 1:1 opening: copy left, a substantial photo pinned to the right edge of
+     the composition (which, on desktop, is the header CTA's axis). Text sits
+     slightly above centre (.6fr / 1fr). Photo width scales with clamp() but
+     never exceeds 78vh of height, so landscape phones stay sensible. */
+  .editorial--axis {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: .6fr auto auto 1fr;
   }
-  .editorial--media-first.editorial--balanced .editorial__media { width: calc(var(--balance-h, 400px) * var(--balance-scale) * var(--ar, 1)); max-width: 46vw; }
-  .editorial--media-first.editorial--balanced .editorial__media img { width: 100%; }
+  .editorial--axis .lede--wide { max-width: 42rem; }
+  .editorial--axis .editorial__media { width: min(clamp(320px, 26vw, 420px), calc(78vh * var(--ar, 1))); justify-self: end; }
+  .editorial--axis .editorial__media img { width: 100%; }
+}
+
+/* With the desktop section index active, a .wrap--cta-axis keeps the shared
+   content left edge but extends right to the header CTA's right edge
+   (header: max-width 1440px, 32px side padding; sections: 20px gutter). */
+@media (min-width: 1100px) {
+  .has-subnav main .wrap.wrap--cta-axis {
+    max-width: none;
+    margin-left: calc((100% - min(1120px, 100% - 360px)) / 2);
+    margin-right: max(12px, calc((100% + 40px - 1440px) / 2 + 12px));
+  }
 }
 
 /* --------------------------------------------------------------------------
