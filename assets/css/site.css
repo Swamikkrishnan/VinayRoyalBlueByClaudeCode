@@ -692,10 +692,20 @@ textarea.finput { min-height: 112px; resize: vertical; }
   .site-foot__brand p { max-width: none; }
 }
 
-/* Desktop (header nav visible): the sigil and tagline centred, then a
-   single quiet legal row. The header carries navigation, so no links here. */
+/* Desktop (header nav visible): one slim row. Copyright left, sigil and
+   tagline centred, Privacy right. The header carries navigation, so no
+   links here. The two wrappers dissolve so all three share one grid row. */
 @media (min-width: 1100px) {
-  .site-foot__main { grid-template-columns: 1fr; justify-items: center; padding: var(--s-3) 32px var(--s-1); }
+  .site-foot {
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: var(--s-3);
+    padding: 12px max(32px, calc((100% - 1440px) / 2 + 32px));
+  }
+  .site-foot__main, .site-foot__bottom { display: contents; }
   .site-foot__links { display: none; }
-  .site-foot__bottom { border-top: 0; padding: 12px 32px 18px; max-width: 1440px; }
+  .site-foot__bottom > span { grid-column: 1; grid-row: 1; justify-self: start; }
+  .site-foot__bottom > a { grid-column: 3; grid-row: 1; justify-self: end; }
+  .site-foot__brand { grid-column: 2; grid-row: 1; display: flex; align-items: center; gap: 10px; }
+  .site-foot__brand img { width: 26px; }
+  .site-foot__brand p { font-size: 1.05rem; max-width: none; }
+  .site-foot__bottom > span, .site-foot__bottom > a { font-size: var(--t-small); }
 }
