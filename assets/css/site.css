@@ -706,11 +706,14 @@ textarea.finput { min-height: 112px; resize: vertical; }
 }
 
 /* --------------------------------------------------------------------------
-   Editorial photography (home, 1:1, About): text beside a photograph that
-   melts into the navy. Photos keep their natural shape; nothing is cropped.
-   The host is a size container, so the two-column layout appears only when
-   the space the composition actually has is wide enough (this also accounts
-   for the desktop section index). DOM order is always text, then photo.
+   Editorial photography (home, 1:1, About): text beside a clearly framed
+   photograph with restrained rounded corners. No fades or masks: the warm
+   photos simply contrast with the navy. Photos keep their natural shape;
+   nothing is cropped. The host is a size container, so two columns appear
+   only when the composition actually has room (this accounts for the
+   desktop section index).
+   Stacked order: text then photo (About), or with .editorial--media-first
+   heading, photo, then copy (Home, 1:1), via grid areas, not DOM reordering.
    -------------------------------------------------------------------------- */
 .wrap--wide { max-width: 1240px; }
 .editorial-host { container-type: inline-size; }
@@ -721,8 +724,12 @@ textarea.finput { min-height: 112px; resize: vertical; }
 .editorial__media img {
   width: min(100%, 640px, calc(78vh * var(--ar, 1)));   /* stacked: near content width, never a wall of photo */
   height: auto;
-  border-radius: 12px;
+  border-radius: 20px;
 }
+.editorial--media-first { gap: var(--s-3); grid-template-areas: "head" "media" "body"; }
+.editorial--media-first .editorial__head { grid-area: head; }
+.editorial--media-first .editorial__media { grid-area: media; justify-self: start; }
+.editorial--media-first .editorial__body { grid-area: body; }
 @container (min-width: 800px) {
   .editorial__media img { width: min(100%, calc(min(78vh, 760px) * var(--ar, 1))); }
   .editorial { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); column-gap: var(--s-5); align-items: center; }
@@ -731,18 +738,14 @@ textarea.finput { min-height: 112px; resize: vertical; }
   .editorial--media-left.editorial--landscape { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
   .editorial--media-left .editorial__media { order: -1; }
   .editorial--top { align-items: start; }
-  /* Fade only the edge that faces the text, plus a whisper at the base. */
-  .editorial__media img {
-    border-radius: 0;
-    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 10%), linear-gradient(to top, transparent 0, #000 6%);
-    -webkit-mask-composite: source-in;
-            mask-image: linear-gradient(to right, transparent 0, #000 10%), linear-gradient(to top, transparent 0, #000 6%);
-            mask-composite: intersect;
+  /* Media-first returns to text | photo, with the text block vertically
+     centred beside the photo (the empty 1fr rows absorb the difference). */
+  .editorial--media-first {
+    grid-template-areas: ". media" "head media" "body media" ". media";
+    grid-template-rows: 1fr auto auto 1fr;
+    row-gap: var(--s-3); align-items: start;
   }
-  .editorial--media-left .editorial__media img {
-    -webkit-mask-image: linear-gradient(to left, transparent 0, #000 10%), linear-gradient(to top, transparent 0, #000 6%);
-            mask-image: linear-gradient(to left, transparent 0, #000 10%), linear-gradient(to top, transparent 0, #000 6%);
-  }
+  .editorial--media-first .editorial__media { align-self: center; justify-self: center; }
 }
 
 /* --------------------------------------------------------------------------
