@@ -3,8 +3,8 @@
    Content is visible in plain HTML/CSS by default; this file only adds a
    one-shot entrance animation, the header/nav toggle, the interior pages'
    sticky section nav, the Approach FACE selector, the Alignment Call
-   scheduler + submission, and a settle-safe hash landing. Accordions are
-   native <details>: no JS.
+   scheduler + submission, a settle-safe hash landing, and open/close
+   motion for the native <details> accordions (which still work without JS).
    ========================================================================= */
 (function () {
   'use strict';
@@ -17,31 +17,89 @@
         [hidden] until this runs, but on narrow screens it is only reached
         via the toggle button, so we default it closed once JS confirms).
      --------------------------------------------------------------------- */
+  // Open/closed is the .is-open class; the CSS fades and unclips the panel
+  // and uses visibility (not display) so closing animates too, while closed
+  // links still leave the tab order and accessibility tree.
   var toggle = document.getElementById('nav-toggle');
   var mobileNav = document.getElementById('nav-mobile');
   if (toggle && mobileNav) {
-    mobileNav.hidden = true;
+    var setNav = function (open) {
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.querySelector('[data-label]').textContent = open ? 'Close' : 'Menu';
+      mobileNav.classList.toggle('is-open', open);
+    };
     toggle.addEventListener('click', function () {
-      var open = toggle.getAttribute('aria-expanded') === 'true';
-      toggle.setAttribute('aria-expanded', open ? 'false' : 'true');
-      toggle.querySelector('[data-label]').textContent = open ? 'Menu' : 'Close';
-      mobileNav.hidden = open;
-      mobileNav.classList.toggle('is-open', !open);
+      setNav(toggle.getAttribute('aria-expanded') !== 'true');
     });
     var closeNav = function (returnFocus) {
-      toggle.setAttribute('aria-expanded', 'false');
-      toggle.querySelector('[data-label]').textContent = 'Menu';
-      mobileNav.hidden = true;
-      mobileNav.classList.remove('is-open');
+      setNav(false);
       if (returnFocus) toggle.focus();
     };
     mobileNav.addEventListener('click', function (e) {
       if (e.target.closest('a')) closeNav(false);
     });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !mobileNav.hidden) closeNav(true);
+      if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) closeNav(true);
     });
   }
+
+  // Header: a slightly firmer ground once the page is scrolled (colour only).
+  var siteHead = document.getElementById('site-head');
+  if (siteHead) {
+    var markScrolled = function () { siteHead.classList.toggle('is-scrolled', window.scrollY > 8); };
+    window.addEventListener('scroll', markScrolled, { passive: true });
+    markScrolled();
+  }
+
+  /* ---------------------------------------------------------------------
+     1b. Accordions — animate native <details> open and close (height,
+         opacity and a 4px settle). Rapid clicks reverse from the current
+         height; nothing is left with a fixed height afterwards, so resizing
+         an open accordion is safe. Reduced motion: native instant toggle.
+     --------------------------------------------------------------------- */
+  var ACC_MS = 260, ACC_EASE = 'cubic-bezier(.22,.61,.36,1)';
+  document.querySelectorAll('details.accordion').forEach(function (d) {
+    var summary = d.querySelector(':scope > summary');
+    var body = d.querySelector(':scope > .accordion__body');
+    if (!summary || !body || !body.animate) return;
+    var anim = null;
+    var finish = function (open) {
+      anim = null;
+      d.open = open;
+      d.classList.remove('is-animating', 'is-closing');
+      body.style.height = body.style.opacity = body.style.transform = body.style.paddingBottom = '';
+    };
+    summary.addEventListener('click', function (e) {
+      if (reduce.matches) return;           // native toggle, no motion
+      e.preventDefault();
+      var closing = d.open && !d.classList.contains('is-closing');
+      // A closed <details> may still report its content's box (Chrome keeps
+      // layout for hidden details content), so a closed one starts at 0.
+      var from = d.open ? body.getBoundingClientRect().height : 0;
+      var pad = anim ? getComputedStyle(body).paddingBottom : null;
+      if (anim) anim.cancel();
+      var padFull = getComputedStyle(body).paddingBottom;   // resting padding
+      if (pad === null) pad = d.open ? padFull : '0px';
+      d.classList.add('is-animating');
+      if (closing) {
+        d.classList.add('is-closing');
+        anim = body.animate(
+          [{ height: from + 'px', paddingBottom: pad, opacity: 1, transform: 'none' },
+           { height: '0px', paddingBottom: '0px', opacity: 0, transform: 'translateY(-4px)' }],
+          { duration: ACC_MS, easing: ACC_EASE });
+        anim.onfinish = function () { finish(false); };
+      } else {
+        d.classList.remove('is-closing');
+        d.open = true;
+        var to = body.scrollHeight;
+        anim = body.animate(
+          [{ height: (from || 0) + 'px', paddingBottom: pad, opacity: from ? 1 : 0, transform: from ? 'none' : 'translateY(-4px)' },
+           { height: to + 'px', paddingBottom: padFull, opacity: 1, transform: 'none' }],
+          { duration: ACC_MS, easing: ACC_EASE });
+        anim.onfinish = function () { finish(true); };
+      }
+    });
+  });
 
   /* ---------------------------------------------------------------------
      2. Reveal engine — IntersectionObserver adds .is-in once; the CSS in
@@ -104,7 +162,11 @@
         if (on && a.getAttribute('aria-current') !== 'location') {
           // Keep the active item in view in the horizontally scrolling bar.
           var bar = a.closest('ul');
-          if (bar && bar.scrollWidth > bar.clientWidth) bar.scrollLeft = a.parentNode.offsetLeft - bar.offsetLeft - (bar.clientWidth - a.offsetWidth) / 2;
+          if (bar && bar.scrollWidth > bar.clientWidth) {
+            var left = a.parentNode.offsetLeft - bar.offsetLeft - (bar.clientWidth - a.offsetWidth) / 2;
+            if (bar.scrollTo) bar.scrollTo({ left: left, behavior: reduce.matches ? 'auto' : 'smooth' });
+            else bar.scrollLeft = left;
+          }
         }
         a.setAttribute('aria-current', on ? 'location' : 'false');
       });
@@ -300,7 +362,7 @@
       e.preventDefault();
       var btn = form.querySelector('button[type="submit"]');
       var label = btn ? btn.innerHTML : '';
-      if (btn) { btn.disabled = true; btn.innerHTML = 'Sending…'; }
+      if (btn) { btn.style.minWidth = btn.offsetWidth + 'px'; btn.disabled = true; btn.innerHTML = 'Sending…'; }
       fetch(endpoint, { method: 'POST', headers: { Accept: 'application/json' }, body: new FormData(form) })
         .then(function (r) { return r.json().catch(function () { return {}; }).then(function (data) { return { ok: r.ok, data: data }; }); })
         .then(function (res) {

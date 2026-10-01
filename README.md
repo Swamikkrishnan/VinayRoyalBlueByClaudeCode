@@ -47,8 +47,15 @@ Four type tiers (`--t-display`, `--t-heading`, `--t-sub`, `--t-body`) plus
 `--t-small`; spacing tokens `--s-1`…`--s-5` and `--section-y`. Hierarchy comes
 from scale, space and typeface contrast, not weight.
 
-Progressive disclosure uses one native `<details class="accordion">` pattern
-(no JavaScript). A hash link to an element inside a closed accordion opens it.
+Progressive disclosure uses one native `<details class="accordion">` pattern.
+`site.js` animates open/close (height, opacity, 4px settle; reverses mid-way;
+skipped under reduced motion); without JS the native toggle still works. A hash
+link to an element inside a closed accordion opens it.
+
+Motion uses one ease-out curve and three durations (`--motion-fast` 180ms,
+`--motion-base` 260ms, `--motion-slow` 500ms). Reveals are one block per
+section (12px rise). The mobile menu fades/unclips rather than toggling
+`display`, so closing animates too.
 Anchor offset is a single rule: `[id] { scroll-margin-top: … }` driven by
 `--header-h` (+ `--subnav-h` on the Approach page).
 
