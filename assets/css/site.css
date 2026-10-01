@@ -692,8 +692,10 @@ textarea.finput { min-height: 112px; resize: vertical; }
   .site-foot__brand p { max-width: none; }
 }
 
-/* Desktop (header nav visible): the footer is a single quiet legal row. */
+/* Desktop (header nav visible): the sigil and tagline centred, then a
+   single quiet legal row. The header carries navigation, so no links here. */
 @media (min-width: 1100px) {
-  .site-foot__main { display: none; }
-  .site-foot__bottom { border-top: 0; padding: 18px 32px; max-width: 1440px; }
+  .site-foot__main { grid-template-columns: 1fr; justify-items: center; padding: var(--s-3) 32px var(--s-1); }
+  .site-foot__links { display: none; }
+  .site-foot__bottom { border-top: 0; padding: 12px 32px 18px; max-width: 1440px; }
 }
