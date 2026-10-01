@@ -557,6 +557,12 @@ html:not(.js) .nav-toggle { display: none !important; }
   .form { gap: 18px; }
   .form__row--contact { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
 }
+/* Full desktop: the call block sits on the page's main content axis (the
+   left edge of a 1120px .wrap) instead of floating centred. */
+@media (min-width: 1100px) {
+  .call { margin-left: max(0px, calc((100% - 1120px) / 2)); margin-right: auto; }
+  .call__intro { justify-items: start; text-align: left; }
+}
 .form fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; min-width: 0; }
 .form legend { padding: 0; margin-bottom: 8px; }
 .form .btn { justify-self: start; }
@@ -778,7 +784,7 @@ textarea.finput { min-height: 112px; resize: vertical; }
      so the photo's height matches the copy (natural ratio, no crop). */
   .editorial--balanced .editorial__media img { width: min(100%, calc(var(--balance-h, 760px) * var(--balance-scale, 1) * var(--ar, 1))); }
   /* 1:1 opening: copy left, a substantial photo pinned to the right edge of
-     the composition (which, on desktop, is the header CTA's axis). Text sits
+     the page's content column (the Five doorways price axis below). Text sits
      slightly above centre (.6fr / 1fr). Photo width scales with clamp() but
      never exceeds 78vh of height, so landscape phones stay sensible. */
   .editorial--axis {
@@ -788,17 +794,6 @@ textarea.finput { min-height: 112px; resize: vertical; }
   .editorial--axis .lede--wide { max-width: 42rem; }
   .editorial--axis .editorial__media { width: min(clamp(320px, 26vw, 420px), calc(78vh * var(--ar, 1))); justify-self: end; }
   .editorial--axis .editorial__media img { width: 100%; }
-}
-
-/* With the desktop section index active, a .wrap--cta-axis keeps the shared
-   content left edge but extends right to the header CTA's right edge
-   (header: max-width 1440px, 32px side padding; sections: 20px gutter). */
-@media (min-width: 1100px) {
-  .has-subnav main .wrap.wrap--cta-axis {
-    max-width: none;
-    margin-left: calc((100% - min(1120px, 100% - 360px)) / 2);
-    margin-right: max(12px, calc((100% + 40px - 1440px) / 2 + 12px));
-  }
 }
 
 /* --------------------------------------------------------------------------
