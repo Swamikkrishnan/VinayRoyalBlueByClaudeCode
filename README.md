@@ -75,8 +75,12 @@ the header flow.
   tabindex, Arrow/Home/End, `aria-selected`); without JS all four steps stay
   stacked and readable.
 - Interior pages (Approach, 1:1 Offerings, Group Offerings, About, Training)
-  share one sticky section nav (`.subnav`, 50px + border = `--subnav-h`) with
-  one scroll-spy in `site.js`; anchors land below both sticky bars.
+  share one section nav (`.subnav`) and one scroll-spy in `site.js`. From
+  1200px it is a slim fixed index beside the reading column (content shifts
+  right to clear it); below that it is a horizontal bar under the header
+  (50px + border = `--subnav-h`). Anchors land below the sticky bars.
+- Gillius ADF maps "oe" to "œ" through its required-ligature table; `body`
+  sets `font-feature-settings: "rlig" 0` so "does" never reads "dœs".
 - Mobile nav traps nothing, closes on Escape, returns focus to the toggle.
 - All body text clears WCAG AA comfortably (7:1+ on every band); the royal-blue
   accent clears AA as a link colour on every band. Audited across all seven pages.

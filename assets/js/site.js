@@ -78,8 +78,10 @@
 
   /* ---------------------------------------------------------------------
      3. Interior pages — sticky section nav scroll-spy (no-op without one).
-        A section is current once its top passes the bottom of the sticky
-        bars; at the very bottom of the page the last reached section wins.
+        On desktop the nav is a slim fixed index beside the content; below
+        that it is a horizontal bar under the header (its height is
+        --subnav-h). A section is current once its top passes the bottom of
+        the sticky bars; at the very bottom the last reached section wins.
      --------------------------------------------------------------------- */
   var subnav = document.querySelector('.subnav');
   var subnavLinks = document.querySelectorAll('.subnav [data-section]');
@@ -87,7 +89,8 @@
     var head = document.getElementById('site-head');
     var sectionIds = Array.prototype.map.call(subnavLinks, function (a) { return a.getAttribute('data-section'); });
     var setActive = function () {
-      var line = (head ? head.offsetHeight : 0) + subnav.offsetHeight + 24;
+      var barH = parseFloat(getComputedStyle(document.body).getPropertyValue('--subnav-h')) || 0;
+      var line = Math.max((head ? head.offsetHeight : 0) + barH + 24, window.innerHeight * 0.3);
       var atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
       var current = sectionIds[0];
       sectionIds.forEach(function (id) {
@@ -101,7 +104,7 @@
         if (on && a.getAttribute('aria-current') !== 'location') {
           // Keep the active item in view in the horizontally scrolling bar.
           var bar = a.closest('ul');
-          if (bar) bar.scrollLeft = a.parentNode.offsetLeft - bar.offsetLeft - (bar.clientWidth - a.offsetWidth) / 2;
+          if (bar && bar.scrollWidth > bar.clientWidth) bar.scrollLeft = a.parentNode.offsetLeft - bar.offsetLeft - (bar.clientWidth - a.offsetWidth) / 2;
         }
         a.setAttribute('aria-current', on ? 'location' : 'false');
       });
@@ -318,7 +321,7 @@
         })
         .catch(function () {
           if (btn) { btn.disabled = false; btn.innerHTML = label; }
-          if (errors) { errors.hidden = false; errors.textContent = 'The message did not go through — this can be a connection issue. Please try again in a moment.'; }
+          if (errors) { errors.hidden = false; errors.textContent = 'The message did not go through. This can be a connection issue. Please try again in a moment.'; }
         });
     });
   }

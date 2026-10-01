@@ -87,8 +87,9 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: clip;
-  /* Gillius ADF ships an "oe" ligature in its standard set ("does" → "dœs"). */
-  font-variant-ligatures: no-common-ligatures;
+  /* Gillius ADF maps "oe" to "œ" through its required-ligature table
+     ("does" would read "dœs"); switch that table off. */
+  font-feature-settings: "rlig" 0;
 }
 
 img { max-width: 100%; height: auto; display: block; }
@@ -100,7 +101,7 @@ strong { font-weight: 600; }
 ::selection { background: rgba(93, 184, 240, .28); color: var(--text); }
 input, textarea, select, button { font: inherit; }
 h1, h2, h3 { margin: 0; font-weight: 400; }
-h1, h2 { font-family: var(--serif); font-variant-ligatures: common-ligatures; line-height: 1.12; letter-spacing: -.005em; text-wrap: balance; }
+h1, h2 { font-family: var(--serif); line-height: 1.12; letter-spacing: -.005em; text-wrap: balance; }
 h1, .heading { font-size: var(--t-heading); }
 h2 { font-size: var(--t-heading); }
 h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
@@ -161,6 +162,8 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 .statement { font-family: var(--serif); font-size: var(--t-heading); line-height: 1.12; text-wrap: balance; max-width: 18ch; }
 .lede { font-size: var(--t-sub); line-height: 1.4; color: var(--text); text-wrap: pretty; max-width: 30ch; }
 .lede--wide { max-width: var(--measure); }
+.pair-lines { display: grid; gap: var(--s-2); max-width: var(--measure); }
+.pair-lines .rule { margin: var(--s-1) 0; }
 .eyebrow { font-family: var(--sans); font-weight: 400; line-height: 1.4; color: var(--muted); font-size: var(--t-small); letter-spacing: .14em; text-transform: uppercase; }
 .muted { color: var(--muted); }
 .small { font-size: var(--t-small); }
@@ -287,6 +290,37 @@ html:not(.js) .nav-toggle { display: none !important; }
 .subnav a:hover, .subnav a:focus-visible { color: var(--text); border-color: rgba(93,184,240,.5); }
 .subnav a[aria-current="location"] { color: var(--text); border-color: var(--accent); background: var(--ink-3); }
 @media (max-width: 999px) { html:not(.js) .subnav { top: 0; } }
+@media (max-width: 1199px) {
+  .subnav a { border-color: rgba(180,188,212,.35); color: #CBD2E6; }
+}
+
+/* Wide screens: the same nav becomes a slim index beside the reading
+   column. Content columns shift right just enough to clear it. */
+@media (min-width: 1200px) {
+  .has-subnav { --subnav-h: 0px; }
+  .subnav {
+    position: fixed; top: calc(var(--header-h) + 48px); left: 28px; z-index: 40;
+    width: 168px; background: none; border: 0;
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+  }
+  .subnav ul {
+    height: auto; margin: 0; padding: 0; overflow: visible;
+    display: grid; gap: 2px; border-left: 1px solid var(--line);
+  }
+  .subnav a {
+    position: relative; min-height: 32px; padding: 4px 0 4px 16px; white-space: normal; line-height: 1.3;
+    border: 0; border-radius: 0; background: none;
+  }
+  .subnav a::before {
+    content: ""; position: absolute; left: -1px; top: 6px; bottom: 6px; width: 1px;
+    background: transparent; transition: background-color var(--t-fast) var(--ease);
+  }
+  .subnav a:hover, .subnav a:focus-visible { border: 0; }
+  .subnav a[aria-current="location"] { background: none; border: 0; }
+  .subnav a[aria-current="location"]::before { background: var(--accent); width: 2px; }
+  .has-subnav main .wrap, .has-subnav main .wrap--narrow { margin-left: max(204px, calc((100% - var(--col, 1120px)) / 2)); margin-right: auto; }
+  .has-subnav main .wrap--narrow { --col: 680px; }
+}
 
 /* --------------------------------------------------------------------------
    Buttons & links
@@ -337,7 +371,7 @@ html:not(.js) .nav-toggle { display: none !important; }
 }
 .accordion[open] > summary::after { transform: translateY(4px) rotate(-135deg); }
 .accordion > summary:hover .accordion__label { color: var(--text); }
-.accordion__label { color: var(--muted); transition: color var(--t-fast) var(--ease); }
+.accordion__label { color: var(--muted); font-size: 1rem; transition: color var(--t-fast) var(--ease); }
 .accordion[open] .accordion__label { color: var(--text); }
 .accordion__title { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; color: var(--text); }
 .accordion__desc { grid-column: 1; color: var(--muted); }
