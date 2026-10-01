@@ -18,7 +18,8 @@ Static site. No framework, no bundler, no npm, no database.
     assets/css/site.css  One stylesheet
     assets/js/site.js    One script
     assets/fonts/        Gillius ADF No2 (OTF)
-    assets/images/       Sigil + photography
+    assets/images/       Sigil + photography (web JPGs; full-size originals are
+                         kept locally in assets/images/originals/, git-ignored)
     CNAME · .nojekyll    GitHub Pages / custom-domain config
 
 ## Design system
@@ -136,3 +137,18 @@ Pages caches assets for 10 minutes, so bump the `v` value in all seven pages
 whenever CSS or JS changes, or visitors may keep the old file:
 
     V=$(date +%Y%m%d%H%M); sed -i '' -E "s#(site\.(css|js))(\?v=[0-9]+)?\"#\1?v=$V\"#" *.html
+
+## Photography
+
+Two treatments, both keeping each photo's natural shape (nothing is cropped
+or forced into one ratio). Each figure carries its ratio as `--ar` so space is
+reserved before the image loads.
+
+- **Editorial** (`.editorial` inside an `.editorial-host` size container):
+  homepage portrait, 1:1 Healing simplified, About. Two columns once the
+  container is 800px+ (so the desktop section index is accounted for); the
+  edge facing the text fades into the navy via `mask-image`. Stacked, the
+  DOM order is always text then photo, capped at 640px and 78vh.
+- **Archive** (`.training-archive`, `--pair`): documentary photos inside
+  expanded Training items, with a small caption. In a pair, each figure grows
+  in proportion to its ratio, so both photos share one height uncropped.

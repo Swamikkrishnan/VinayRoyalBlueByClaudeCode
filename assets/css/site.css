@@ -507,9 +507,6 @@ html:not(.js) .nav-toggle { display: none !important; }
 .summary-list h3 { font-size: var(--t-sub); }
 .summary-list p { grid-column: 2; color: var(--muted); }
 
-.portrait { margin: 0; border-radius: var(--radius); overflow: hidden; }
-.portrait img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 25%; }
-.portrait--home { width: min(100%, 340px); }
 
 /* Metrics */
 /* The number column is sized to the widest number (subgrid), so "10 years"
@@ -603,8 +600,6 @@ textarea.finput { min-height: 112px; resize: vertical; }
    -------------------------------------------------------------------------- */
 .rule { width: 48px; height: 1px; margin: var(--s-1) 0; border: 0; background: var(--accent); opacity: .6; }
 .closing-line { font-family: var(--serif); font-size: var(--t-sub); line-height: 1.35; }
-.photo { margin: 0; border-radius: var(--radius); overflow: hidden; max-width: 420px; }
-.photo--field img { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; object-position: 100% 50%; }
 .quote { margin: 0; padding: 4px 0 4px 20px; border-left: 1px solid var(--accent); font-family: var(--serif); font-size: var(--t-sub); line-height: 1.45; }
 
 /* --------------------------------------------------------------------------
@@ -708,4 +703,63 @@ textarea.finput { min-height: 112px; resize: vertical; }
   .site-foot__brand img { width: 26px; }
   .site-foot__brand p { font-size: 1.05rem; max-width: none; }
   .site-foot__bottom > span, .site-foot__bottom > a { font-size: var(--t-small); }
+}
+
+/* --------------------------------------------------------------------------
+   Editorial photography (home, 1:1, About): text beside a photograph that
+   melts into the navy. Photos keep their natural shape; nothing is cropped.
+   The host is a size container, so the two-column layout appears only when
+   the space the composition actually has is wide enough (this also accounts
+   for the desktop section index). DOM order is always text, then photo.
+   -------------------------------------------------------------------------- */
+.wrap--wide { max-width: 1240px; }
+.editorial-host { container-type: inline-size; }
+.editorial { display: grid; gap: var(--s-4); }
+.editorial__media { margin: 0; justify-self: center; }
+/* Width comes from the photo's own ratio (--ar) and the height cap, so space
+   is reserved before the image loads and the photo is never cropped. */
+.editorial__media img {
+  width: min(100%, 640px, calc(78vh * var(--ar, 1)));   /* stacked: near content width, never a wall of photo */
+  height: auto;
+  border-radius: 12px;
+}
+@container (min-width: 800px) {
+  .editorial__media img { width: min(100%, calc(min(78vh, 760px) * var(--ar, 1))); }
+  .editorial { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); column-gap: var(--s-5); align-items: center; }
+  .editorial--landscape { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }
+  .editorial--media-left { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }
+  .editorial--media-left.editorial--landscape { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+  .editorial--media-left .editorial__media { order: -1; }
+  .editorial--top { align-items: start; }
+  /* Fade only the edge that faces the text, plus a whisper at the base. */
+  .editorial__media img {
+    border-radius: 0;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 10%), linear-gradient(to top, transparent 0, #000 6%);
+    -webkit-mask-composite: source-in;
+            mask-image: linear-gradient(to right, transparent 0, #000 10%), linear-gradient(to top, transparent 0, #000 6%);
+            mask-composite: intersect;
+  }
+  .editorial--media-left .editorial__media img {
+    -webkit-mask-image: linear-gradient(to left, transparent 0, #000 10%), linear-gradient(to top, transparent 0, #000 6%);
+            mask-image: linear-gradient(to left, transparent 0, #000 10%), linear-gradient(to top, transparent 0, #000 6%);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Training archive: documentary photos inside expanded qualifications.
+   Natural aspect ratio, modest size, small factual caption. In a pair, each
+   figure grows in proportion to its aspect ratio (--ar), so both photos end
+   up the same height without cropping either.
+   -------------------------------------------------------------------------- */
+.training-archive { margin-top: var(--s-1); }
+.training-archive__figure { margin: 0; display: grid; gap: 8px; justify-items: start; }
+.training-archive__image { width: min(100%, calc(360px * var(--ar, 1.33))); height: auto; border-radius: 6px; }
+.training-archive__caption { font-size: var(--t-small); color: var(--muted); line-height: 1.4; }
+.training-archive--pair { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.training-archive--pair .training-archive__figure { flex: var(--ar, 1) 1 0; min-width: 0; }
+.training-archive--pair .training-archive__image { width: 100%; max-height: none; }
+@media (max-width: 559px) {
+  /* Stacked: a plain one-column grid (column flexbox mis-sizes figures
+     holding percentage-width images). */
+  .training-archive--pair { display: grid; grid-template-columns: minmax(0, 1fr); }
 }
