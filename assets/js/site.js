@@ -57,7 +57,7 @@
          height; nothing is left with a fixed height afterwards, so resizing
          an open accordion is safe. Reduced motion: native instant toggle.
      --------------------------------------------------------------------- */
-  var ACC_MS = 260, ACC_EASE = 'cubic-bezier(.22,.61,.36,1)';
+  var ACC_MS = 380, ACC_EASE = 'cubic-bezier(.22,.61,.36,1)';
   document.querySelectorAll('details.accordion').forEach(function (d) {
     var summary = d.querySelector(':scope > summary');
     var body = d.querySelector(':scope > .accordion__body');
@@ -108,7 +108,7 @@
      --------------------------------------------------------------------- */
   if (!reduce.matches && 'IntersectionObserver' in window) {
     root.classList.add('motion-ready');
-    var targets = document.querySelectorAll('[data-reveal], [data-seq], [data-hl]');
+    var targets = document.querySelectorAll('[data-reveal], [data-seq], [data-hl], [data-reveal-img]');
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
@@ -163,9 +163,15 @@
           // Keep the active item in view in the horizontally scrolling bar.
           var bar = a.closest('ul');
           if (bar && bar.scrollWidth > bar.clientWidth) {
-            var left = a.parentNode.offsetLeft - bar.offsetLeft - (bar.clientWidth - a.offsetWidth) / 2;
-            if (bar.scrollTo) bar.scrollTo({ left: left, behavior: reduce.matches ? 'auto' : 'smooth' });
-            else bar.scrollLeft = left;
+            // Move only as far as needed to bring the active item into view.
+            var pad = 20, itemL = a.parentNode.offsetLeft - bar.offsetLeft, itemR = itemL + a.offsetWidth;
+            var target = null;
+            if (itemL - pad < bar.scrollLeft) target = itemL - pad;
+            else if (itemR + pad > bar.scrollLeft + bar.clientWidth) target = itemR + pad - bar.clientWidth;
+            if (target !== null) {
+              if (bar.scrollTo) bar.scrollTo({ left: Math.max(0, target), behavior: reduce.matches ? 'auto' : 'smooth' });
+              else bar.scrollLeft = Math.max(0, target);
+            }
           }
         }
         a.setAttribute('aria-current', on ? 'location' : 'false');
@@ -215,6 +221,25 @@
     tablist.hidden = false;
     face.classList.add('is-tabs');
     select(0, false);
+  }
+
+  /* ---------------------------------------------------------------------
+     3c. Balanced photo/text pairs — set --balance-h from the text block's
+         rendered height so the photo matches it (CSS keeps the natural
+         ratio and only applies this in the two-column layout).
+     --------------------------------------------------------------------- */
+  if ('ResizeObserver' in window) {
+    document.querySelectorAll('.editorial--balanced').forEach(function (ed) {
+      var parts = Array.prototype.filter.call(ed.children, function (c) { return !c.classList.contains('editorial__media'); });
+      var measure = function () {
+        var top = Infinity, bottom = -Infinity;
+        parts.forEach(function (p) { var b = p.getBoundingClientRect(); if (b.height) { top = Math.min(top, b.top); bottom = Math.max(bottom, b.bottom); } });
+        if (bottom > top) ed.style.setProperty('--balance-h', Math.round((bottom - top) * 1.08) + 'px');
+      };
+      var ro = new ResizeObserver(function () { window.requestAnimationFrame(measure); });
+      parts.forEach(function (p) { ro.observe(p); });
+      measure();
+    });
   }
 
   /* ---------------------------------------------------------------------

@@ -60,9 +60,10 @@
   --radius: 14px;
   /* One shared motion system: a single ease-out curve, three durations. */
   --ease: cubic-bezier(.22,.61,.36,1);
-  --motion-fast: 180ms;   /* hover, colour, small state changes */
-  --motion-base: 260ms;   /* menus, accordions, chevrons */
-  --motion-slow: 500ms;   /* section reveals */
+  --motion-fast: 240ms;   /* hover, colour, small state changes */
+  --motion-base: 360ms;   /* menus, accordions, chevrons, tab switches */
+  --motion-slow: 750ms;   /* text / section reveals */
+  --motion-image: 950ms;  /* photographs settling into view */
   --t-fast: var(--motion-fast);
 }
 
@@ -222,10 +223,19 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 .js.motion-ready [data-seq]:nth-child(2).is-in { transition-delay: 90ms; }
 .js.motion-ready [data-seq]:nth-child(3).is-in { transition-delay: 180ms; }
 .js.motion-ready [data-seq]:nth-child(4).is-in { transition-delay: 270ms; }
+/* Photographs: fade up from near-transparent, a 14px settle and a 3px blur
+   that resolves early. No zoom, no slide. Runs once; stays put afterwards. */
+[data-reveal-img] { opacity: 1; }
+.js.motion-ready [data-reveal-img] { opacity: 0; transform: translate3d(0,14px,0); filter: blur(3px); }
+.js.motion-ready [data-reveal-img].is-in {
+  opacity: 1; transform: none; filter: none;
+  transition: opacity var(--motion-image) var(--ease) 120ms, transform var(--motion-image) var(--ease) 120ms,
+              filter calc(var(--motion-image) * .6) var(--ease) 120ms;
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
-  .js.motion-ready [data-reveal], .js.motion-ready [data-seq] { opacity: 1 !important; transform: none !important; }
+  .js.motion-ready [data-reveal], .js.motion-ready [data-seq], .js.motion-ready [data-reveal-img] { opacity: 1 !important; transform: none !important; filter: none !important; }
   .js [data-hl] { background-size: 100% 100% !important; }
 }
 
@@ -634,6 +644,8 @@ textarea.finput { min-height: 112px; resize: vertical; }
 .face.is-tabs .face__panels { border-top: 0; }
 .face.is-tabs .face__panel { border-bottom: 0; padding: 0; }
 .face.is-tabs .face__letter { display: none; }
+.face.is-tabs .face__panel:not([hidden]) { animation: face-in var(--motion-base) var(--ease) both; }
+@keyframes face-in { from { opacity: 0; transform: translate3d(0,4px,0); } to { opacity: 1; transform: none; } }
 
 .diagram { display: block; width: 100%; max-width: 420px; overflow: visible; }
 .pair { display: grid; gap: var(--s-4); }
@@ -718,17 +730,21 @@ textarea.finput { min-height: 112px; resize: vertical; }
 .wrap--wide { max-width: 1240px; }
 .editorial-host { container-type: inline-size; }
 .editorial { display: grid; gap: var(--s-4); }
-.editorial__media { margin: 0; justify-self: center; }
+/* The figure always spans its column (so the photo's percentage width can
+   resolve before it loads); the photo centres inside it. */
+.editorial__media { margin: 0; justify-self: stretch; width: 100%; }
 /* Width comes from the photo's own ratio (--ar) and the height cap, so space
    is reserved before the image loads and the photo is never cropped. */
 .editorial__media img {
   width: min(100%, 640px, calc(78vh * var(--ar, 1)));   /* stacked: near content width, never a wall of photo */
   height: auto;
+  margin-inline: auto;
   border-radius: 20px;
 }
 .editorial--media-first { gap: var(--s-3); grid-template-areas: "head" "media" "body"; }
-.editorial--media-first .editorial__head { grid-area: head; }
-.editorial--media-first .editorial__media { grid-area: media; justify-self: start; }
+.editorial--media-first .editorial__head { grid-area: head; text-align: center; }
+.editorial--media-first .editorial__head.stack { justify-items: center; }
+.editorial--media-first .editorial__media { grid-area: media; }
 .editorial--media-first .editorial__body { grid-area: body; }
 @container (min-width: 800px) {
   .editorial__media img { width: min(100%, calc(min(78vh, 760px) * var(--ar, 1))); }
@@ -745,7 +761,21 @@ textarea.finput { min-height: 112px; resize: vertical; }
     grid-template-rows: 1fr auto auto 1fr;
     row-gap: var(--s-3); align-items: start;
   }
-  .editorial--media-first .editorial__media { align-self: center; justify-self: center; }
+  .editorial--media-first .editorial__media { align-self: center; }
+  .editorial--media-first .editorial__head { text-align: start; }
+  .editorial--media-first .editorial__head.stack { justify-items: start; }
+  /* Balanced pairs: site.js measures the text block and sets --balance-h,
+     so the photo's height matches the copy (natural ratio, no crop). */
+  .editorial--balanced .editorial__media img { width: min(100%, calc(var(--balance-h, 760px) * var(--balance-scale, 1) * var(--ar, 1))); }
+  /* Media-first + balanced (1:1 opening): the photo column is sized to the
+     photo, so it sits beside the copy as one unit instead of floating in an
+     empty column. */
+  .editorial--media-first.editorial--balanced {
+    --balance-scale: 1.1;
+    grid-template-columns: minmax(0, 36rem) auto; justify-content: start;
+  }
+  .editorial--media-first.editorial--balanced .editorial__media { width: calc(var(--balance-h, 400px) * var(--balance-scale) * var(--ar, 1)); max-width: 46vw; }
+  .editorial--media-first.editorial--balanced .editorial__media img { width: 100%; }
 }
 
 /* --------------------------------------------------------------------------
@@ -758,6 +788,9 @@ textarea.finput { min-height: 112px; resize: vertical; }
 .training-archive__figure { margin: 0; display: grid; gap: 8px; justify-items: start; }
 .training-archive__image { width: min(100%, calc(360px * var(--ar, 1.33))); height: auto; border-radius: 6px; }
 .training-archive__caption { font-size: var(--t-small); color: var(--muted); line-height: 1.4; }
+.js .accordion[open]:not(.is-closing) .training-archive__figure { animation: archive-in 700ms var(--ease) 140ms both; }
+@keyframes archive-in { from { opacity: 0; transform: translate3d(0,8px,0); } to { opacity: 1; transform: none; } }
+@media (max-width: 559px) { .training-archive__figure { justify-items: center; text-align: center; } }
 .training-archive--pair { display: flex; flex-wrap: wrap; gap: var(--s-2); }
 .training-archive--pair .training-archive__figure { flex: var(--ar, 1) 1 0; min-width: 0; }
 .training-archive--pair .training-archive__image { width: 100%; max-height: none; }
