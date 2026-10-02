@@ -431,6 +431,18 @@
       var w = item ? item.getBoundingClientRect().width + gap : track.clientWidth;
       track.scrollBy({ left: dir * w, behavior: reduce.matches ? 'auto' : 'smooth' });
     };
+    // Start at the first photo. Some browsers (Safari) re-snap a strip to a
+    // later photo while images load or are added, so hold it at the start
+    // until the visitor scrolls it themselves.
+    var touched = false;
+    var hold = function () { if (!touched && track.scrollLeft !== 0) track.scrollLeft = 0; };
+    ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach(function (ev) {
+      track.addEventListener(ev, function () { touched = true; }, { passive: true });
+    });
+    nav.addEventListener('click', function () { touched = true; });
+    track.querySelectorAll('img').forEach(function (img) { img.addEventListener('load', hold); });
+    window.addEventListener('load', hold);
+    hold();
     prev.addEventListener('click', function () { step(-1); });
     next.addEventListener('click', function () { step(1); });
     track.addEventListener('scroll', function () { window.requestAnimationFrame(update); }, { passive: true });
@@ -454,6 +466,7 @@
         fig.appendChild(img);
         track.appendChild(fig);
         update();
+        hold();
         probe(n + 1);
       };
       img.src = src;                       // a missing file simply ends the search
