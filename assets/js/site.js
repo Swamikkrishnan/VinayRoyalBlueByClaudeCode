@@ -498,7 +498,7 @@
     var label = track.getAttribute('aria-label') || 'Training photograph';
     var probe = function (n) {
       var src = 'assets/images/training-' + series + '-' + (n < 10 ? '0' : '') + n + '.jpg';
-      if (track.querySelector('img[src="' + src + '"]')) { probe(n + 1); return; }
+      if (track.querySelector('img[src^="' + src + '"]')) { probe(n + 1); return; }   // already in the markup (any ?v=)
       if (BUILD) src += '?v=' + BUILD;
       var img = new Image();
       img.onload = function () {

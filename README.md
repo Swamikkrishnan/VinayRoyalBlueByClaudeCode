@@ -160,17 +160,21 @@ reserved before the image loads.
   container is 800px+ (so the desktop section index is accounted for); the
   edge facing the text fades into the navy via `mask-image`. Stacked, the
   DOM order is always text then photo, capped at 640px and 78vh.
-- **Archive strips** (`.archive[data-archive]`): four horizontal strips on
+- **Archive strips** (`.archive[data-archive]`): three horizontal strips on
   the Training page, one under each section: Certified Qualifications
-  (`certified`), Extensive Practice & Study (`study`), Personal
-  Transformation (`personal`) and Ongoing Practice (`ongoing`). Native scroll with snap: swipe, mouse-drag, or tap the
-  arrows to glide to the next photo; a counter shows the position. Phones:
-  one photo at a time, edge to edge. Larger screens: one shared photo
-  height. No autoplay, no looping, and photos are never cropped.
+  (`certified`), Extensive Practice & Study (`study`) and Personal
+  Transformation (`personal`). Ongoing Practice has a simple two-photo row
+  (`training-ongoing-01/02.jpg`) instead of a strip. Native scroll with snap: swipe, mouse-drag, or tap the
+  arrows to glide to the next photo; a counter shows the position. Every slide
+  is the same frame; the whole photo sits centred inside it on a quiet navy
+  ground (never cropped or stretched). Phones: one frame at a time, edge to
+  edge. No autoplay, no looping.
+  Image URLs in `training.html` carry `?v=2`; bump it if you ever replace a
+  photo under an existing file name, so browsers fetch the new one.
 
   **Adding photos:** name them `training-<series>-<NN>.jpg` and drop them in
   `assets/images/`, numbering on from the last one with no gaps, e.g.
   `training-certified-05.jpg`, `training-study-02.jpg`,
-  `training-personal-02.jpg`, `training-ongoing-03.jpg`. They appear in the right strip automatically
+  `training-personal-06.jpg`. They appear in the right strip automatically
   (no caption). For a caption and proper alt text, add a `<figure>` for the
   file to that strip in `training.html`, like the existing ones.

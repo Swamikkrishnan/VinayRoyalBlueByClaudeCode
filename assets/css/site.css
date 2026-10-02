@@ -786,32 +786,40 @@ textarea.finput { min-height: 112px; resize: vertical; }
    Training archive strips: documentary photos beneath a major section.
    Native horizontal scroll with snap; swipe, drag (mouse) or tap the
    arrows, which glide to the next photo. A counter (2 / 5) shows where you
-   are. Photos are resized, never cropped. Phones: one photo at a time,
-   edge to edge across the screen. Larger screens: one shared height, so
-   the strip reads as an even row. Only the strip scrolls sideways.
+   are. Standardise the frame, not the photograph: every slide is the same
+   frame, and the whole photo sits centred inside it (object-fit: contain)
+   on a quiet navy ground, so mixed shapes read as one even row with no
+   crop and no distortion. Phones: one frame at a time, edge to edge.
    -------------------------------------------------------------------------- */
-.archive { --archive-h: 250px; display: grid; gap: 10px; margin-top: var(--s-2); }
-@media (min-width: 1000px) { .archive { --archive-h: 270px; } }
+.archive {
+  --frame-h: clamp(250px, 26vw, 300px);
+  --frame-w: calc(var(--frame-h) * 4 / 3);
+  display: grid; gap: 8px; margin-top: var(--s-1);
+}
+@media (min-width: 1000px) { .archive { --frame-h: clamp(280px, 22vw, 320px); } }
 .archive__track {
   display: flex; gap: var(--s-2); align-items: start;
   overflow-x: auto; overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory; scrollbar-width: none;
-  container-type: inline-size;
 }
 .archive__track::-webkit-scrollbar { display: none; }
 .archive__track.is-dragging { scroll-snap-type: none; cursor: grabbing; user-select: none; }
 @media (hover: hover) { .archive__track { cursor: grab; } }
 .archive__track:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
-.archive__item { margin: 0; flex: 0 0 auto; display: grid; grid-template-columns: min-content; gap: 8px; scroll-snap-align: start; }
-/* shared height; a photo wider than the strip shrinks to fit it (ratio kept) */
-.archive__item img { width: auto; height: auto; max-height: var(--archive-h); max-width: 100cqw; border-radius: 6px; -webkit-user-drag: none; user-select: none; }
-.archive__item figcaption { font-size: var(--t-small); color: var(--muted); line-height: 1.4; }
-/* Phones: one photo per view, full screen width, no side padding. */
+.archive__item { margin: 0; flex: 0 0 auto; width: var(--frame-w); max-width: 100%; display: grid; gap: 6px; scroll-snap-align: start; }
+.archive__item img {
+  display: block; width: 100%; height: var(--frame-h); max-width: none;
+  object-fit: contain; object-position: center;
+  background: var(--ink-3); border-radius: 6px;
+  -webkit-user-drag: none; user-select: none;
+}
+.archive__item figcaption { font-size: var(--t-small); color: var(--muted); line-height: 1.4; text-align: left; }
+/* Phones: one frame per view, the full screen width, no side padding. */
 @media (max-width: 599px) {
-  .archive { margin-inline: calc(-1 * var(--gutter)); gap: 6px; }
+  .archive { --frame-h: clamp(220px, 64vw, 270px); margin-inline: calc(-1 * var(--gutter)); gap: 6px; }
   .archive__track { gap: 0; }
-  .archive__item { flex: 0 0 100%; grid-template-columns: 100%; }
-  .archive__item img { width: 100%; max-width: none; max-height: none; border-radius: 0; }
+  .archive__item { flex: 0 0 100%; width: 100%; }
+  .archive__item img { border-radius: 0; }
   .archive__item figcaption { padding-inline: var(--gutter); }
   .archive__nav { padding-inline: var(--gutter); }
 }
@@ -826,6 +834,13 @@ textarea.finput { min-height: 112px; resize: vertical; }
 }
 .archive__btn:hover, .archive__btn:focus-visible { border-color: var(--accent); }
 .archive__btn:disabled { opacity: .35; cursor: default; border-color: var(--line); }
+
+/* Ongoing Practice: two photos side by side at one shared height (each grows
+   in proportion to its ratio, --ar); stacked on phones. No crop. */
+.photo-row { display: flex; gap: var(--s-2); max-width: 680px; }
+.photo-row figure { margin: 0; flex: var(--ar, 1) 1 0; min-width: 0; }
+.photo-row img { width: 100%; height: auto; border-radius: 6px; }
+@media (max-width: 559px) { .photo-row { display: grid; grid-template-columns: minmax(0, 1fr); } }
 
 /* --------------------------------------------------------------------------
    How the work takes shape: a short bridge between Vinay and the five areas.
