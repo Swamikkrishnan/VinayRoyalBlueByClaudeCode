@@ -204,7 +204,7 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 .insight--sm { font-size: clamp(1.2rem, 4.2vw, 1.4rem); line-height: 1.35; max-width: 44ch; }
 .pair-lines { display: grid; gap: var(--s-2); max-width: var(--measure); }
 .pair-lines .rule { margin: var(--s-1) 0; }
-.eyebrow { font-family: var(--sans); font-weight: 400; line-height: 1.4; color: var(--muted); font-size: var(--t-small); letter-spacing: .14em; text-transform: uppercase; }
+.eyebrow { font-family: var(--sans); font-weight: 400; line-height: 1.4; color: var(--accent); font-size: var(--t-small); letter-spacing: .14em; text-transform: uppercase; }
 .muted { color: var(--muted); }
 .nowrap { white-space: nowrap; }
 /* A modest body-font emphasis between a heading and body text. */
@@ -439,7 +439,9 @@ html:not(.js) .nav-toggle { display: none !important; }
 }
 .accordion[open]:not(.is-closing) > summary::after { transform: translateY(4px) rotate(-135deg); }
 .accordion > summary:hover .accordion__label { color: var(--text); }
-.accordion__label { color: var(--muted); font-size: 1rem; transition: color var(--t-fast) var(--ease); }
+/* Small labels (eyebrows, dropdown toggles) use the secondary accent colour;
+   body-level secondary text stays muted. */
+.accordion__label { color: var(--accent); font-size: 1rem; transition: color var(--t-fast) var(--ease); }
 .accordion[open]:not(.is-closing) .accordion__label { color: var(--text); }
 .accordion__title { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; color: var(--text); }
 .accordion__desc { grid-column: 1; color: var(--muted); }
