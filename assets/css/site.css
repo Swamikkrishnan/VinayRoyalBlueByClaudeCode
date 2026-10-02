@@ -61,7 +61,6 @@
   --ease: cubic-bezier(.22,.61,.36,1);
   --motion-fast: 240ms;   /* hover, colour, small state changes */
   --motion-base: 360ms;   /* menus, accordions, chevrons, tab switches */
-  --motion-slow: 750ms;   /* text / section reveals */
   --motion-image: 1330ms; /* photographs gradually appearing */
   --ease-image: cubic-bezier(.25,.46,.45,.94); /* soft ease-out, no overshoot */
   /* Reveal language: calm, unhurried, no overshoot. */
@@ -709,7 +708,7 @@ textarea.finput { min-height: 112px; resize: vertical; }
 .face.is-tabs .face__panels { border-top: 0; }
 .face.is-tabs .face__panel { border-bottom: 0; padding: 0; }
 .face.is-tabs .face__letter { display: none; }
-.face.is-tabs .face__panel:not([hidden]) { animation: face-in var(--motion-base) var(--ease) both; }
+.face.is-tabs .face__panel:not([hidden]) { animation: face-in var(--motion-text) var(--ease-calm) both; }
 @keyframes face-in { from { opacity: 0; transform: translate3d(0,4px,0); } to { opacity: 1; transform: none; } }
 
 .diagram { display: block; width: 100%; max-width: 420px; overflow: visible; }

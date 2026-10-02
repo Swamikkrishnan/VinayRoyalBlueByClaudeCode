@@ -9,6 +9,7 @@
 (function () {
   'use strict';
   var root = document.documentElement;
+  window.__siteJs = true;                 // tells the inline head script we arrived
   // This script's ?v= stamp, bumped on every release; used to keep photo
   // look-ups from reusing a stale cached copy of a renamed file.
   var BUILD = ((document.currentScript && document.currentScript.src.match(/[?&]v=(\d+)/)) || [])[1] || '';
