@@ -799,11 +799,10 @@ textarea.finput { min-height: 112px; resize: vertical; }
 .wrap--wide { max-width: 1240px; }
 .editorial-host { container-type: inline-size; }
 /* About, Today: the closing photo of the personal story carries more weight.
-   A light 3:4 crop (trimming canopy above and rock below; the figure, the
-   mountains and the falls stay whole), filling its column, with a quiet
-   text link to Training & Background just beneath it. */
+   A 3:4 portrait filling its column (2:3 on phones, a slight side trim that
+   keeps the face whole), with a quiet text link to Training & Background. */
 .editorial__media--feature { display: grid; justify-items: start; gap: var(--s-2); }
-.editorial .editorial__media--feature img { width: min(100%, 460px); aspect-ratio: 2 / 3; object-fit: cover; object-position: 50% 58%; margin-inline: 0; }
+.editorial .editorial__media--feature img { width: min(100%, 460px); aspect-ratio: 2 / 3; object-fit: cover; object-position: 45% 50%; margin-inline: 0; }
 @container (min-width: 800px) { .editorial .editorial__media--feature img { width: 100%; aspect-ratio: 3 / 4; } }
 /* The link sits under the photo when stacked, under the text when side by side. */
 .editorial .text-cta--split { display: none; }
