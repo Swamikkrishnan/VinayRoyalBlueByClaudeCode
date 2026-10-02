@@ -80,6 +80,9 @@
 html {
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
+  /* No elastic bounce past the top or bottom (macOS trackpads): the bounce
+     drags the sticky header and section index out of place. */
+  overscroll-behavior-y: none;
   -webkit-text-size-adjust: 100%;
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
@@ -93,6 +96,7 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: clip;
+  overscroll-behavior-y: none;
   /* Gillius ADF maps "oe" to "œ" through its required-ligature table
      ("does" would read "dœs"); switch that table off. */
   font-feature-settings: "rlig" 0;
