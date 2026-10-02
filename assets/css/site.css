@@ -785,8 +785,8 @@ textarea.finput { min-height: 112px; resize: vertical; }
 /* --------------------------------------------------------------------------
    Training archive strips: documentary photos beneath a major section.
    Native horizontal scroll with snap; one photo per view on phones (with a
-   glimpse of the next), two on tablets, three on desktop. Natural aspect
-   ratios, no cropping. Only the strip scrolls sideways, never the page.
+   glimpse of the next), two on tablets, three on desktop. Every photo sits
+   in the same 5:4 frame. Only the strip scrolls sideways, never the page.
    -------------------------------------------------------------------------- */
 .archive { display: grid; gap: 10px; margin-top: var(--s-2); }
 .archive__track {
@@ -797,7 +797,9 @@ textarea.finput { min-height: 112px; resize: vertical; }
 }
 .archive__track:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
 .archive__item { margin: 0; flex: 0 0 88%; min-width: 0; display: grid; gap: 8px; scroll-snap-align: start; }
-.archive__item img { width: 100%; height: auto; border-radius: 6px; }
+/* One standard frame for every photo (5:4), filled edge to edge; the crop
+   leans slightly upward so faces stay in frame. */
+.archive__item img { width: 100%; height: auto; aspect-ratio: 5 / 4; object-fit: cover; object-position: 50% 35%; border-radius: 6px; }
 .archive__item figcaption { font-size: var(--t-small); color: var(--muted); line-height: 1.4; }
 @media (min-width: 600px) { .archive__item { flex-basis: calc((100% - var(--s-2)) / 2); } }
 @media (min-width: 1000px) { .archive__item { flex-basis: calc((100% - 2 * var(--s-2)) / 3); } }
