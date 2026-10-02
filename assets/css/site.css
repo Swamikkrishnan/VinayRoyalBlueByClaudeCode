@@ -833,9 +833,10 @@ textarea.finput { min-height: 112px; resize: vertical; }
 /* --------------------------------------------------------------------------
    How the work takes shape: a short bridge between Vinay and the five areas.
    -------------------------------------------------------------------------- */
-.shape { display: grid; gap: var(--s-3); max-width: var(--measure); }
-.shape .insight { max-width: none; }
-.shape__close { font-size: var(--t-sub); line-height: 1.4; color: var(--muted); }
+/* Every line uses the core body size; emphasis comes from line breaks and
+   scan-marks only. The opening pair sits on two lines with no gap. */
+.shape { display: grid; gap: var(--s-2); max-width: var(--measure); }
+.shape__pair p { margin: 0; }
 
 /* Ways to work together: one ruled row per relationship, label then link. */
 .pathways { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--line); max-width: 46rem; }
@@ -862,4 +863,3 @@ textarea.finput { min-height: 112px; resize: vertical; }
 /* Contact forms on interior pages: the same form system as the Alignment
    Call, sitting on the content's left axis. */
 .contact-form { display: grid; gap: var(--s-3); max-width: 920px; }
-.sessions-empty ~ .contact-form { margin-top: var(--s-3); }

@@ -4,17 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Collaborate | Vinay Swaminathan</title>
-<meta name="description" content="Collaborations, invitations, guest facilitation and shared projects with Vinay Swaminathan.">
+<title>Express Interest | Vinay Swaminathan</title>
+<meta name="description" content="Register interest in Breath of Becoming, Conscious Dance Journeys or Listening Temples.">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#0E1428">
-<link rel="canonical" href="https://vinayswaminathan.com/collaborate.html">
+<link rel="canonical" href="https://vinayswaminathan.com/group-interest.html">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Vinay Swaminathan">
-<meta property="og:title" content="Collaborate | Vinay Swaminathan">
-<meta property="og:description" content="Collaborations, invitations, guest facilitation and shared projects with Vinay Swaminathan.">
-<meta property="og:url" content="https://vinayswaminathan.com/collaborate.html">
+<meta property="og:title" content="Express Interest | Vinay Swaminathan">
+<meta property="og:description" content="Register interest in Breath of Becoming, Conscious Dance Journeys or Listening Temples.">
+<meta property="og:url" content="https://vinayswaminathan.com/group-interest.html">
 <meta property="og:image" content="https://vinayswaminathan.com/assets/images/sigil.png">
 <meta name="twitter:card" content="summary_large_image">
 
@@ -62,55 +62,60 @@
 
 <main id="main">
 
-<section class="page-hero" aria-labelledby="c1">
+<section class="page-hero" aria-labelledby="gi1">
   <div class="wrap stack stack--lg">
-    <p class="eyebrow">Collaboration</p>
-    <h1 data-seq id="c1">Get in touch</h1>
-    <p data-seq class="lede lede--wide">I&rsquo;m open to creating with people when there is alignment in values, intention and way of working.</p>
-    <p data-seq class="muted prose">For personal 1:1 support, please <a href="alignment.html">request an Alignment Call</a> instead.</p>
+    <p class="eyebrow">Group Experiences</p>
+    <h1 data-seq id="gi1">Express interest</h1>
+    <p data-seq class="prose">Let me know which experience you are drawn to and I will be in touch. <a href="groupwork.html#upcoming">See upcoming sessions</a>.</p>
+    <p id="g-event-note" class="muted" hidden>Session: <span></span></p>
   </div>
 </section>
 
-<section id="enquiry" class="section section--alt" aria-labelledby="c2">
+<section id="interest" class="section section--alt" aria-labelledby="gi2">
   <div data-reveal class="wrap">
     <div class="contact-form">
-      <h2 id="c2" class="visually-hidden">Collaboration enquiry</h2>
-      <div role="status" tabindex="-1" id="collab-sent" class="form-sent" hidden>
+      <h2 id="gi2" class="visually-hidden">Interest form</h2>
+      <div role="status" tabindex="-1" id="group-sent" class="form-sent" hidden>
         <h3>Thank you, <span data-sent-name></span>.</h3>
-        <p>I&rsquo;ve received your message and will reply personally.</p>
+        <p>I&rsquo;ve received your interest and will be in touch.</p>
       </div>
 
-      <div id="collab-errors" class="form-errors" role="alert" tabindex="-1" hidden></div>
+      <div id="group-errors" class="form-errors" role="alert" tabindex="-1" hidden></div>
 
-      <form id="collab-form" class="form" method="post" action="https://api.web3forms.com/submit" data-web3 data-sent="collab-sent" data-errors="collab-errors">
+      <form id="group-form" class="form" method="post" action="https://api.web3forms.com/submit" data-web3 data-sent="group-sent" data-errors="group-errors">
         <input type="hidden" name="access_key" value="ec323d61-7be3-4555-b763-50858652113c">
         <input type="hidden" name="from_name" value="vinayswaminathan.com">
-        <input type="hidden" name="subject" value="New Collaboration Enquiry - vinayswaminathan.com">
+        <input type="hidden" name="subject" value="New Group Experience Interest - vinayswaminathan.com">
+        <input type="hidden" name="event" id="g-event" value="" disabled>
         <input type="checkbox" name="botcheck" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
-
         <div class="form__row form__row--contact">
           <div class="ffield">
-            <label class="flabel" for="c-name">Full name</label>
-            <input class="finput" id="c-name" name="name" required maxlength="120" autocomplete="name">
+            <label class="flabel" for="g-name">Full name</label>
+            <input class="finput" id="g-name" name="name" required maxlength="120" autocomplete="name">
           </div>
           <div class="ffield">
-            <label class="flabel" for="c-email">Email</label>
-            <input class="finput" id="c-email" type="email" name="email" required autocomplete="email">
+            <label class="flabel" for="g-email">Email</label>
+            <input class="finput" id="g-email" type="email" name="email" required autocomplete="email">
           </div>
           <div class="ffield">
-            <label class="flabel" for="c-wa">WhatsApp number <span class="fhint">(optional)</span></label>
-            <input class="finput" id="c-wa" type="tel" name="whatsapp" autocomplete="tel">
+            <label class="flabel" for="g-wa">WhatsApp number <span class="fhint">(optional)</span></label>
+            <input class="finput" id="g-wa" type="tel" name="whatsapp" autocomplete="tel">
           </div>
         </div>
+        <fieldset>
+          <legend>Which experience are you interested in?</legend>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="experience" value="Breath of Becoming" data-key="breath-of-becoming" required>Breath of Becoming</label>
+            <label class="choice"><input type="radio" name="experience" value="Conscious Dance Journeys" data-key="conscious-dance">Conscious Dance Journeys</label>
+            <label class="choice"><input type="radio" name="experience" value="Listening Temples" data-key="listening-temples">Listening Temples</label>
+            <label class="choice"><input type="radio" name="experience" value="I'm open / not sure" data-key="open">I&rsquo;m open / not sure</label>
+          </div>
+        </fieldset>
         <div class="ffield">
-          <label class="flabel" for="c-align">Where do you already sense a potential alignment?</label>
-          <textarea class="finput" id="c-align" name="alignment" required rows="5" maxlength="4000"></textarea>
+          <label class="flabel" for="g-msg">Message <span class="fhint">(optional)</span></label>
+          <textarea class="finput" id="g-msg" name="message" rows="3" maxlength="4000"></textarea>
         </div>
-        <div class="ffield">
-          <label class="flabel" for="c-more">Anything else you&rsquo;d like me to know? <span class="fhint">(optional)</span></label>
-          <textarea class="finput" id="c-more" name="message" rows="3" maxlength="4000"></textarea>
-        </div>
-        <button class="btn btn--solid" type="submit">Send <span aria-hidden="true">&rarr;</span></button>
+        <button class="btn btn--solid" type="submit">Express interest <span aria-hidden="true">&rarr;</span></button>
       </form>
     </div>
   </div>

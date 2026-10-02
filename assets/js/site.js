@@ -421,13 +421,30 @@
     });
   });
 
-  // Group interest: ?experience=<value> preselects that experience.
-  var expParam = null;
-  try { expParam = new URLSearchParams(location.search).get('experience'); } catch (e) {}
-  if (expParam) {
-    document.querySelectorAll('input[name="experience"]').forEach(function (r) {
-      if (r.dataset.key === expParam) r.checked = true;
-    });
+  // Group interest: ?experience=<key> preselects that experience and
+  // ?event=YYYY-MM-DD (from a listed session) travels with the enquiry.
+  var params = null;
+  try { params = new URLSearchParams(location.search); } catch (e) {}
+  if (params) {
+    var expParam = params.get('experience');
+    if (expParam) {
+      document.querySelectorAll('input[name="experience"]').forEach(function (r) {
+        if (r.dataset.key === expParam) r.checked = true;
+      });
+    }
+    var eventParam = params.get('event');
+    var eventInput = document.getElementById('g-event');
+    if (eventInput && eventParam && /^\d{4}-\d{2}-\d{2}$/.test(eventParam)) {
+      eventInput.value = eventParam;
+      eventInput.disabled = false;
+      var note = document.getElementById('g-event-note');
+      if (note) {
+        var d = new Date(eventParam + 'T12:00:00Z');
+        var label = isNaN(d) ? eventParam : new Intl.DateTimeFormat(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(d);
+        note.querySelector('span').textContent = label;
+        note.hidden = false;
+      }
+    }
   }
 
   /* ---------------------------------------------------------------------

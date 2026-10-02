@@ -111,7 +111,7 @@ Three forms, one per relationship, all delivered by [Web3Forms](https://web3form
 | Page | Form | Email subject |
 | --- | --- | --- |
 | `alignment.html` | Alignment Call (1:1) | New Alignment Call Request - vinayswaminathan.com |
-| `groupwork.html#interest` | Group Experience interest | New Group Experience Interest - vinayswaminathan.com |
+| `group-interest.html` | Group Experience interest | New Group Experience Interest - vinayswaminathan.com |
 | `collaborate.html` | Collaboration enquiry | New Collaboration Enquiry - vinayswaminathan.com |
 
 - The access key is the hidden `access_key` field in each form. The recipient
@@ -123,8 +123,10 @@ Three forms, one per relationship, all delivered by [Web3Forms](https://web3form
   else restores the button, keeps what was typed and shows the error.
 - Without JavaScript the form posts normally and Web3Forms shows its own
   confirmation page.
-- Group interest preselects an experience from `?experience=` (keys:
-  `breath-of-becoming`, `conscious-dance`, `listening-temples`, `open`).
+- `group-interest.html?experience=<key>&event=YYYY-MM-DD` preselects the
+  experience (keys: `breath-of-becoming`, `conscious-dance`,
+  `listening-temples`, `open`) and sends the session date with the enquiry.
+  Visited directly, the form starts unselected.
 
 **Upcoming group sessions** are a hand-edited list in `groupwork.html`
 (`<ul class="sessions">`); a commented template sits just above it. With no
