@@ -215,53 +215,6 @@
     setActive();
   }
 
-  // Training archive photos (inside accordions). One state per figure:
-  // (none) → 'preparing' → 'prepared' → 'revealed'. A qualification within
-  // ~400px of the viewport starts loading and decoding its photos while still
-  // closed; opening the accordion reveals any prepared photo (opacity only,
-  // via .is-revealed). Revealed photos stay visible on every later open.
-  // Reduced motion: no .archive-motion, so photos simply show when loaded.
-  var archive = document.querySelectorAll('.training-archive__figure');
-  if (archive.length) {
-    if (!reduce.matches) root.classList.add('archive-motion');
-    var revealFig = function (fig) {
-      if (fig.dataset.archive !== 'prepared') return;
-      var acc = fig.closest('details');
-      if (acc && !acc.open) return;          // wait for the accordion to open
-      fig.dataset.archive = 'revealed';
-      fig.classList.add('is-revealed');
-    };
-    var prepareFig = function (fig) {
-      if (fig.dataset.archive) return;
-      fig.dataset.archive = 'preparing';
-      var img = fig.querySelector('img');
-      if (img) img.loading = 'eager';        // fetch now, even while closed
-      whenReady(img, function () { fig.dataset.archive = 'prepared'; revealFig(fig); });
-    };
-    var accs = [];
-    archive.forEach(function (fig) {
-      var acc = fig.closest('details');
-      if (acc && accs.indexOf(acc) < 0) accs.push(acc);
-    });
-    accs.forEach(function (acc) {
-      var figs = acc.querySelectorAll('.training-archive__figure');
-      acc.addEventListener('toggle', function () {
-        if (!acc.open) return;
-        figs.forEach(function (fig) { prepareFig(fig); revealFig(fig); });
-      });
-    });
-    if ('IntersectionObserver' in window) {
-      var archiveIO = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          entry.target.querySelectorAll('.training-archive__figure').forEach(prepareFig);
-          archiveIO.unobserve(entry.target);
-        });
-      }, { rootMargin: '400px 0px 400px 0px' });
-      accs.forEach(function (acc) { archiveIO.observe(acc); });
-    }
-  }
-
   /* ---------------------------------------------------------------------
      3b. FACE (Approach) — progressive tab selector. Without JS the four
          panels stay stacked and fully readable.
@@ -323,13 +276,12 @@
   }
 
   /* ---------------------------------------------------------------------
-     4. Alignment Call — day/slot picker in the visitor's own time zone,
-        submitted to Web3Forms. IST is the practice's home time zone.
+     4. Alignment Call — day/slot picker in the visitor's own time zone.
+        IST is the practice's home time zone.
      --------------------------------------------------------------------- */
-  var form = document.getElementById('alignment-form');
-  if (form) {
+  var slotsWrap = document.getElementById('call-slots');
+  if (slotsWrap) {
     var IST_OFFSET_MIN = 330;
-    var slotsWrap = document.getElementById('call-slots');
     var tzNote = document.getElementById('call-tz-note');
     var slotInput = document.getElementById('f-slot');
 
@@ -451,47 +403,116 @@
       row.appendChild(dayField); row.appendChild(timeField);
       slotsWrap.appendChild(row);
     }
-    if (slotsWrap) renderSlots();
+    renderSlots();
+  }
 
-    var sent = document.getElementById('form-sent');
-    var errors = document.getElementById('form-errors');
+  // "I'm not sure yet" and the five specific areas are mutually exclusive.
+  document.querySelectorAll('[data-exclusive-group]').forEach(function (group) {
+    var none = group.querySelector('input[data-exclusive]');
+    var boxes = group.querySelectorAll('input[type="checkbox"]');
+    if (!none) return;
+    boxes.forEach(function (box) {
+      box.addEventListener('change', function () {
+        if (!box.checked) return;
+        boxes.forEach(function (other) {
+          if (other !== box && (box === none || other === none)) other.checked = false;
+        });
+      });
+    });
+  });
+
+  // Group interest: ?experience=<value> preselects that experience.
+  var expParam = null;
+  try { expParam = new URLSearchParams(location.search).get('experience'); } catch (e) {}
+  if (expParam) {
+    document.querySelectorAll('input[name="experience"]').forEach(function (r) {
+      if (r.dataset.key === expParam) r.checked = true;
+    });
+  }
+
+  /* ---------------------------------------------------------------------
+     4b. Web3Forms — one submission handler for every form[data-web3]
+         (Alignment Call, Group interest, Collaboration). Each form names its
+         own success panel (data-sent) and error box (data-errors); its
+         subject and metadata are hidden fields in the markup. Success is
+         shown only when Web3Forms explicitly accepts the submission
+         (HTTP OK and success === true). On any failure the entered values
+         stay in place. Without fetch, the form posts normally.
+     --------------------------------------------------------------------- */
+  var FAIL_MSG = 'Your message did not go through. Please try again in a moment.';
+  document.querySelectorAll('form[data-web3]').forEach(function (form) {
+    var sent = document.getElementById(form.getAttribute('data-sent'));
+    var errors = document.getElementById(form.getAttribute('data-errors'));
     var endpoint = form.getAttribute('action') || '';
-    var canAjax = /web3forms\.com/.test(endpoint) && typeof window.fetch === 'function';
+    if (typeof window.fetch !== 'function' || !/web3forms\.com/.test(endpoint)) return;
+    var btn = form.querySelector('button[type="submit"]');
+    var label = btn ? btn.innerHTML : '';
+    var restore = function (msg) {
+      if (btn) { btn.disabled = false; btn.innerHTML = label; btn.style.minWidth = ''; }
+      if (errors) { errors.textContent = msg; errors.hidden = false; errors.focus(); }
+    };
 
     form.addEventListener('submit', function (e) {
+      e.preventDefault();                      // native validation has already passed
       if (errors) errors.hidden = true;
-      if (!canAjax) return;
-      if (!form.checkValidity()) return;
-      var hp = form.querySelector('input[name="website"]');
-      if (hp && hp.value) { e.preventDefault(); return; }
-      e.preventDefault();
-      var btn = form.querySelector('button[type="submit"]');
-      var label = btn ? btn.innerHTML : '';
-      if (btn) { btn.style.minWidth = btn.offsetWidth + 'px'; btn.disabled = true; btn.innerHTML = 'Sending…'; }
-      fetch(endpoint, { method: 'POST', headers: { Accept: 'application/json' }, body: new FormData(form) })
-        .then(function (r) { return r.json().catch(function () { return {}; }).then(function (data) { return { ok: r.ok, data: data }; }); })
+      var bot = form.querySelector('input[name="botcheck"]');
+      if (bot && bot.checked) return;          // honeypot: drop silently
+      if (btn) { btn.style.minWidth = btn.offsetWidth + 'px'; btn.disabled = true; btn.textContent = 'Sending…'; }
+      var data = new FormData(form);
+      fetch(endpoint, { method: 'POST', headers: { Accept: 'application/json' }, body: data })
+        .then(function (r) {
+          return r.json().catch(function () { return null; }).then(function (body) { return { ok: r.ok, body: body }; });
+        })
         .then(function (res) {
-          if (res.ok && (res.data.success === true || res.data.success === undefined)) {
-            var nameEl = document.getElementById('sent-name');
-            if (nameEl) nameEl.textContent = String(new FormData(form).get('name') || '').split(' ')[0];
-            var slotEl = document.getElementById('sent-slot');
-            if (slotEl) {
-              var v = slotInput ? slotInput.value : '';
-              if (v) { slotEl.hidden = false; slotEl.querySelector('span').textContent = v; }
+          if (res.ok && res.body && res.body.success === true) {
+            if (sent) {
+              var first = String(data.get('name') || '').trim().split(/\s+/)[0];
+              sent.querySelectorAll('[data-sent-name]').forEach(function (el) { el.textContent = first; });
+              var slotEl = sent.querySelector('[data-sent-slot]');
+              var slot = data.get('slot');
+              if (slotEl && slot) { slotEl.hidden = false; slotEl.querySelector('span').textContent = slot; }
             }
             form.hidden = true;
-            if (sent) { sent.hidden = false; sent.setAttribute('tabindex', '-1'); sent.focus(); }
+            if (sent) { sent.hidden = false; sent.focus(); }
           } else {
-            if (btn) { btn.disabled = false; btn.innerHTML = label; }
-            if (errors) { errors.hidden = false; errors.textContent = (res.data && res.data.message) || 'The message did not go through. Please try again, or write in directly.'; }
+            restore((res.body && res.body.message) ? 'Your message did not go through: ' + res.body.message : FAIL_MSG);
           }
         })
         .catch(function () {
-          if (btn) { btn.disabled = false; btn.innerHTML = label; }
-          if (errors) { errors.hidden = false; errors.textContent = 'The message did not go through. This can be a connection issue. Please try again in a moment.'; }
+          restore('Your message did not go through. This can be a connection issue. Please try again in a moment.');
         });
     });
-  }
+  });
+
+  /* ---------------------------------------------------------------------
+     4c. Training archive strips — native horizontal scroll with snap.
+         Small previous/next buttons appear on wide screens only; they are
+         disabled at either end. No autoplay, no looping.
+     --------------------------------------------------------------------- */
+  document.querySelectorAll('[data-archive]').forEach(function (strip) {
+    var track = strip.querySelector('.archive__track');
+    var nav = strip.querySelector('.archive__nav');
+    if (!track || !nav) return;
+    var prev = nav.querySelector('[data-dir="-1"]');
+    var next = nav.querySelector('[data-dir="1"]');
+    var update = function () {
+      var max = track.scrollWidth - track.clientWidth;
+      nav.hidden = max <= 2;
+      prev.disabled = track.scrollLeft <= 2;
+      next.disabled = track.scrollLeft >= max - 2;
+    };
+    var step = function (dir) {
+      var item = track.querySelector('.archive__item');
+      var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      var w = item ? item.getBoundingClientRect().width + gap : track.clientWidth;
+      track.scrollBy({ left: dir * w, behavior: reduce.matches ? 'auto' : 'smooth' });
+    };
+    prev.addEventListener('click', function () { step(-1); });
+    next.addEventListener('click', function () { step(1); });
+    track.addEventListener('scroll', function () { window.requestAnimationFrame(update); }, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  });
 
   /* ---------------------------------------------------------------------
      5. Hash landing. The browser's own jump happens before web fonts and

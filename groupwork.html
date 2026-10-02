@@ -25,7 +25,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="preload" href="assets/fonts/GilliusADFNo2-Regular.otf" as="font" type="font/otf" crossorigin>
-<link rel="stylesheet" href="assets/css/site.css?v=202610020530">
+<link rel="stylesheet" href="assets/css/site.css?v=202610022207">
 </head>
 <body class="has-subnav">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -43,7 +43,7 @@
       <a class="nav__link" href="about.html">About</a>
       <a class="nav__link" href="training.html">Training</a>
     </nav>
-    <a class="btn head-cta" href="index.html#alignment-call">Request an Alignment Call</a>
+    <a class="btn head-cta" href="alignment.html">Request an Alignment Call</a>
     <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-mobile">
       <span class="nav-toggle__bars" aria-hidden="true"><i></i><i></i></span>
       <span data-label>Menu</span>
@@ -55,13 +55,14 @@
     <a href="groupwork.html" aria-current="page">Group Offerings <span aria-hidden="true">&rarr;</span></a>
     <a href="about.html">About <span aria-hidden="true">&rarr;</span></a>
     <a href="training.html">Training <span aria-hidden="true">&rarr;</span></a>
-    <a class="btn btn--solid" href="index.html#alignment-call">Request an Alignment Call</a>
+    <a class="btn btn--solid" href="alignment.html">Request an Alignment Call</a>
   </nav>
 </header>
 
 <nav class="subnav" aria-label="Sections of this page">
   <ul>
     <li><a data-section="experiences" href="#experiences">Group Experiences</a></li>
+    <li><a data-section="upcoming" href="#upcoming">Upcoming Sessions</a></li>
     <li><a data-section="design" href="#design">Design &amp; Curation</a></li>
     <li><a data-section="collaboration" href="#collaboration">Collaboration</a></li>
   </ul>
@@ -91,11 +92,80 @@
         <p class="accordion__desc">Sharing circles devoted to listening as a sacred practice.</p>
       </div>
     </div>
-    <a class="btn btn--outline" href="index.html#alignment-call">Express interest <span aria-hidden="true">&rarr;</span></a>
+    <a class="btn btn--outline" href="#interest">Express interest <span aria-hidden="true">&rarr;</span></a>
   </div>
 </section>
 
-<section id="design" class="section section--alt" aria-labelledby="g2">
+<section id="upcoming" class="section section--alt" aria-labelledby="g-up">
+  <div data-reveal class="wrap stack stack--lg">
+    <h2 id="g-up">Upcoming Sessions</h2>
+
+    <!-- UPCOMING SESSIONS: edit by hand.
+         To list a session, copy this template inside <ul class="sessions">.
+         The "No upcoming dates" line hides itself while the list has items.
+         Use the experience key in the link so the interest form preselects it:
+         breath-of-becoming, conscious-dance, listening-temples.
+
+      <li class="session">
+        <h3 class="session__name">Breath of Becoming</h3>
+        <p class="session__when"><time datetime="2026-11-14">Saturday 14 November 2026</time> &middot; <time datetime="2026-11-14T16:00+05:30">4:00 PM IST</time></p>
+        <p class="session__where">Auroville</p>
+        <p class="session__status">Places available</p>
+        <a class="session__cta" href="groupwork.html?experience=breath-of-becoming#interest">Express interest <span aria-hidden="true">&rarr;</span></a>
+      </li>
+    -->
+    <ul class="sessions" aria-label="Upcoming sessions">
+    </ul>
+    <p class="sessions-empty">No upcoming dates are currently listed.</p>
+
+    <div id="interest" class="contact-form">
+      <h3>Express interest</h3>
+      <div role="status" tabindex="-1" id="group-sent" class="form-sent" hidden>
+        <h3>Thank you, <span data-sent-name></span>.</h3>
+        <p>I&rsquo;ve received your interest and will be in touch.</p>
+      </div>
+
+      <div id="group-errors" class="form-errors" role="alert" tabindex="-1" hidden></div>
+
+      <form id="group-form" class="form" method="post" action="https://api.web3forms.com/submit" data-web3 data-sent="group-sent" data-errors="group-errors">
+        <input type="hidden" name="access_key" value="7d72a4c8-7199-40bb-a6a2-3202c847cce5">
+        <input type="hidden" name="from_name" value="vinayswaminathan.com">
+        <input type="hidden" name="subject" value="New Group Experience Interest - vinayswaminathan.com">
+        <input type="checkbox" name="botcheck" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="form__row form__row--contact">
+          <div class="ffield">
+            <label class="flabel" for="g-name">Full name</label>
+            <input class="finput" id="g-name" name="name" required maxlength="120" autocomplete="name">
+          </div>
+          <div class="ffield">
+            <label class="flabel" for="g-email">Email</label>
+            <input class="finput" id="g-email" type="email" name="email" required autocomplete="email">
+          </div>
+          <div class="ffield">
+            <label class="flabel" for="g-wa">WhatsApp number <span class="fhint">(optional)</span></label>
+            <input class="finput" id="g-wa" type="tel" name="whatsapp" autocomplete="tel">
+          </div>
+        </div>
+        <fieldset>
+          <legend>Which experience are you interested in?</legend>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="experience" value="Breath of Becoming" data-key="breath-of-becoming" required>Breath of Becoming</label>
+            <label class="choice"><input type="radio" name="experience" value="Conscious Dance Journeys" data-key="conscious-dance">Conscious Dance Journeys</label>
+            <label class="choice"><input type="radio" name="experience" value="Listening Temples" data-key="listening-temples">Listening Temples</label>
+            <label class="choice"><input type="radio" name="experience" value="I'm open / not sure" data-key="open">I&rsquo;m open / not sure</label>
+          </div>
+        </fieldset>
+        <div class="ffield">
+          <label class="flabel" for="g-msg">Message <span class="fhint">(optional)</span></label>
+          <textarea class="finput" id="g-msg" name="message" rows="3" maxlength="4000"></textarea>
+        </div>
+        <button class="btn btn--solid" type="submit">Express interest <span aria-hidden="true">&rarr;</span></button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section id="design" class="section" aria-labelledby="g2">
   <div data-reveal class="wrap stack stack--lg">
     <h2 id="g2">Design &amp; Curation</h2>
     <p class="lede lede--wide">When people are being invited into vulnerability, intensity or their edges, the <span class="scan-mark">quality of the container matters</span>.</p>
@@ -124,11 +194,11 @@
         </div>
       </div>
     </figure>
-    <a class="btn btn--outline" href="index.html#alignment-call">Enquire about Design &amp; Curation <span aria-hidden="true">&rarr;</span></a>
+    <a class="btn btn--outline" href="collaborate.html">Enquire about Design &amp; Curation <span aria-hidden="true">&rarr;</span></a>
   </div>
 </section>
 
-<section id="collaboration" class="section" aria-labelledby="g3">
+<section id="collaboration" class="section section--alt" aria-labelledby="g3">
   <div data-reveal class="wrap stack stack--lg">
     <h2 id="g3">Collaboration &amp; Guest Facilitation</h2>
     <p class="prose">I&rsquo;m open to creating with people when there is alignment in values, intention and way of working.</p>
@@ -146,11 +216,11 @@
   </div>
 </section>
 
-<section class="section section--alt section--center watermark" aria-labelledby="g4">
+<section class="section section--center watermark" aria-labelledby="g4">
   <div data-reveal class="wrap stack">
     <h2 id="g4">Start a conversation</h2>
     <p class="muted">If what you are creating feels aligned, I would like to hear from you.</p>
-    <a class="btn btn--solid" href="index.html#alignment-call">Request an Alignment Call <span aria-hidden="true">&rarr;</span></a>
+    <a class="btn btn--solid" href="collaborate.html">Get in touch <span aria-hidden="true">&rarr;</span></a>
   </div>
 </section>
 
@@ -173,7 +243,8 @@
       <ul>
         <li><a href="offerings.html">1:1</a></li>
         <li><a href="groupwork.html">Group</a></li>
-        <li><a href="index.html#alignment-call">Alignment Call</a></li>
+        <li><a href="alignment.html">Alignment Call</a></li>
+        <li><a href="collaborate.html">Collaborate</a></li>
       </ul>
     </nav>
   </div>
@@ -183,6 +254,6 @@
   </div>
 </footer>
 
-<script src="assets/js/site.js?v=202610020530" defer></script>
+<script src="assets/js/site.js?v=202610022207" defer></script>
 </body>
 </html>

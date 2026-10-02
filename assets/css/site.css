@@ -548,6 +548,8 @@ html:not(.js) .nav-toggle { display: none !important; }
 .call { max-width: 620px; margin: 0 auto; display: grid; gap: var(--s-4); }
 .call__intro .steps { width: 100%; }
 .call__intro { display: grid; gap: var(--s-2); justify-items: center; text-align: center; }
+/* On alignment.html the intro follows the page hero's left edge. */
+.call--page .call__intro { justify-items: start; text-align: left; }
 .form { display: grid; gap: 20px; }
 .form__row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; align-items: start; }
 /* Desktop: a wider form; the three short contact fields share one row, every
@@ -798,29 +800,66 @@ textarea.finput { min-height: 112px; resize: vertical; }
 }
 
 /* --------------------------------------------------------------------------
-   Training archive: documentary photos inside expanded qualifications.
-   Natural aspect ratio, modest size, small factual caption. In a pair, each
-   figure grows in proportion to its aspect ratio (--ar), so both photos end
-   up the same height without cropping either.
+   Training archive strips: documentary photos beneath a major section.
+   Native horizontal scroll with snap; one photo per view on phones (with a
+   glimpse of the next), two on tablets, three on desktop. Natural aspect
+   ratios, no cropping. Only the strip scrolls sideways, never the page.
    -------------------------------------------------------------------------- */
-.training-archive { margin-top: var(--s-1); }
-.training-archive__figure { margin: 0; display: grid; gap: 8px; justify-items: start; }
-.training-archive__image { width: min(100%, calc(360px * var(--ar, 1.33))); height: auto; border-radius: 6px; }
-.training-archive__caption { font-size: var(--t-small); color: var(--muted); line-height: 1.4; }
-/* Archive photos develop into view by opacity alone. Space is reserved by the
-   img width/height, so the fade never changes accordion geometry. site.js
-   preloads and decodes each photo before its accordion is opened, then adds
-   .is-revealed once (never reset). The 220ms delay lets the accordion start
-   opening first; a pair's second photo follows 100ms later. */
-.archive-motion .training-archive__figure { opacity: 0; transition: opacity 1250ms var(--ease-image) 220ms; }
-.archive-motion .training-archive--pair .training-archive__figure + .training-archive__figure { transition-delay: 320ms; }
-.archive-motion .training-archive__figure.is-revealed { opacity: 1; }
-@media (max-width: 559px) { .training-archive__figure { justify-items: center; text-align: center; } }
-.training-archive--pair { display: flex; flex-wrap: wrap; gap: var(--s-2); }
-.training-archive--pair .training-archive__figure { flex: var(--ar, 1) 1 0; min-width: 0; }
-.training-archive--pair .training-archive__image { width: 100%; max-height: none; }
-@media (max-width: 559px) {
-  /* Stacked: a plain one-column grid (column flexbox mis-sizes figures
-     holding percentage-width images). */
-  .training-archive--pair { display: grid; grid-template-columns: minmax(0, 1fr); }
+.archive { display: grid; gap: 10px; margin-top: var(--s-2); }
+.archive__track {
+  display: flex; gap: var(--s-2); align-items: start;
+  overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scrollbar-width: thin; scrollbar-color: var(--line) transparent;
+  padding-bottom: 10px;
 }
+.archive__track:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
+.archive__item { margin: 0; flex: 0 0 88%; min-width: 0; display: grid; gap: 8px; scroll-snap-align: start; }
+.archive__item img { width: 100%; height: auto; border-radius: 6px; }
+.archive__item figcaption { font-size: var(--t-small); color: var(--muted); line-height: 1.4; }
+@media (min-width: 600px) { .archive__item { flex-basis: calc((100% - var(--s-2)) / 2); } }
+@media (min-width: 1000px) { .archive__item { flex-basis: calc((100% - 2 * var(--s-2)) / 3); } }
+.archive__nav { display: none; }
+@media (min-width: 1000px) and (hover: hover) {
+  .archive__nav:not([hidden]) { display: flex; justify-content: flex-end; gap: 8px; }
+}
+.archive__btn {
+  width: 36px; height: 36px; display: inline-grid; place-items: center;
+  border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--text);
+  font: inherit; cursor: pointer; transition: border-color var(--motion-fast) var(--ease), opacity var(--motion-fast) var(--ease);
+}
+.archive__btn:hover, .archive__btn:focus-visible { border-color: var(--accent); }
+.archive__btn:disabled { opacity: .35; cursor: default; border-color: var(--line); }
+
+/* --------------------------------------------------------------------------
+   How the work takes shape: a short bridge between Vinay and the five areas.
+   -------------------------------------------------------------------------- */
+.shape { display: grid; gap: var(--s-3); max-width: var(--measure); }
+.shape .insight { max-width: none; }
+.shape__close { font-size: var(--t-sub); line-height: 1.4; color: var(--muted); }
+
+/* Ways to work together: one ruled row per relationship, label then link. */
+.pathways { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--line); max-width: 46rem; }
+.pathways li { display: grid; gap: 2px 24px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.pathways__kind { color: var(--muted); }
+.pathways a { color: var(--text); text-decoration: none; display: inline-flex; align-items: center; gap: 10px; min-height: 32px; }
+.pathways a span[aria-hidden] { color: var(--accent); transition: transform var(--t-fast) var(--ease); }
+.pathways a:hover span[aria-hidden], .pathways a:focus-visible span[aria-hidden] { transform: translateX(3px); }
+@media (min-width: 600px) { .pathways li { grid-template-columns: 12rem 1fr; align-items: center; } }
+
+/* Upcoming group sessions: a static list, edited by hand in groupwork.html.
+   With no <li> in the list, the empty-state line shows instead. */
+.sessions { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--line); }
+.sessions:not(:has(li)) { display: none; }
+.sessions:has(li) ~ .sessions-empty { display: none; }
+.session { display: grid; gap: 4px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.session__name { font-size: var(--t-sub); line-height: 1.3; }
+.session__when, .session__where { color: var(--muted); }
+.session__status { color: var(--accent); font-size: var(--t-small); }
+.session__cta { color: var(--text); text-decoration: none; justify-self: start; min-height: 40px; display: inline-flex; align-items: center; gap: 8px; }
+.session__cta span[aria-hidden] { color: var(--accent); }
+.sessions-empty { color: var(--muted); }
+
+/* Contact forms on interior pages: the same form system as the Alignment
+   Call, sitting on the content's left axis. */
+.contact-form { display: grid; gap: var(--s-3); max-width: 920px; }
+.sessions-empty ~ .contact-form { margin-top: var(--s-3); }

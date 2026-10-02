@@ -103,27 +103,32 @@ the header flow.
 2. A base rule declared *after* its own media query silently overrides the
    sticky inside it. Declare base rules first.
 
-## The Alignment Call form → Web3Forms
+## Contact pathways and Web3Forms
 
-The form delivers through [Web3Forms](https://web3forms.com) — no backend, so it
-works the same on GitHub Pages and on the final host.
+Three forms, one per relationship, all delivered by [Web3Forms](https://web3forms.com)
+(no backend) to the same inbox:
 
-**One-time setup:**
+| Page | Form | Email subject |
+| --- | --- | --- |
+| `alignment.html` | Alignment Call (1:1) | New Alignment Call Request - vinayswaminathan.com |
+| `groupwork.html#interest` | Group Experience interest | New Group Experience Interest - vinayswaminathan.com |
+| `collaborate.html` | Collaboration enquiry | New Collaboration Enquiry - vinayswaminathan.com |
 
-1. Go to web3forms.com and create an access key for **vinay.swami91@gmail.com**
-   (a verification email is sent to that address).
-2. The key lives in the hidden `access_key` field in `index.html`.
-3. That is all. The recipient address is bound to the key inside the Web3Forms
-   dashboard and never appears anywhere in this repo.
+- The access key is the hidden `access_key` field in each form. The recipient
+  address is bound to that key in the Web3Forms dashboard and never appears in
+  this repo. Changing the inbox means changing it there.
+- `site.js` (section 4b) handles every `form[data-web3]`: native validation,
+  the `botcheck` honeypot, "Sending…", then a POST. The thank-you panel shows
+  only when Web3Forms answers with HTTP OK **and** `success: true`; anything
+  else restores the button, keeps what was typed and shows the error.
+- Without JavaScript the form posts normally and Web3Forms shows its own
+  confirmation page.
+- Group interest preselects an experience from `?experience=` (keys:
+  `breath-of-becoming`, `conscious-dance`, `listening-temples`, `open`).
 
-**How it behaves:**
-
-- With JavaScript, `site.js` validates inline, then POSTs in the background and
-  shows the "Thank you" panel in place.
-- Without JavaScript, the form does a normal POST and Web3Forms returns the
-  visitor to `?sent=1` (via the hidden `redirect` field — update its domain if
-  you want the no-JS path to work on a URL other than `vinayswaminathan.com`).
-- Spam: a hidden honeypot (`website`) plus Web3Forms' own `botcheck`.
+**Upcoming group sessions** are a hand-edited list in `groupwork.html`
+(`<ul class="sessions">`); a commented template sits just above it. With no
+items, "No upcoming dates are currently listed." shows automatically.
 
 ## Still to do before public launch
 
@@ -133,7 +138,7 @@ works the same on GitHub Pages and on the final host.
 ## Cache-busting
 
 Pages link `assets/css/site.css?v=…` and `assets/js/site.js?v=…`. GitHub
-Pages caches assets for 10 minutes, so bump the `v` value in all seven pages
+Pages caches assets for 10 minutes, so bump the `v` value in every page
 whenever CSS or JS changes, or visitors may keep the old file:
 
     V=$(date +%Y%m%d%H%M); sed -i '' -E "s#(site\.(css|js))(\?v=[0-9]+)?\"#\1?v=$V\"#" *.html
@@ -149,6 +154,8 @@ reserved before the image loads.
   container is 800px+ (so the desktop section index is accounted for); the
   edge facing the text fades into the navy via `mask-image`. Stacked, the
   DOM order is always text then photo, capped at 640px and 78vh.
-- **Archive** (`.training-archive`, `--pair`): documentary photos inside
-  expanded Training items, with a small caption. In a pair, each figure grows
-  in proportion to its ratio, so both photos share one height uncropped.
+- **Archive strips** (`.archive[data-archive]`): two horizontal strips on the
+  Training page, under Certified Qualifications and under Personal
+  Transformation. Native scroll with snap: one photo per view on phones, two
+  on tablets, three on desktop, with small previous/next buttons on wide
+  screens. No autoplay, no looping, natural ratios.
