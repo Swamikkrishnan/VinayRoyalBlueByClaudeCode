@@ -807,10 +807,14 @@ textarea.finput { min-height: 112px; resize: vertical; }
 .training-archive__figure { margin: 0; display: grid; gap: 8px; justify-items: start; }
 .training-archive__image { width: min(100%, calc(360px * var(--ar, 1.33))); height: auto; border-radius: 6px; }
 .training-archive__caption { font-size: var(--t-small); color: var(--muted); line-height: 1.4; }
-.js .accordion[open]:not(.is-closing) .training-archive__figure { animation: archive-in 950ms var(--ease-image) 110ms both; }
-/* Held at its transparent start until site.js has the photo decoded. */
-.js .training-archive__figure[data-pending] { animation-play-state: paused; }
-@keyframes archive-in { from { opacity: 0; transform: translate3d(0,5px,0); } to { opacity: 1; transform: none; } }
+/* Archive photos develop into view by opacity alone. Space is reserved by the
+   img width/height, so the fade never changes accordion geometry. site.js
+   preloads and decodes each photo before its accordion is opened, then adds
+   .is-revealed once (never reset). The 220ms delay lets the accordion start
+   opening first; a pair's second photo follows 100ms later. */
+.archive-motion .training-archive__figure { opacity: 0; transition: opacity 1250ms var(--ease-image) 220ms; }
+.archive-motion .training-archive--pair .training-archive__figure + .training-archive__figure { transition-delay: 320ms; }
+.archive-motion .training-archive__figure.is-revealed { opacity: 1; }
 @media (max-width: 559px) { .training-archive__figure { justify-items: center; text-align: center; } }
 .training-archive--pair { display: flex; flex-wrap: wrap; gap: var(--s-2); }
 .training-archive--pair .training-archive__figure { flex: var(--ar, 1) 1 0; min-width: 0; }

@@ -215,21 +215,52 @@
     setActive();
   }
 
-  // Training archive photos (inside accordions): hold the CSS fade at its
-  // transparent start until the photo is decoded, so it never pops in late.
-  // Lazy photos only load once their accordion opens, so the wait starts there.
-  document.querySelectorAll('.training-archive__figure').forEach(function (fig) {
-    var img = fig.querySelector('img');
-    var acc = fig.closest('details');
-    if (!img || !acc || (img.complete && img.naturalWidth)) return;
-    fig.setAttribute('data-pending', '');
-    var onToggle = function () {
-      if (!acc.open) return;
-      acc.removeEventListener('toggle', onToggle);
-      whenReady(img, function () { fig.removeAttribute('data-pending'); });
+  // Training archive photos (inside accordions). One state per figure:
+  // (none) → 'preparing' → 'prepared' → 'revealed'. A qualification within
+  // ~400px of the viewport starts loading and decoding its photos while still
+  // closed; opening the accordion reveals any prepared photo (opacity only,
+  // via .is-revealed). Revealed photos stay visible on every later open.
+  // Reduced motion: no .archive-motion, so photos simply show when loaded.
+  var archive = document.querySelectorAll('.training-archive__figure');
+  if (archive.length) {
+    if (!reduce.matches) root.classList.add('archive-motion');
+    var revealFig = function (fig) {
+      if (fig.dataset.archive !== 'prepared') return;
+      var acc = fig.closest('details');
+      if (acc && !acc.open) return;          // wait for the accordion to open
+      fig.dataset.archive = 'revealed';
+      fig.classList.add('is-revealed');
     };
-    acc.addEventListener('toggle', onToggle);
-  });
+    var prepareFig = function (fig) {
+      if (fig.dataset.archive) return;
+      fig.dataset.archive = 'preparing';
+      var img = fig.querySelector('img');
+      if (img) img.loading = 'eager';        // fetch now, even while closed
+      whenReady(img, function () { fig.dataset.archive = 'prepared'; revealFig(fig); });
+    };
+    var accs = [];
+    archive.forEach(function (fig) {
+      var acc = fig.closest('details');
+      if (acc && accs.indexOf(acc) < 0) accs.push(acc);
+    });
+    accs.forEach(function (acc) {
+      var figs = acc.querySelectorAll('.training-archive__figure');
+      acc.addEventListener('toggle', function () {
+        if (!acc.open) return;
+        figs.forEach(function (fig) { prepareFig(fig); revealFig(fig); });
+      });
+    });
+    if ('IntersectionObserver' in window) {
+      var archiveIO = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.querySelectorAll('.training-archive__figure').forEach(prepareFig);
+          archiveIO.unobserve(entry.target);
+        });
+      }, { rootMargin: '400px 0px 400px 0px' });
+      accs.forEach(function (acc) { archiveIO.observe(acc); });
+    }
+  }
 
   /* ---------------------------------------------------------------------
      3b. FACE (Approach) — progressive tab selector. Without JS the four
