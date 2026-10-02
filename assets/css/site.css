@@ -784,11 +784,14 @@ textarea.finput { min-height: 112px; resize: vertical; }
 
 /* --------------------------------------------------------------------------
    Training archive strips: documentary photos beneath a major section.
-   Native horizontal scroll with snap; one photo per view on phones (with a
-   glimpse of the next), two on tablets, three on desktop. Every photo sits
-   in the same 5:4 frame. Only the strip scrolls sideways, never the page.
+   Native horizontal scroll with snap. Every photo is resized, never
+   cropped, to one shared height, so the strip reads as an even row while
+   each picture keeps its whole frame. Captions wrap to their photo's width.
+   Only the strip scrolls sideways, never the page.
    -------------------------------------------------------------------------- */
-.archive { display: grid; gap: 10px; margin-top: var(--s-2); }
+.archive { --archive-h: 220px; display: grid; gap: 10px; margin-top: var(--s-2); }
+@media (min-width: 600px) { .archive { --archive-h: 250px; } }
+@media (min-width: 1000px) { .archive { --archive-h: 270px; } }
 .archive__track {
   display: flex; gap: var(--s-2); align-items: start;
   overflow-x: auto; overscroll-behavior-x: contain;
@@ -796,13 +799,9 @@ textarea.finput { min-height: 112px; resize: vertical; }
   padding-bottom: 10px;
 }
 .archive__track:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
-.archive__item { margin: 0; flex: 0 0 88%; min-width: 0; display: grid; gap: 8px; scroll-snap-align: start; }
-/* One standard frame for every photo (5:4), filled edge to edge; the crop
-   leans slightly upward so faces stay in frame. */
-.archive__item img { width: 100%; height: auto; aspect-ratio: 5 / 4; object-fit: cover; object-position: 50% 35%; border-radius: 6px; }
+.archive__item { margin: 0; flex: 0 0 auto; display: grid; grid-template-columns: min-content; gap: 8px; scroll-snap-align: start; }
+.archive__item img { height: var(--archive-h); width: auto; max-width: none; border-radius: 6px; }
 .archive__item figcaption { font-size: var(--t-small); color: var(--muted); line-height: 1.4; }
-@media (min-width: 600px) { .archive__item { flex-basis: calc((100% - var(--s-2)) / 2); } }
-@media (min-width: 1000px) { .archive__item { flex-basis: calc((100% - 2 * var(--s-2)) / 3); } }
 .archive__nav { display: none; }
 @media (min-width: 1000px) and (hover: hover) {
   .archive__nav:not([hidden]) { display: flex; justify-content: flex-end; gap: 8px; }

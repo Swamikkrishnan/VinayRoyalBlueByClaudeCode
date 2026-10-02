@@ -165,7 +165,8 @@ reserved before the image loads.
   (`certified`), Extensive Practice & Study (`study`), Personal
   Transformation (`personal`) and Ongoing Practice (`ongoing`). Native scroll with snap: one photo per view on
   phones, two on tablets, three on desktop, with small previous/next buttons
-  on wide screens. No autoplay, no looping, natural ratios.
+  on wide screens. No autoplay, no looping. Every photo is resized, never
+  cropped, to one shared height.
 
   **Adding photos:** name them `training-<series>-<NN>.jpg` and drop them in
   `assets/images/`, numbering on from the last one with no gaps, e.g.
