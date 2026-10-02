@@ -595,7 +595,11 @@ textarea.finput { min-height: 112px; resize: vertical; }
 .offering__desc { max-width: var(--measure); }
 .offering__meta { display: flex; flex-wrap: wrap; gap: 4px 20px; align-items: baseline; color: var(--muted); margin-top: 4px; }
 .offering__price { color: var(--text); font-size: var(--t-sub); }
-.offering__note { color: var(--muted); font-size: var(--t-small); line-height: 1.5; max-width: var(--measure); }
+/* Donation-based exchange (Crucible): one body size; hierarchy by colour,
+   weight and spacing only. */
+.offering__exchange { display: grid; gap: 2px; margin-top: var(--s-1); max-width: var(--measure); }
+.offering__exchange p { margin: 0; }
+.offering__exchange-label { color: var(--accent); font-weight: 600; }
 .offering .accordion { border-bottom: 0; }
 @media (min-width: 860px) {
   .offering__head { grid-template-columns: 1fr auto; column-gap: var(--s-4); }
