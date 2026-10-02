@@ -835,12 +835,12 @@ textarea.finput { min-height: 112px; resize: vertical; }
 .archive__btn:hover, .archive__btn:focus-visible { border-color: var(--accent); }
 .archive__btn:disabled { opacity: .35; cursor: default; border-color: var(--line); }
 
-/* Ongoing Practice: two photos side by side at one shared height (each grows
-   in proportion to its ratio, --ar); stacked on phones. No crop. */
-.photo-row { display: flex; gap: var(--s-2); max-width: 680px; }
-.photo-row figure { margin: 0; flex: var(--ar, 1) 1 0; min-width: 0; }
-.photo-row img { width: 100%; height: auto; border-radius: 6px; }
-@media (max-width: 559px) { .photo-row { display: grid; grid-template-columns: minmax(0, 1fr); } }
+/* A section that ends with an archive strip closes with one short,
+   intentional gap (about 28px on phones to 48px on desktop) instead of the
+   full section padding, and the section after it starts a little sooner,
+   so the strip does not trail a blank band. */
+.section:has(> .wrap > .archive:last-child) { padding-bottom: clamp(1.75rem, 4vw, 3rem); }
+.section:has(> .wrap > .archive:last-child) + .section { padding-top: clamp(2.5rem, 6vw, 4rem); }
 
 /* --------------------------------------------------------------------------
    How the work takes shape: a short bridge between Vinay and the five areas.

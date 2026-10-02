@@ -160,11 +160,11 @@ reserved before the image loads.
   container is 800px+ (so the desktop section index is accounted for); the
   edge facing the text fades into the navy via `mask-image`. Stacked, the
   DOM order is always text then photo, capped at 640px and 78vh.
-- **Archive strips** (`.archive[data-archive]`): three horizontal strips on
+- **Archive strips** (`.archive[data-archive]`): four horizontal strips on
   the Training page, one under each section: Certified Qualifications
-  (`certified`), Extensive Practice & Study (`study`) and Personal
-  Transformation (`personal`). Ongoing Practice has a simple two-photo row
-  (`training-ongoing-01/02.jpg`) instead of a strip. Native scroll with snap: swipe, mouse-drag, or tap the
+  (`certified`), Extensive Practice & Study (`study`), Personal
+  Transformation (`personal`) and Ongoing Practice (`ongoing`, the
+  Stillness, Breath & Movement photos). Native scroll with snap: swipe, mouse-drag, or tap the
   arrows to glide to the next photo; a counter shows the position. Every slide
   is the same frame; the whole photo sits centred inside it on a quiet navy
   ground (never cropped or stretched). Phones: one frame at a time, edge to
