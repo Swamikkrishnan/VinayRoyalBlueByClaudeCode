@@ -820,20 +820,21 @@ textarea.finput { min-height: 112px; resize: vertical; }
 .shape p { margin: 0; }
 .shape__statements { display: grid; gap: 2px; }
 .shape__box {
-  display: grid; gap: 12px; justify-self: start; max-width: 100%;
+  display: grid; gap: 10px; justify-self: start; max-width: 100%;
   background: var(--ink-1); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: var(--s-2);
+  padding: var(--s-2) 18px;
 }
-.shape__places { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: auto auto; justify-content: start; gap: 6px 20px; }
-.shape__places li { position: relative; padding-left: 12px; line-height: 1.5; }
+.shape__places { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: auto auto; justify-content: start; gap: 4px 20px; }
+/* each phrase carries its own short accent line, not joined to the next */
+.shape__places li { position: relative; padding-left: 11px; line-height: 1.5; }
 .shape__places li::before {
-  content: ""; position: absolute; left: 0; top: .7em;
-  width: 4px; height: 4px; border-radius: 50%; background: var(--accent); opacity: .8;
+  content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 2px; height: 18px; border-radius: 1px; background: var(--accent); opacity: .6;
 }
 .shape__places li:last-child { grid-column: 1 / -1; }
 @container (min-width: 600px) {
-  .shape__box { padding: var(--s-3) calc(var(--s-3) + 4px); gap: 14px; }
-  .shape__places { grid-template-columns: repeat(3, max-content); gap: 8px var(--s-4); }
+  .shape__box { padding: 20px 24px; gap: 10px; }
+  .shape__places { grid-template-columns: repeat(3, max-content); gap: 6px 32px; }
   .shape__places li:last-child { grid-column: span 2; }
 }
 .shape__begin { margin-top: 4px; }
