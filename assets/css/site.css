@@ -798,6 +798,16 @@ textarea.finput { min-height: 112px; resize: vertical; }
    -------------------------------------------------------------------------- */
 .wrap--wide { max-width: 1240px; }
 .editorial-host { container-type: inline-size; }
+/* About, Today: the closing photo of the personal story carries more weight.
+   A light 3:4 crop (trimming canopy above and rock below; the figure, the
+   mountains and the falls stay whole), filling its column, with a quiet
+   text link to Training & Background just beneath it. */
+.editorial__media--feature { display: grid; justify-items: start; gap: var(--s-2); }
+.editorial .editorial__media--feature img { width: min(100%, 460px); aspect-ratio: 2 / 3; object-fit: cover; object-position: 50% 58%; margin-inline: 0; }
+@container (min-width: 800px) { .editorial .editorial__media--feature img { width: 100%; aspect-ratio: 3 / 4; } }
+.text-cta { display: inline-flex; align-items: center; gap: 10px; min-height: 40px; color: var(--text); text-decoration: none; }
+.text-cta span[aria-hidden] { color: var(--accent); transition: transform var(--motion-fast) var(--ease); }
+.text-cta:hover span[aria-hidden], .text-cta:focus-visible span[aria-hidden] { transform: translateX(3px); }
 .editorial { display: grid; gap: var(--s-4); }
 /* The figure always spans its column (so the photo's percentage width can
    resolve before it loads); the photo centres inside it. */
