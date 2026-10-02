@@ -135,9 +135,48 @@
   // connection, cached or not. revealPhoto() is also used for photos that
   // are added later (carousel auto-discovery).
   var revealPhoto = function (fig) { fig.classList.add('is-in'); };
+  var T0 = performance.now();
   if (!reduce.matches && 'IntersectionObserver' in window) {
     root.classList.add('motion-ready');
     var targets = document.querySelectorAll('[data-reveal], [data-seq], [data-reveal-img]');
+    // Cascade: the readable blocks inside each section, in reading order.
+    // Layout wrappers are opened up; lists, figures, dropdowns, forms,
+    // carousels and other composed pieces count as one block each.
+    var KEEP = 'p,h1,h2,h3,h4,ul,ol,dl,figure,details,form,svg,a,button,.btn-row,[data-stagger],.archive,.face,.accordion-group,.metrics,.quad,.pair,.form-sent,.form-errors,.link-list,.sessions,.contact-form';
+    document.querySelectorAll('[data-reveal]').forEach(function (box) {
+      var items = [];
+      var collect = function (el, depth) {
+        Array.prototype.forEach.call(el.children, function (c) {
+          if (c.hasAttribute('data-reveal-img') || c.hasAttribute('data-reveal') || c.tagName === 'SCRIPT') return;
+          if (depth < 4 && !c.matches(KEEP) && c.children.length > 1) collect(c, depth + 1);
+          else items.push(c);
+        });
+      };
+      collect(box, 0);
+      if (!items.length) items = [box];
+      // Start times in reading order: a block waits for the one above it, and
+      // for every item of a staggered list above it.
+      var cs = getComputedStyle(document.documentElement);
+      var step = parseFloat(cs.getPropertyValue('--cascade')) || 160;
+      var stag = parseFloat(cs.getPropertyValue('--stagger')) || 120;
+      var at = 0;
+      items.forEach(function (it) {
+        it.classList.add('rv-item');
+        it.style.setProperty('--cd', Math.round(at) + 'ms');
+        var list = it.matches('[data-stagger]') ? it : null;
+        at += step + (list ? 160 + Math.max(0, Math.min(list.children.length, 7) - 1) * stag : 0);
+      });
+      box.dataset.span = Math.round(at);
+      box.classList.add('rv-ready');
+    });
+    // Page openings: each line a beat after the one before, in reading order.
+    var SEQ_STEP = 220, seqCount = 0;
+    document.querySelectorAll('main > section').forEach(function (sec) {
+      var lines = sec.querySelectorAll('[data-seq]');
+      if (lines.length && !seqCount) seqCount = lines.length;
+      lines.forEach(function (el, i) { el.style.setProperty('--sd', (i * SEQ_STEP) + 'ms'); });
+    });
+    var OPENING_PHOTO = 80 + SEQ_STEP * Math.max(0, Math.min(seqCount, 5) - 1) + 200;  // after the last line starts
     // Stagger index for list / grid items (capped so long lists stay calm).
     document.querySelectorAll('[data-stagger]').forEach(function (list) {
       Array.prototype.forEach.call(list.children, function (item, i) { item.style.setProperty('--i', Math.min(i, 6)); });
@@ -151,6 +190,17 @@
       el.dataset.inAt = Date.now();
       el.classList.add('is-in');
     };
+    // Sections that start together go one after another (top to bottom), so
+    // their cascades never interleave. The wait is capped to stay responsive.
+    var nextSlot = 0;
+    var revealSection = function (el) {
+      if (el.classList.contains('is-in') || el.dataset.queued) return;
+      var now = Date.now(), start = Math.max(now, nextSlot);
+      nextSlot = start + Math.min(1400, Number(el.dataset.span) || 160);
+      if (start - now < 20) return reveal(el);
+      el.dataset.queued = '1';
+      setTimeout(function () { reveal(el); }, start - now);
+    };
     // A photo inside a revealing section waits for that section's own fade;
     // a standalone photo (page openings) follows its text a beat later.
     var showPhoto = function (fig, extra) {
@@ -161,9 +211,16 @@
         var host = parent && (parent.closest('[data-reveal]') || parent.querySelector(':scope > [data-reveal]'));
         var go = function () { window.requestAnimationFrame(function () { reveal(fig); }); };
         var wait = 200;
-        if (host) {
-          if (!host.classList.contains('is-in')) { if (host.contains(fig)) reveal(host); else { setTimeout(function () { fig.dataset.pending = ''; showPhoto(fig, extra); }, 150); return; } }
-          wait = msOf(host) * 0.6 - (Date.now() - Number(host.dataset.inAt || 0));
+        var seqs = !host && fig.closest('section') ? fig.closest('section').querySelectorAll('[data-seq]') : [];
+        if (seqs.length) {
+          // opening lines start 220ms apart from ~80ms after load; the photo follows the last
+          wait = OPENING_PHOTO - (performance.now() - T0);
+        } else if (host) {
+          // never start a section early on a photo's account: wait for its text
+          if (!host.classList.contains('is-in')) { setTimeout(function () { fig.dataset.pending = ''; showPhoto(fig, extra); }, 150); return; }
+          var first = host.querySelector('.rv-item');
+          var above = first && fig.getBoundingClientRect().top < first.getBoundingClientRect().top - 40;
+          wait = (above ? 0 : msOf(host) * 0.6) - (Date.now() - Number(host.dataset.inAt || 0));
         }
         wait = Math.max(0, wait) + (extra || 0);
         if (wait > 0) setTimeout(go, wait); else go();
@@ -194,14 +251,14 @@
       targets.forEach(function (el) {                    // anything scrolled to meanwhile
         if (el.hasAttribute('data-reveal-img') || el.classList.contains('is-in')) return;
         var b = el.getBoundingClientRect();
-        if (b.top < window.innerHeight * 0.88 && b.bottom > 0) reveal(el);
+        if (b.top < window.innerHeight * 0.88 && b.bottom > 0) { if (el.hasAttribute('data-seq')) reveal(el); else revealSection(el); }
       });
-    }, 1100);
+    }, OPENING_PHOTO + 300);
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
         if (opening && !entry.target.hasAttribute('data-seq')) return;  // handled by the opening pass
-        reveal(entry.target);
+        if (entry.target.hasAttribute('data-seq')) reveal(entry.target); else revealSection(entry.target);
         io.unobserve(entry.target);
       });
     }, { rootMargin: '0px 0px -12% 0px', threshold: 0.05 });
@@ -233,9 +290,9 @@
         targets.forEach(function (el) {
           if (el.hasAttribute('data-reveal-img') || el.hasAttribute('data-seq')) return;
           var b = el.getBoundingClientRect();
-          if (b.top < window.innerHeight && b.bottom > 0) reveal(el);
+          if (b.top < window.innerHeight && b.bottom > 0) revealSection(el);
         });
-      }, seqShown ? 900 : 0);
+      }, seqShown ? OPENING_PHOTO + 250 : 0);
     }, 80);
     // Safety net: text already scrolled past (e.g. after a jump link) is never
     // left invisible. Content further down keeps its normal fade.
