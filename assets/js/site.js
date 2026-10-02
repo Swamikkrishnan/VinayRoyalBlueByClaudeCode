@@ -405,6 +405,10 @@
      4c. Training archive strips — native horizontal scroll with snap.
          Small previous/next buttons appear on wide screens only; they are
          disabled at either end. No autoplay, no looping.
+         Each strip names its series (data-archive="certified" | "study" |
+         "personal"). Photos in the markup carry captions and alt text; any
+         further numbered files (assets/images/training-<series>-NN.jpg)
+         are found automatically and appended, stopping at the first gap.
      --------------------------------------------------------------------- */
   document.querySelectorAll('[data-archive]').forEach(function (strip) {
     var track = strip.querySelector('.archive__track');
@@ -429,6 +433,38 @@
     track.addEventListener('scroll', function () { window.requestAnimationFrame(update); }, { passive: true });
     window.addEventListener('resize', update);
     update();
+
+    // Auto-discovery of further numbered photos, once the strip is near view.
+    var series = strip.getAttribute('data-archive');
+    if (!/^[a-z]+$/.test(series || '')) return;
+    var label = track.getAttribute('aria-label') || 'Training photograph';
+    var probe = function (n) {
+      var src = 'assets/images/training-' + series + '-' + (n < 10 ? '0' : '') + n + '.jpg';
+      if (track.querySelector('img[src="' + src + '"]')) { probe(n + 1); return; }
+      var img = new Image();
+      img.onload = function () {
+        var fig = document.createElement('figure');
+        fig.className = 'archive__item';
+        img.alt = label.replace(/^Photographs/, 'Photograph');
+        img.width = img.naturalWidth; img.height = img.naturalHeight;
+        fig.appendChild(img);
+        track.appendChild(fig);
+        update();
+        probe(n + 1);
+      };
+      img.src = src;                       // a missing file simply ends the search
+    };
+    var start = function () { probe(track.querySelectorAll('.archive__item').length + 1); };
+    if ('IntersectionObserver' in window) {
+      var seen = new IntersectionObserver(function (entries) {
+        if (!entries[0].isIntersecting) return;
+        seen.disconnect();
+        start();
+      }, { rootMargin: '600px 0px' });
+      seen.observe(strip);
+    } else {
+      start();
+    }
   });
 
   /* ---------------------------------------------------------------------

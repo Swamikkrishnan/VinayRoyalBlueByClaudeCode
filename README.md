@@ -160,8 +160,16 @@ reserved before the image loads.
   container is 800px+ (so the desktop section index is accounted for); the
   edge facing the text fades into the navy via `mask-image`. Stacked, the
   DOM order is always text then photo, capped at 640px and 78vh.
-- **Archive strips** (`.archive[data-archive]`): two horizontal strips on the
-  Training page, under Certified Qualifications and under Personal
-  Transformation. Native scroll with snap: one photo per view on phones, two
-  on tablets, three on desktop, with small previous/next buttons on wide
-  screens. No autoplay, no looping, natural ratios.
+- **Archive strips** (`.archive[data-archive]`): three horizontal strips on
+  the Training page, one under each section: Certified Qualifications
+  (`certified`), Extensive Practice & Study (`study`) and Personal
+  Transformation (`personal`). Native scroll with snap: one photo per view on
+  phones, two on tablets, three on desktop, with small previous/next buttons
+  on wide screens. No autoplay, no looping, natural ratios.
+
+  **Adding photos:** name them `training-<series>-<NN>.jpg` and drop them in
+  `assets/images/`, numbering on from the last one with no gaps, e.g.
+  `training-certified-05.jpg`, `training-study-02.jpg`,
+  `training-personal-04.jpg`. They appear in the right strip automatically
+  (no caption). For a caption and proper alt text, add a `<figure>` for the
+  file to that strip in `training.html`, like the existing ones.
