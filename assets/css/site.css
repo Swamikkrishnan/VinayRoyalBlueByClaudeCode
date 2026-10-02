@@ -805,6 +805,12 @@ textarea.finput { min-height: 112px; resize: vertical; }
 .editorial__media--feature { display: grid; justify-items: start; gap: var(--s-2); }
 .editorial .editorial__media--feature img { width: min(100%, 460px); aspect-ratio: 2 / 3; object-fit: cover; object-position: 50% 58%; margin-inline: 0; }
 @container (min-width: 800px) { .editorial .editorial__media--feature img { width: 100%; aspect-ratio: 3 / 4; } }
+/* The link sits under the photo when stacked, under the text when side by side. */
+.editorial .text-cta--split { display: none; }
+@container (min-width: 800px) {
+  .editorial .text-cta--split { display: inline-flex; justify-self: start; }
+  .editorial .text-cta--stacked { display: none; }
+}
 .text-cta { display: inline-flex; align-items: center; gap: 10px; min-height: 40px; color: var(--text); text-decoration: none; }
 .text-cta span[aria-hidden] { color: var(--accent); transition: transform var(--motion-fast) var(--ease); }
 .text-cta:hover span[aria-hidden], .text-cta:focus-visible span[aria-hidden] { transform: translateX(3px); }
