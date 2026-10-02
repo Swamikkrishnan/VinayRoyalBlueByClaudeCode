@@ -9,6 +9,9 @@
 (function () {
   'use strict';
   var root = document.documentElement;
+  // This script's ?v= stamp, bumped on every release; used to keep photo
+  // look-ups from reusing a stale cached copy of a renamed file.
+  var BUILD = ((document.currentScript && document.currentScript.src.match(/[?&]v=(\d+)/)) || [])[1] || '';
   root.classList.add('js');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -441,6 +444,7 @@
     var probe = function (n) {
       var src = 'assets/images/training-' + series + '-' + (n < 10 ? '0' : '') + n + '.jpg';
       if (track.querySelector('img[src="' + src + '"]')) { probe(n + 1); return; }
+      if (BUILD) src += '?v=' + BUILD;
       var img = new Image();
       img.onload = function () {
         var fig = document.createElement('figure');
