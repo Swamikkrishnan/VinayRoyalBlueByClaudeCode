@@ -88,8 +88,8 @@ the header flow.
   stays centred, inset equally to clear it); below that it is a horizontal bar under the header
   (50px + border = `--subnav-h`). Anchors land below the sticky bars.
 - Emphasis: Gillius for explanation, EB Garamond (`.insight`) only for
-  complete distilled sentences; `.anchor` (semibold) marks a short scanning
-  phrase; the blue highlight sweep is kept to one per neighbourhood.
+  complete distilled sentences; `.scan-mark` is the single site-wide
+  highlight (semibold over a translucent accent wash) for scanning phrases.
 - Gillius ADF maps "oe" to "œ" through its required-ligature table; `body`
   sets `font-feature-settings: "rlig" 0` so "does" never reads "dœs".
 - Mobile nav traps nothing, closes on Escape, returns focus to the toggle.
@@ -121,6 +121,10 @@ Three forms, one per relationship, all delivered by [Web3Forms](https://web3form
   the `botcheck` honeypot, "Sending…", then a POST. The thank-you panel shows
   only when Web3Forms answers with HTTP OK **and** `success: true`; anything
   else restores the button, keeps what was typed and shows the error.
+- The Alignment Call asks which weekdays usually work (several allowed, at
+  least one) and a preferred time in India time; no dates are generated.
+  Ticked boxes in a `fieldset[data-join="Label"]` are sent as one readable
+  line, e.g. `Preferred days: Monday, Wednesday, Saturday`.
 - Without JavaScript the form posts normally and Web3Forms shows its own
   confirmation page.
 - `group-interest.html?experience=<key>&event=YYYY-MM-DD` preselects the

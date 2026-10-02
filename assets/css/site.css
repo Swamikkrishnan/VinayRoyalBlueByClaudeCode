@@ -31,7 +31,6 @@
   --text:       #F7F6F2;
   --muted:      #B4BCD4;
   --accent:     #5DB8F0;
-  --accent-bg:  #2A44B8;   /* highlight-sweep fill, sits under text */
   --warn:       #E0955C;
 
   /* Type families */
@@ -173,24 +172,20 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 .lede--wide { max-width: var(--measure); }
 .narrative { max-width: 640px; }
 /* Emphasis system. Gillius = explanation, EB Garamond = distilled insight.
-   Level 2a (.anchor): semibold warm-white, for dense rows and paired phrases.
-   Level 2b (.scan-mark): semibold over a faint accent wash; the default
-   scanning anchor in body text and expanded content (one per paragraph).
+   Level 2 (.scan-mark): the one site-wide highlight. Semibold warm-white
+   over a translucent wash of the accent blue; clearly visible when skimming,
+   never a badge (no border, no shadow, soft rounded ends).
    Level 3 (.insight): a complete quotable sentence in EB Garamond. */
-.anchor { font-weight: 600; color: var(--text); }
-/* Scanning anchor: a faint transparent wash from the existing accent blue
-   beneath a key phrase. Visible when skimming, nearly gone when reading. */
 .scan-mark {
   font-weight: 600; color: var(--text);
-  background: rgba(93, 184, 240, .10);
-  padding: 0 .14em; border-radius: 3px;
+  background: rgba(93, 184, 240, .2);
+  padding: .02em .22em; border-radius: .3em;
   -webkit-box-decoration-break: clone; box-decoration-break: clone;
 }
 .lede--serif { font-family: var(--serif); }  /* same size as .lede; the face makes the distinction */
 .page-approach .lede { font-size: calc(var(--t-sub) - 2px); }
 .insight { font-family: var(--serif); font-size: clamp(1.45rem, 5vw, 1.8rem); line-height: 1.3; color: var(--text); max-width: 32ch; text-wrap: pretty; }
 .insight--sm { font-size: clamp(1.2rem, 4.2vw, 1.4rem); line-height: 1.35; max-width: 44ch; }
-.muted [data-hl], .muted .hl { color: var(--text); }
 .pair-lines { display: grid; gap: var(--s-2); max-width: var(--measure); }
 .pair-lines .rule { margin: var(--s-1) 0; }
 .eyebrow { font-family: var(--sans); font-weight: 400; line-height: 1.4; color: var(--muted); font-size: var(--t-small); letter-spacing: .14em; text-transform: uppercase; }
@@ -199,20 +194,6 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 .prose { max-width: var(--measure); }
 .prose > * + * { margin-top: var(--s-2); }
 .lines { line-height: 1.7; }
-
-/* --------------------------------------------------------------------------
-   Highlight sweep — a filled backdrop that draws in behind emphasised text
-   -------------------------------------------------------------------------- */
-[data-hl], .hl {
-  background: linear-gradient(var(--accent-bg), var(--accent-bg)) no-repeat;
-  background-size: 0% 100%;
-  color: var(--text);
-  padding: 0 .12em;
-  -webkit-box-decoration-break: clone; box-decoration-break: clone;
-}
-.hl, .js [data-hl] { background-size: 100% 100%; } /* fail-open: filled without JS */
-.js.motion-ready [data-hl] { background-size: 0% 100%; transition: background-size .7s var(--ease); }
-.js.motion-ready [data-hl].is-in { background-size: 100% 100%; }
 
 /* --------------------------------------------------------------------------
    Reveal-on-scroll — content is visible by default; JS only adds motion
@@ -238,7 +219,6 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
   .js.motion-ready [data-reveal], .js.motion-ready [data-seq], .js.motion-ready [data-reveal-img] { opacity: 1 !important; transform: none !important; filter: none !important; }
-  .js [data-hl] { background-size: 100% 100% !important; }
 }
 
 /* --------------------------------------------------------------------------
@@ -833,10 +813,78 @@ textarea.finput { min-height: 112px; resize: vertical; }
 /* --------------------------------------------------------------------------
    How the work takes shape: a short bridge between Vinay and the five areas.
    -------------------------------------------------------------------------- */
-/* Every line uses the core body size; emphasis comes from line breaks and
-   scan-marks only. The opening pair sits on two lines with no gap. */
-.shape { display: grid; gap: var(--s-2); max-width: var(--measure); }
-.shape__pair p { margin: 0; }
+/* Three steps on one quiet vertical path: what is happening (stuck →
+   movement, expanding → capacity), where it shows up (a panel in the other
+   ground colour), where we begin. One body size throughout; hierarchy comes
+   from the path, the panel and the scan-marks. Each step fades in once, in
+   order, as the section arrives; the path draws down with it. */
+.shape {
+  --rail-x: 2rem;            /* text inset from the path */
+  --node: 9px;
+  --node-top: .62em;         /* centre of the first text line */
+  --panel-pad: var(--s-3);
+  --step-gap: var(--s-4);
+  display: grid; gap: var(--step-gap); max-width: var(--measure);
+  padding-left: var(--rail-x);
+}
+.shape p { margin: 0; }
+.shape__step { position: relative; }
+/* node */
+.shape__step::before {
+  content: ""; position: absolute; z-index: 1;
+  left: calc(-1 * var(--rail-x)); top: var(--node-top);
+  width: var(--node); height: var(--node); border-radius: 50%;
+  border: 1px solid var(--accent); background: var(--ink-2);
+}
+/* path segment down to the next node */
+.shape__step:not(:last-child)::after {
+  content: ""; position: absolute;
+  left: calc(-1 * var(--rail-x) + var(--node) / 2 - .5px);
+  top: calc(var(--node-top) + var(--node));
+  height: calc(100% - var(--node-top) - var(--node) + var(--step-gap) + var(--next-top, var(--node-top)));
+  width: 1px; background: var(--line); transform-origin: top;
+}
+.shape__step--what { --next-top: calc(var(--panel-pad) + var(--node-top)); }
+.shape__step--where {
+  --node-top: calc(var(--panel-pad) + .62em);
+  --next-top: .62em;
+  background: var(--ink-1); border-radius: var(--radius);
+  padding: var(--panel-pad);
+}
+.shape__step--where::before { background: var(--accent); }
+.shape__step--begin::before { box-shadow: 0 0 0 3px var(--ink-2), 0 0 0 4px rgba(93, 184, 240, .45); }
+/* the two pairings: stuck → movement, expanding → capacity */
+.shape__pairs { display: grid; gap: 4px; }
+.shape__link { display: none; }
+@media (min-width: 640px) {
+  .shape__pairs { grid-template-columns: max-content 3.25rem max-content; align-items: baseline; column-gap: 14px; row-gap: 6px; }
+  .shape__pair { display: contents; }
+  .shape__link { display: block; align-self: center; height: 1px; background: rgba(93, 184, 240, .5); position: relative; }
+  .shape__link::after {
+    content: ""; position: absolute; right: -2px; top: -2px;
+    width: 5px; height: 5px; border-radius: 50%; background: var(--accent);
+  }
+}
+@media (max-width: 639px) {
+  .shape { --rail-x: 1.5rem; --panel-pad: var(--s-2); }
+}
+/* sequence: once, slowly, then still */
+.js.motion-ready .shape__step { opacity: 0; transition: opacity var(--motion-slow) var(--ease); }
+.js.motion-ready .shape__step:not(:last-child)::after { transform: scaleY(0); transition: transform var(--motion-slow) var(--ease); }
+.js.motion-ready .is-in .shape__step { opacity: 1; }
+.js.motion-ready .is-in .shape__step:not(:last-child)::after { transform: none; }
+.js.motion-ready .is-in .shape__step--what { transition-delay: 150ms; }
+.js.motion-ready .is-in .shape__step--what::after { transition-delay: 500ms; }
+.js.motion-ready .is-in .shape__step--where { transition-delay: 650ms; }
+.js.motion-ready .is-in .shape__step--where::after { transition-delay: 1000ms; }
+.js.motion-ready .is-in .shape__step--begin { transition-delay: 1150ms; }
+@media (prefers-reduced-motion: reduce) {
+  .js.motion-ready .shape__step { opacity: 1 !important; }
+  .js.motion-ready .shape__step::after { transform: none !important; }
+}
+
+/* Before you begin (alignment.html): inline Privacy and Scope accordions. */
+.before-begin { display: grid; gap: var(--s-1); }
 
 /* Ways to work together: one ruled row per relationship, label then link. */
 .pathways { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--line); max-width: 46rem; }

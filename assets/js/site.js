@@ -125,7 +125,7 @@
      --------------------------------------------------------------------- */
   if (!reduce.matches && 'IntersectionObserver' in window) {
     root.classList.add('motion-ready');
-    var targets = document.querySelectorAll('[data-reveal], [data-seq], [data-hl], [data-reveal-img]');
+    var targets = document.querySelectorAll('[data-reveal], [data-seq], [data-reveal-img]');
     // Photos fade in only once decoded (cached images resolve at once).
     var show = function (el) {
       if (el.hasAttribute('data-reveal-img')) {
@@ -276,135 +276,18 @@
   }
 
   /* ---------------------------------------------------------------------
-     4. Alignment Call — day/slot picker in the visitor's own time zone.
-        IST is the practice's home time zone.
+     4. Form helpers. A fieldset[data-require-one] needs at least one box
+        ticked (native validation message on the first box).
      --------------------------------------------------------------------- */
-  var slotsWrap = document.getElementById('call-slots');
-  if (slotsWrap) {
-    var IST_OFFSET_MIN = 330;
-    var tzNote = document.getElementById('call-tz-note');
-    var slotInput = document.getElementById('f-slot');
-
-    function istParts(d) {
-      var p = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' })
-        .format(d).split('-').map(Number);
-      return { y: p[0], m: p[1], d: p[2] };
-    }
-
-    function buildDays() {
-      var now = new Date();
-      var t = istParts(now);
-      var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-      var isIST = tz === 'Asia/Kolkata' || tz === 'Asia/Calcutta';
-      var fTime = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' });
-      var fDay = new Intl.DateTimeFormat(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
-      var fDayIST = new Intl.DateTimeFormat(undefined, { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' });
-      var fWk = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
-      var days = [];
-      for (var k = 0; days.length < 6 && k < 14; k++) {
-        var base = new Date(Date.UTC(t.y, t.m - 1, t.d + k));
-        if (base.getUTCDay() === 0) continue;
-        var raw = [[15, 0, '3:00 PM'], [15, 45, '3:45 PM']].map(function (s) {
-          var dt = new Date(Date.UTC(t.y, t.m - 1, t.d + k, s[0], s[1]) - IST_OFFSET_MIN * 60000);
-          return { dt: dt, lbl: s[2] };
-        }).filter(function (s) { return s.dt - now > 3 * 3600000; });
-        if (!raw.length) continue;
-        var dayLocal = fDay.format(raw[0].dt);
-        days.push({
-          label: isIST ? fDayIST.format(raw[0].dt) : dayLocal,
-          slots: raw.map(function (s) {
-            var sameDay = fDay.format(s.dt) === dayLocal;
-            var local = (sameDay ? '' : fWk.format(s.dt) + ' ') + fTime.format(s.dt);
-            var value = fDayIST.format(s.dt) + ', ' + s.lbl + ' IST' + (isIST ? '' : ' (' + fDay.format(s.dt) + ' ' + fTime.format(s.dt) + ' ' + tz + ')');
-            return { value: value, local: isIST ? s.lbl : local, ist: isIST ? 'IST' : s.lbl + ' IST' };
-          }),
-        });
-      }
-      var off = '';
-      try { off = new Intl.DateTimeFormat(undefined, { timeZone: tz, timeZoneName: 'short' }).formatToParts(now).find(function (p) { return p.type === 'timeZoneName'; }).value; } catch (e) {}
-      var city = tz.split('/').pop().replace(/_/g, ' ');
-      return { days: days, tzLabel: isIST ? 'India (IST)' : city + (off ? ' · ' + off : ''), isIST: isIST };
-    }
-
-    var FLEX_VALUE = 'Flexible / later';
-
-    // Dropdown-based picker: a day <select> and a time <select>, rebuilt from
-    // buildDays() so the choices are always the next real days from *today*
-    // (recomputed on every page load — nothing here goes stale) in the
-    // visitor's own time zone.
-    function renderSlots() {
-      var built = buildDays();
-      if (tzNote) {
-        tzNote.textContent = 'Shown in your time · ' + built.tzLabel + (built.isIST ? '.' : ', with India time (IST) beneath each.');
-      }
-      slotsWrap.innerHTML = '';
-
-      var row = document.createElement('div');
-      row.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px';
-
-      var dayField = document.createElement('div');
-      dayField.className = 'ffield';
-      var dayLabel = document.createElement('label');
-      dayLabel.className = 'flabel'; dayLabel.htmlFor = 'f-call-day'; dayLabel.textContent = 'Day';
-      var daySelect = document.createElement('select');
-      daySelect.className = 'finput'; daySelect.id = 'f-call-day';
-      built.days.forEach(function (day, i) {
-        var opt = document.createElement('option');
-        opt.value = String(i); opt.textContent = day.label;
-        daySelect.appendChild(opt);
-      });
-      var flexOpt = document.createElement('option');
-      flexOpt.value = 'flex'; flexOpt.textContent = 'I’m flexible, or need a later date';
-      daySelect.appendChild(flexOpt);
-      dayField.appendChild(dayLabel); dayField.appendChild(daySelect);
-
-      var timeField = document.createElement('div');
-      timeField.className = 'ffield';
-      var timeLabel = document.createElement('label');
-      timeLabel.className = 'flabel'; timeLabel.htmlFor = 'f-call-time'; timeLabel.textContent = 'Time';
-      var timeSelect = document.createElement('select');
-      timeSelect.className = 'finput'; timeSelect.id = 'f-call-time';
-      timeField.appendChild(timeLabel); timeField.appendChild(timeSelect);
-
-      function updateSlotValue() {
-        if (daySelect.value === 'flex') {
-          slotInput.value = FLEX_VALUE;
-          return;
-        }
-        var day = built.days[Number(daySelect.value)];
-        var slot = day && day.slots[Number(timeSelect.value)];
-        slotInput.value = slot ? slot.value : '';
-      }
-
-      function populateTimes() {
-        timeSelect.innerHTML = '';
-        if (daySelect.value === 'flex') {
-          timeSelect.disabled = true;
-          var flexTimeOpt = document.createElement('option');
-          flexTimeOpt.textContent = 'Any time';
-          timeSelect.appendChild(flexTimeOpt);
-        } else {
-          timeSelect.disabled = false;
-          var day = built.days[Number(daySelect.value)];
-          (day ? day.slots : []).forEach(function (s, i) {
-            var opt = document.createElement('option');
-            opt.value = String(i);
-            opt.textContent = s.local + ' (' + s.ist + ')';
-            timeSelect.appendChild(opt);
-          });
-        }
-        updateSlotValue();
-      }
-
-      daySelect.addEventListener('change', populateTimes);
-      timeSelect.addEventListener('change', updateSlotValue);
-      populateTimes();
-
-      row.appendChild(dayField); row.appendChild(timeField);
-      slotsWrap.appendChild(row);
-    }
-    renderSlots();
-  }
+  document.querySelectorAll('fieldset[data-require-one]').forEach(function (set) {
+    var boxes = set.querySelectorAll('input[type="checkbox"]');
+    var check = function () {
+      var any = Array.prototype.some.call(boxes, function (b) { return b.checked; });
+      boxes[0].setCustomValidity(any ? '' : set.getAttribute('data-require-one'));
+    };
+    boxes.forEach(function (b) { b.addEventListener('change', check); });
+    check();
+  });
 
   // "I'm not sure yet" and the five specific areas are mutually exclusive.
   document.querySelectorAll('[data-exclusive-group]').forEach(function (group) {
@@ -475,7 +358,24 @@
       var bot = form.querySelector('input[name="botcheck"]');
       if (bot && bot.checked) return;          // honeypot: drop silently
       if (btn) { btn.style.minWidth = btn.offsetWidth + 'px'; btn.disabled = true; btn.textContent = 'Sending…'; }
-      var data = new FormData(form);
+      // Fields in form order. A fieldset[data-join="Label"] is sent as one
+      // readable line ("Monday, Wednesday, Saturday"), not raw repeated values.
+      var data = new FormData();
+      var joined = [];
+      Array.prototype.forEach.call(form.elements, function (el) {
+        if (!el.name || el.disabled || el.type === 'submit') return;
+        var set = el.closest('fieldset[data-join]');
+        if (set) {
+          if (joined.indexOf(set) > -1) return;
+          joined.push(set);
+          var picked = Array.prototype.filter.call(set.querySelectorAll('input:checked'), Boolean)
+            .map(function (b) { return b.value; });
+          data.append(set.getAttribute('data-join'), picked.length ? picked.join(', ') : 'Not specified');
+          return;
+        }
+        if ((el.type === 'checkbox' || el.type === 'radio') && !el.checked) return;
+        data.append(el.name, el.value);
+      });
       fetch(endpoint, { method: 'POST', headers: { Accept: 'application/json' }, body: data })
         .then(function (r) {
           return r.json().catch(function () { return null; }).then(function (body) { return { ok: r.ok, body: body }; });
@@ -485,9 +385,9 @@
             if (sent) {
               var first = String(data.get('name') || '').trim().split(/\s+/)[0];
               sent.querySelectorAll('[data-sent-name]').forEach(function (el) { el.textContent = first; });
-              var slotEl = sent.querySelector('[data-sent-slot]');
-              var slot = data.get('slot');
-              if (slotEl && slot) { slotEl.hidden = false; slotEl.querySelector('span').textContent = slot; }
+              var availEl = sent.querySelector('[data-sent-availability]');
+              var days = data.get('Preferred days'), time = data.get('Preferred time');
+              if (availEl && days && time) { availEl.hidden = false; availEl.querySelector('span').textContent = days + ' · ' + time; }
             }
             form.hidden = true;
             if (sent) { sent.hidden = false; sent.focus(); }

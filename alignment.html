@@ -25,7 +25,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="preload" href="assets/fonts/GilliusADFNo2-Regular.otf" as="font" type="font/otf" crossorigin>
-<link rel="stylesheet" href="assets/css/site.css?v=202610022234">
+<link rel="stylesheet" href="assets/css/site.css?v=202610022249">
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -80,16 +80,35 @@
       </ol>
     </div>
 
-    <nav class="link-list" aria-label="Before you begin">
-      <a href="privacy.html">Privacy <span aria-hidden="true">&rarr;</span></a>
-      <a href="offerings.html#scope">Scope &amp; Suitability <span aria-hidden="true">&rarr;</span></a>
-    </nav>
+    <div class="before-begin">
+      <h3 class="eyebrow">Before you begin</h3>
+      <div class="accordion-group">
+        <details class="accordion">
+          <summary><span class="accordion__title">Privacy</span></summary>
+          <div class="accordion__body prose">
+            <p>The Alignment Call form asks only for what helps a first conversation go well: how to reach you, and a first sketch of what brought you here.</p>
+            <p>It is <span class="scan-mark">read by Vinay alone</span>, used to prepare for your call, and <span class="scan-mark">not shared with anyone else</span>.</p>
+            <p>More detailed personal history can be discussed later once we co-sign the consent and confidentiality form.</p>
+            <p><a href="privacy.html">Read full Privacy Policy <span aria-hidden="true">&rarr;</span></a></p>
+          </div>
+        </details>
+        <details class="accordion">
+          <summary><span class="accordion__title">Scope &amp; Suitability</span></summary>
+          <div class="accordion__body prose">
+            <p>This work can support healing, self-understanding, emotional processing, embodiment, clarity, behaviour change and personal growth.</p>
+            <p>It <span class="scan-mark">does not replace</span> medical care, psychiatric treatment, psychotherapy, emergency support or other licensed professional services where those are needed. If you are in crisis or need clinical care, please reach a qualified medical professional or local emergency services first.</p>
+            <p>The form and Alignment Call help us assess whether what I offer is appropriate for your situation. If it is not, I will say so clearly and, where possible, point you toward a more suitable kind of support.</p>
+            <p><a href="offerings.html#scope">Read full Scope &amp; Suitability <span aria-hidden="true">&rarr;</span></a></p>
+          </div>
+        </details>
+      </div>
+    </div>
 
     <div>
       <div role="status" tabindex="-1" id="call-sent" class="form-sent" hidden>
         <h3>Thank you, <span data-sent-name></span>.</h3>
         <p>I&rsquo;ve received your request. I&rsquo;ll read what you&rsquo;ve shared <strong>personally</strong> and come back to you <strong>within 48 hours</strong>.</p>
-        <p data-sent-slot class="muted" hidden>Your preferred time: <span style="color:var(--text)"></span></p>
+        <p data-sent-availability class="muted" hidden>Your availability: <span style="color:var(--text)"></span></p>
       </div>
 
       <div id="call-errors" class="form-errors" role="alert" tabindex="-1" hidden></div>
@@ -100,7 +119,6 @@
         <input type="hidden" name="access_key" value="ec323d61-7be3-4555-b763-50858652113c">
         <input type="hidden" name="from_name" value="vinayswaminathan.com">
         <input type="hidden" name="subject" value="New Alignment Call Request - vinayswaminathan.com">
-        <input type="hidden" name="slot" id="f-slot" value="">
         <input type="checkbox" name="botcheck" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
 
         <div class="form__row form__row--contact">
@@ -122,7 +140,7 @@
           <label class="flabel" for="f-bring">What is bringing you here?</label>
           <textarea class="finput" id="f-bring" name="bringing" required rows="4" maxlength="4000"></textarea>
         </div>
-        <fieldset data-exclusive-group>
+        <fieldset data-exclusive-group data-join="Focus area">
           <legend>Is there an area you already feel drawn toward? (Optional)</legend>
           <div class="choices">
             <label class="choice"><input type="checkbox" name="focus_area[]" value="I'm not sure yet" data-exclusive>I&rsquo;m not sure yet</label>
@@ -133,10 +151,25 @@
             <label class="choice"><input type="checkbox" name="focus_area[]" value="Breath">Breath</label>
           </div>
         </fieldset>
+        <fieldset data-join="Preferred days" data-require-one="Please choose at least one day.">
+          <legend>Which days usually work for you?</legend>
+          <div class="choices">
+            <label class="choice"><input type="checkbox" name="day[]" value="Monday">Monday</label>
+            <label class="choice"><input type="checkbox" name="day[]" value="Tuesday">Tuesday</label>
+            <label class="choice"><input type="checkbox" name="day[]" value="Wednesday">Wednesday</label>
+            <label class="choice"><input type="checkbox" name="day[]" value="Thursday">Thursday</label>
+            <label class="choice"><input type="checkbox" name="day[]" value="Friday">Friday</label>
+            <label class="choice"><input type="checkbox" name="day[]" value="Saturday">Saturday</label>
+            <label class="choice"><input type="checkbox" name="day[]" value="Sunday">Sunday</label>
+          </div>
+        </fieldset>
         <fieldset>
-          <legend>Preferred day &amp; time for the call</legend>
-          <p id="call-tz-note" class="fhint">Shown in your time.</p>
-          <div id="call-slots"></div>
+          <legend>Preferred time <span class="fhint">(India time)</span></legend>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="Preferred time" value="3:00 PM India time" required>3:00 PM</label>
+            <label class="choice"><input type="radio" name="Preferred time" value="3:45 PM India time">3:45 PM</label>
+            <label class="choice"><input type="radio" name="Preferred time" value="Either 3:00 PM or 3:45 PM India time">Either works</label>
+          </div>
         </fieldset>
         <button class="btn btn--solid" type="submit">Request an Alignment Call <span aria-hidden="true">&rarr;</span></button>
       </form>
@@ -186,6 +219,6 @@
   </div>
 </footer>
 
-<script src="assets/js/site.js?v=202610022234" defer></script>
+<script src="assets/js/site.js?v=202610022249" defer></script>
 </body>
 </html>
