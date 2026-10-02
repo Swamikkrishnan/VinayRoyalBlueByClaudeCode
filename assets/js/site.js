@@ -188,7 +188,14 @@
       if (strip && strip.dataset.shown) showPhoto(fig, 0);   // late addition to a shown strip
     };
     var opening = true;                       // first second: the 80ms pass decides
-    setTimeout(function () { opening = false; }, 1100);
+    setTimeout(function () {
+      opening = false;
+      targets.forEach(function (el) {                    // anything scrolled to meanwhile
+        if (el.hasAttribute('data-reveal-img') || el.classList.contains('is-in')) return;
+        var b = el.getBoundingClientRect();
+        if (b.top < window.innerHeight * 0.88 && b.bottom > 0) reveal(el);
+      });
+    }, 1100);
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
