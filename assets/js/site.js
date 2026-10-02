@@ -406,12 +406,13 @@
 
   /* ---------------------------------------------------------------------
      4c. Training archive strips — native horizontal scroll with snap.
-         Small previous/next buttons appear on wide screens only; they are
-         disabled at either end. No autoplay, no looping.
+         Swipe (touch), drag (mouse) or tap the arrows, which glide to the
+         next photo; a counter shows the position. Arrows are disabled at
+         either end. No autoplay, no looping.
          Each strip names its series (data-archive="certified" | "study" |
-         "personal"). Photos in the markup carry captions and alt text; any
-         further numbered files (assets/images/training-<series>-NN.jpg)
-         are found automatically and appended, stopping at the first gap.
+         "personal" | "ongoing"). Photos in the markup carry captions and alt
+         text; any further numbered files (assets/images/training-<series>-
+         NN.jpg) are found automatically and appended, stopping at the first gap.
      --------------------------------------------------------------------- */
   document.querySelectorAll('[data-archive]').forEach(function (strip) {
     var track = strip.querySelector('.archive__track');
@@ -419,23 +420,41 @@
     if (!track || !nav) return;
     var prev = nav.querySelector('[data-dir="-1"]');
     var next = nav.querySelector('[data-dir="1"]');
+    var count = document.createElement('span');
+    count.className = 'archive__count';
+    count.setAttribute('aria-live', 'polite');
+    nav.insertBefore(count, next);
+    var smooth = function () { return reduce.matches ? 'auto' : 'smooth'; };
+    var items = function () { return track.querySelectorAll('.archive__item'); };
+    var maxScroll = function () { return track.scrollWidth - track.clientWidth; };
+    var posOf = function (el) { return el.getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft; };
+    // Index of the photo the strip is resting on (the last one at the far end).
+    var current = function () {
+      var list = items(), best = 0, dist = Infinity;
+      if (track.scrollLeft >= maxScroll() - 2) return list.length - 1;
+      list.forEach(function (it, i) {
+        var d = Math.abs(posOf(it) - track.scrollLeft);
+        if (d < dist) { dist = d; best = i; }
+      });
+      return best;
+    };
+    var goTo = function (i) {
+      var list = items();
+      i = Math.max(0, Math.min(list.length - 1, i));
+      track.scrollTo({ left: Math.min(posOf(list[i]), maxScroll()), behavior: smooth() });
+    };
     var update = function () {
-      var max = track.scrollWidth - track.clientWidth;
+      var max = maxScroll(), n = items().length;
       nav.hidden = max <= 2;
       prev.disabled = track.scrollLeft <= 2;
       next.disabled = track.scrollLeft >= max - 2;
-    };
-    var step = function (dir) {
-      var item = track.querySelector('.archive__item');
-      var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
-      var w = item ? item.getBoundingClientRect().width + gap : track.clientWidth;
-      track.scrollBy({ left: dir * w, behavior: reduce.matches ? 'auto' : 'smooth' });
+      count.textContent = (current() + 1) + ' / ' + n;
     };
     // Start at the first photo. Some browsers (Safari) re-snap a strip to a
     // later photo while images load or are added, so hold it at the start
-    // until the visitor scrolls it themselves.
+    // until the visitor moves it themselves.
     var touched = false;
-    var hold = function () { if (!touched && track.scrollLeft !== 0) track.scrollLeft = 0; };
+    var hold = function () { if (!touched && track.scrollLeft !== 0) track.scrollLeft = 0; update(); };
     ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach(function (ev) {
       track.addEventListener(ev, function () { touched = true; }, { passive: true });
     });
@@ -443,8 +462,32 @@
     track.querySelectorAll('img').forEach(function (img) { img.addEventListener('load', hold); });
     window.addEventListener('load', hold);
     hold();
-    prev.addEventListener('click', function () { step(-1); });
-    next.addEventListener('click', function () { step(1); });
+    prev.addEventListener('click', function () { goTo(current() - 1); });
+    next.addEventListener('click', function () { goTo(current() + 1); });
+    // Mouse drag: follow the pointer, then settle on the nearest photo in the
+    // direction of travel. Touch keeps the browser's native swipe.
+    var drag = null;
+    track.addEventListener('dragstart', function (e) { e.preventDefault(); });
+    track.addEventListener('pointerdown', function (e) {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      drag = { x: e.clientX, left: track.scrollLeft, from: current(), moved: 0 };
+      track.classList.add('is-dragging');
+      track.setPointerCapture(e.pointerId);
+    });
+    track.addEventListener('pointermove', function (e) {
+      if (!drag) return;
+      drag.moved = e.clientX - drag.x;
+      track.scrollLeft = drag.left - drag.moved;
+    });
+    var endDrag = function () {
+      if (!drag) return;
+      var d = drag; drag = null;
+      track.classList.remove('is-dragging');
+      if (Math.abs(d.moved) > 40) goTo(d.from + (d.moved < 0 ? 1 : -1));
+      else goTo(d.from);
+    };
+    track.addEventListener('pointerup', endDrag);
+    track.addEventListener('pointercancel', endDrag);
     track.addEventListener('scroll', function () { window.requestAnimationFrame(update); }, { passive: true });
     window.addEventListener('resize', update);
     update();

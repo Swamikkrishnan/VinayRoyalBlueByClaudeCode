@@ -784,36 +784,43 @@ textarea.finput { min-height: 112px; resize: vertical; }
 
 /* --------------------------------------------------------------------------
    Training archive strips: documentary photos beneath a major section.
-   Native horizontal scroll with snap. Every photo is resized, never
-   cropped, to one shared height, so the strip reads as an even row while
-   each picture keeps its whole frame. Captions wrap to their photo's width.
-   Only the strip scrolls sideways, never the page.
+   Native horizontal scroll with snap; swipe, drag (mouse) or tap the
+   arrows, which glide to the next photo. A counter (2 / 5) shows where you
+   are. Photos are resized, never cropped. Phones: one photo at a time,
+   edge to edge across the screen. Larger screens: one shared height, so
+   the strip reads as an even row. Only the strip scrolls sideways.
    -------------------------------------------------------------------------- */
-.archive { --archive-h: 220px; display: grid; gap: 10px; margin-top: var(--s-2); }
-@media (min-width: 600px) { .archive { --archive-h: 250px; } }
+.archive { --archive-h: 250px; display: grid; gap: 10px; margin-top: var(--s-2); }
 @media (min-width: 1000px) { .archive { --archive-h: 270px; } }
 .archive__track {
   display: flex; gap: var(--s-2); align-items: start;
   overflow-x: auto; overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory; scrollbar-width: thin; scrollbar-color: var(--line) transparent;
-  padding-bottom: 10px;
+  scroll-snap-type: x mandatory; scrollbar-width: none;
   container-type: inline-size;
 }
+.archive__track::-webkit-scrollbar { display: none; }
+.archive__track.is-dragging { scroll-snap-type: none; cursor: grabbing; user-select: none; }
+@media (hover: hover) { .archive__track { cursor: grab; } }
 .archive__track:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
 .archive__item { margin: 0; flex: 0 0 auto; display: grid; grid-template-columns: min-content; gap: 8px; scroll-snap-align: start; }
 /* shared height; a photo wider than the strip shrinks to fit it (ratio kept) */
-.archive__item img { width: auto; height: auto; max-height: var(--archive-h); max-width: 100cqw; border-radius: 6px; }
+.archive__item img { width: auto; height: auto; max-height: var(--archive-h); max-width: 100cqw; border-radius: 6px; -webkit-user-drag: none; user-select: none; }
 .archive__item figcaption { font-size: var(--t-small); color: var(--muted); line-height: 1.4; }
-/* Phones: exactly one photo per view, centred in a full-width slot. */
+/* Phones: one photo per view, full screen width, no side padding. */
 @media (max-width: 599px) {
-  .archive__item { flex: 0 0 100%; justify-content: center; }
+  .archive { margin-inline: calc(-1 * var(--gutter)); gap: 6px; }
+  .archive__track { gap: 0; }
+  .archive__item { flex: 0 0 100%; grid-template-columns: 100%; }
+  .archive__item img { width: 100%; max-width: none; max-height: none; border-radius: 0; }
+  .archive__item figcaption { padding-inline: var(--gutter); }
+  .archive__nav { padding-inline: var(--gutter); }
 }
+/* Controls: previous / counter / next, under the strip on every screen. */
 .archive__nav { display: none; }
-@media (min-width: 1000px) and (hover: hover) {
-  .archive__nav:not([hidden]) { display: flex; justify-content: flex-end; gap: 8px; }
-}
+.archive__nav:not([hidden]) { display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
+.archive__count { font-size: var(--t-small); color: var(--muted); min-width: 3.2em; text-align: center; font-variant-numeric: tabular-nums; }
 .archive__btn {
-  width: 36px; height: 36px; display: inline-grid; place-items: center;
+  width: 40px; height: 40px; display: inline-grid; place-items: center;
   border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--text);
   font: inherit; cursor: pointer; transition: border-color var(--motion-fast) var(--ease), opacity var(--motion-fast) var(--ease);
 }
