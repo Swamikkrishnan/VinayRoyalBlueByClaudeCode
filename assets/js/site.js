@@ -187,9 +187,12 @@
       var strip = fig.closest('.archive');
       if (strip && strip.dataset.shown) showPhoto(fig, 0);   // late addition to a shown strip
     };
+    var opening = true;                       // first second: the 80ms pass decides
+    setTimeout(function () { opening = false; }, 1100);
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
+        if (opening && !entry.target.hasAttribute('data-seq')) return;  // handled by the opening pass
         reveal(entry.target);
         io.unobserve(entry.target);
       });
@@ -207,13 +210,24 @@
       else if (!el.closest('.archive')) photoIO.observe(el);
     });
     document.querySelectorAll('.archive').forEach(function (strip) { stripIO.observe(strip); });
-    // Anything already on screen arrives without waiting for a scroll.
+    // Anything already on screen arrives without waiting for a scroll: the
+    // page opening (data-seq) first, then any section below it that is also
+    // in view, after the opening has had its moment.
     setTimeout(function () {
+      var seqShown = false;
       targets.forEach(function (el) {
         if (el.hasAttribute('data-reveal-img')) return;   // photos have their own path
         var b = el.getBoundingClientRect();
-        if (b.top < window.innerHeight && b.bottom > 0) reveal(el);
+        if (!(b.top < window.innerHeight && b.bottom > 0)) return;
+        if (el.hasAttribute('data-seq')) { reveal(el); seqShown = true; }
       });
+      setTimeout(function () {
+        targets.forEach(function (el) {
+          if (el.hasAttribute('data-reveal-img') || el.hasAttribute('data-seq')) return;
+          var b = el.getBoundingClientRect();
+          if (b.top < window.innerHeight && b.bottom > 0) reveal(el);
+        });
+      }, seqShown ? 900 : 0);
     }, 80);
     // Safety net: text already scrolled past (e.g. after a jump link) is never
     // left invisible. Content further down keeps its normal fade.
