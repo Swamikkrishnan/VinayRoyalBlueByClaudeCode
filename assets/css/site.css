@@ -813,18 +813,30 @@ textarea.finput { min-height: 112px; resize: vertical; }
    How the work takes shape: a short bridge between Vinay and the five areas.
    -------------------------------------------------------------------------- */
 /* How the work takes shape: a compact pre-frame for the Five Areas. One
-   body size throughout; structure comes from grouping and spacing. The
-   sentence is unpacked into five short places, each with a faint left rule
-   (one column in a narrow column, two, then 3 + 2). */
+   body size throughout. The middle sentence and its five places sit in one
+   quiet panel (2 columns on phones with the last item spanning, 3 + 2 when
+   there is room); the panel is only as wide as its content. */
 .shape { display: grid; gap: var(--s-3); max-width: 800px; container-type: inline-size; }
 .shape p { margin: 0; }
 .shape__statements { display: grid; gap: 2px; }
-.shape__unpack { display: grid; gap: 12px; }
-.shape__places { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px var(--s-3); }
-.shape__places li { padding-left: 12px; border-left: 1px solid rgba(93, 184, 240, .45); line-height: 1.5; }
-@container (min-width: 420px) { .shape__places { grid-template-columns: repeat(2, max-content); gap: 8px var(--s-4); } }
-@container (min-width: 760px) { .shape__places { grid-template-columns: repeat(3, max-content); } }
-.shape__begin { color: var(--text); }
+.shape__box {
+  display: grid; gap: 12px; justify-self: start; max-width: 100%;
+  background: var(--ink-1); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: var(--s-2);
+}
+.shape__places { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: auto auto; justify-content: start; gap: 6px 20px; }
+.shape__places li { position: relative; padding-left: 12px; line-height: 1.5; }
+.shape__places li::before {
+  content: ""; position: absolute; left: 0; top: .7em;
+  width: 4px; height: 4px; border-radius: 50%; background: var(--accent); opacity: .8;
+}
+.shape__places li:last-child { grid-column: 1 / -1; }
+@container (min-width: 600px) {
+  .shape__box { padding: var(--s-3) calc(var(--s-3) + 4px); gap: 14px; }
+  .shape__places { grid-template-columns: repeat(3, max-content); gap: 8px var(--s-4); }
+  .shape__places li:last-child { grid-column: span 2; }
+}
+.shape__begin { margin-top: 4px; }
 
 /* Before you begin (alignment.html): inline Privacy and Scope accordions. */
 .before-begin { display: grid; gap: var(--s-1); }
