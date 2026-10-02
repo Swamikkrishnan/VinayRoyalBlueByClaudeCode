@@ -797,10 +797,12 @@ textarea.finput { min-height: 112px; resize: vertical; }
   overflow-x: auto; overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory; scrollbar-width: thin; scrollbar-color: var(--line) transparent;
   padding-bottom: 10px;
+  container-type: inline-size;
 }
 .archive__track:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
 .archive__item { margin: 0; flex: 0 0 auto; display: grid; grid-template-columns: min-content; gap: 8px; scroll-snap-align: start; }
-.archive__item img { height: var(--archive-h); width: auto; max-width: none; border-radius: 6px; }
+/* shared height; a photo wider than the strip shrinks to fit it (ratio kept) */
+.archive__item img { width: auto; height: auto; max-height: var(--archive-h); max-width: 100cqw; border-radius: 6px; }
 .archive__item figcaption { font-size: var(--t-small); color: var(--muted); line-height: 1.4; }
 .archive__nav { display: none; }
 @media (min-width: 1000px) and (hover: hover) {
