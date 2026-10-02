@@ -15,9 +15,10 @@
   root.classList.add('js');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  // Calls cb once the image is loaded and decoded (immediately if cached),
-  // with a short cap so a slow network never leaves a photo hidden.
-  function whenReady(img, cb) {
+  // Calls cb once the image is loaded and decoded (immediately if cached).
+  // A generous cap means a very slow network still never leaves a photo
+  // hidden, without revealing half-loaded photos on ordinary connections.
+  function whenReady(img, cb, cap) {
     var done = false;
     var go = function () { if (!done) { done = true; cb(); } };
     if (!img) return go();
@@ -29,7 +30,7 @@
       img.addEventListener('load', decode, { once: true });
       img.addEventListener('error', go, { once: true });
     }
-    setTimeout(go, 2500);
+    setTimeout(go, cap || 8000);
   }
 
   /* ---------------------------------------------------------------------
@@ -126,43 +127,66 @@
         motion-ready mode uses that to transition from a JS-added start
         state. Nothing is hidden until root carries .motion-ready.
      --------------------------------------------------------------------- */
+  // One photo rule for the whole site (figure[data-reveal-img], including
+  // Training carousel slides): a photo fades in only when it is near view,
+  // fully loaded and decoded, and after any section fade around it has
+  // finished. So every photo gets the identical fade on every device and
+  // connection, cached or not. revealPhoto() is also used for photos that
+  // are added later (carousel auto-discovery).
+  var revealPhoto = function (fig) { fig.classList.add('is-in'); };
   if (!reduce.matches && 'IntersectionObserver' in window) {
     root.classList.add('motion-ready');
+    var SECTION_MS = 750;                   // --motion-slow
     var targets = document.querySelectorAll('[data-reveal], [data-seq], [data-reveal-img]');
-    // Photos fade in only once decoded (cached images resolve at once).
-    var show = function (el) {
-      if (el.hasAttribute('data-reveal-img')) {
-        whenReady(el.querySelector('img'), function () { el.classList.add('is-in'); });
-      } else {
-        el.classList.add('is-in');
-      }
+    var reveal = function (el) {
+      if (el.classList.contains('is-in')) return;
+      el.dataset.inAt = Date.now();
+      el.classList.add('is-in');
     };
+    var showPhoto = function (fig) {
+      if (fig.dataset.pending) return;
+      fig.dataset.pending = '1';
+      whenReady(fig.querySelector('img'), function () {
+        var host = fig.parentElement && fig.parentElement.closest('[data-reveal]');
+        var go = function () { window.requestAnimationFrame(function () { reveal(fig); }); };
+        if (!host) return go();
+        if (!host.classList.contains('is-in')) reveal(host);
+        var left = SECTION_MS - (Date.now() - Number(host.dataset.inAt || 0));
+        if (left > 0) setTimeout(go, left); else go();
+      });
+    };
+    revealPhoto = function (fig) { photoIO.observe(fig); };
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
-        show(entry.target);
+        reveal(entry.target);
         io.unobserve(entry.target);
       });
     }, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
-    // Photos start a little earlier so they never pop in late.
-    var ioImg = new IntersectionObserver(function (entries) {
+    // Photos start a little earlier (and sideways, for carousels).
+    var photoIO = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
-        show(entry.target);
-        ioImg.unobserve(entry.target);
+        showPhoto(entry.target);
+        photoIO.unobserve(entry.target);
       });
-    }, { rootMargin: '0px 0px 4% 0px', threshold: 0 });
-    targets.forEach(function (el) { (el.hasAttribute('data-reveal-img') ? ioImg : io).observe(el); });
+    }, { rootMargin: '0px 10% 4% 10%', threshold: 0 });
+    targets.forEach(function (el) { (el.hasAttribute('data-reveal-img') ? photoIO : io).observe(el); });
     // Anything already on screen arrives without waiting for a scroll.
     setTimeout(function () {
       targets.forEach(function (el) {
+        if (el.hasAttribute('data-reveal-img')) return;   // photos have their own path
         var b = el.getBoundingClientRect();
-        if (b.top < window.innerHeight && b.bottom > 0) show(el);
+        if (b.top < window.innerHeight && b.bottom > 0) reveal(el);
       });
     }, 80);
-    // Safety net: never leave anything invisible.
+    // Safety net: text already scrolled past (e.g. after a jump link) is never
+    // left invisible. Content further down keeps its normal fade.
     setTimeout(function () {
-      targets.forEach(function (el) { el.classList.add('is-in'); });
+      targets.forEach(function (el) {
+        if (el.hasAttribute('data-reveal-img')) return;
+        if (el.getBoundingClientRect().top < window.innerHeight) reveal(el);
+      });
     }, 4000);
   } else {
     document.querySelectorAll('svg').forEach(function (svg) {
@@ -504,10 +528,12 @@
       img.onload = function () {
         var fig = document.createElement('figure');
         fig.className = 'archive__item';
+        fig.setAttribute('data-reveal-img', '');
         img.alt = label.replace(/^Photographs/, 'Photograph');
         img.width = img.naturalWidth; img.height = img.naturalHeight;
         fig.appendChild(img);
         track.appendChild(fig);
+        revealPhoto(fig);
         update();
         hold();
         probe(n + 1);

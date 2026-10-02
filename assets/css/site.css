@@ -236,6 +236,9 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
   opacity: 1; transform: none;
   transition: opacity var(--motion-image) var(--ease-image) 60ms, transform var(--motion-image) var(--ease-image) 60ms;
 }
+/* The homepage hero sigil is a picture too: same duration and curve as every
+   photo, keeping its place in the hero sequence (its 90ms stagger). */
+.js.motion-ready img[data-seq].is-in { transition-duration: var(--motion-image); transition-timing-function: var(--ease-image); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
