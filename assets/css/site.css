@@ -61,12 +61,12 @@
   --ease: cubic-bezier(.22,.61,.36,1);
   --motion-fast: 240ms;   /* hover, colour, small state changes */
   --motion-base: 360ms;   /* menus, accordions, chevrons, tab switches */
-  --motion-image: 1220ms; /* photographs gradually appearing */
+  --motion-image: 1110ms; /* photographs gradually appearing */
   --ease-image: cubic-bezier(.25,.46,.45,.94); /* soft ease-out, no overshoot */
   /* Reveal language: calm, unhurried, no overshoot. */
   --ease-calm: var(--ease-image);   /* one gentle curve for every reveal */
-  --motion-text: 1220ms;      /* headings, body copy, CTA blocks (fade up) */
-  --motion-reflect: 1220ms;  /* reflective / centred statements (soft fade) */
+  --motion-text: 1110ms;      /* headings, body copy, CTA blocks (fade up) */
+  --motion-reflect: 1110ms;  /* reflective / centred statements (soft fade) */
   --stagger: 120ms;          /* between items in a list or grid */
   --cascade: 160ms;          /* between blocks in a section, top to bottom */
   --rv-dist: 16px;           /* fade-up distance */
