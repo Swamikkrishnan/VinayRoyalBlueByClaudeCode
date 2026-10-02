@@ -65,9 +65,9 @@
   --motion-image: 1150ms; /* photographs gradually appearing */
   --ease-image: cubic-bezier(.25,.46,.45,.94); /* soft ease-out, no overshoot */
   /* Reveal language: calm, unhurried, no overshoot. */
-  --ease-calm: cubic-bezier(.22, 1, .36, 1);
-  --motion-text: 850ms;      /* headings, body copy, CTA blocks (fade up) */
-  --motion-reflect: 1100ms;  /* reflective / centred statements (soft fade) */
+  --ease-calm: var(--ease-image);   /* one gentle curve for every reveal */
+  --motion-text: 1150ms;      /* headings, body copy, CTA blocks (fade up) */
+  --motion-reflect: 1150ms;  /* reflective / centred statements (soft fade) */
   --stagger: 120ms;          /* between items in a list or grid */
   --rv-dist: 16px;           /* fade-up distance */
   --rv-x: 20px;              /* editorial left / right distance */
@@ -256,9 +256,9 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 /* Page openings: title first, then each following line a beat later. */
 .js.motion-ready [data-seq] { opacity: 0; transform: translate3d(0, 10px, 0); }
 .js.motion-ready [data-seq].is-in { opacity: 1; transform: none; transition: opacity var(--motion-text) var(--ease-calm), transform var(--motion-text) var(--ease-calm); }
-.js.motion-ready [data-seq]:nth-child(2).is-in { transition-delay: 140ms; }
-.js.motion-ready [data-seq]:nth-child(3).is-in { transition-delay: 280ms; }
-.js.motion-ready [data-seq]:nth-child(4).is-in { transition-delay: 420ms; }
+.js.motion-ready [data-seq]:nth-child(2).is-in { transition-delay: 220ms; }
+.js.motion-ready [data-seq]:nth-child(3).is-in { transition-delay: 440ms; }
+.js.motion-ready [data-seq]:nth-child(4).is-in { transition-delay: 660ms; }
 /* Photographs: primarily a slow fade with a 5px settle; no blur, no zoom.
    site.js adds .is-in once the image is decoded (and after its section's
    own fade), so the fade never runs over an empty frame. Space is reserved
