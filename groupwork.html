@@ -25,7 +25,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="preload" href="assets/fonts/GilliusADFNo2-Regular.otf" as="font" type="font/otf" crossorigin>
-<link rel="stylesheet" href="assets/css/site.css?v=202610022230">
+<link rel="stylesheet" href="assets/css/site.css?v=202610022234">
 </head>
 <body class="has-subnav">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -62,7 +62,7 @@
 <nav class="subnav" aria-label="Sections of this page">
   <ul>
     <li><a data-section="experiences" href="#experiences">Group Experiences</a></li>
-    <li><a data-section="upcoming" href="#upcoming">Upcoming Sessions</a></li>
+    <li class="subnav__upcoming"><a data-section="upcoming" href="#upcoming">Upcoming Sessions</a></li>
     <li><a data-section="design" href="#design">Design &amp; Curation</a></li>
     <li><a data-section="collaboration" href="#collaboration">Collaboration</a></li>
   </ul>
@@ -96,13 +96,14 @@
   </div>
 </section>
 
-<section id="upcoming" class="section section--alt" aria-labelledby="g-up">
+<section id="upcoming" class="section section--upcoming" aria-labelledby="g-up">
   <div data-reveal class="wrap stack stack--lg">
     <h2 id="g-up">Upcoming Sessions</h2>
 
     <!-- UPCOMING SESSIONS: edit by hand.
          To list a session, copy this template inside <ul class="sessions">.
-         The "No upcoming dates" line hides itself while the list has items.
+         While the list is empty, this whole section (and its link in the
+         section index) stays hidden.
          The link preselects the experience on group-interest.html and passes the
          session date (YYYY-MM-DD) into the enquiry. Experience keys:
          breath-of-becoming, conscious-dance, listening-temples.
@@ -117,13 +118,11 @@
     -->
     <ul class="sessions" aria-label="Upcoming sessions">
     </ul>
-    <p class="sessions-empty">No upcoming dates are currently listed.</p>
-
     <a class="btn btn--outline" href="group-interest.html">Express interest <span aria-hidden="true">&rarr;</span></a>
   </div>
 </section>
 
-<section id="design" class="section" aria-labelledby="g2">
+<section id="design" class="section section--alt" aria-labelledby="g2">
   <div data-reveal class="wrap stack stack--lg">
     <h2 id="g2">Design &amp; Curation</h2>
     <p class="lede lede--wide">When people are being invited into vulnerability, intensity or their edges, the <span class="scan-mark">quality of the container matters</span>.</p>
@@ -156,7 +155,7 @@
   </div>
 </section>
 
-<section id="collaboration" class="section section--alt" aria-labelledby="g3">
+<section id="collaboration" class="section" aria-labelledby="g3">
   <div data-reveal class="wrap stack stack--lg">
     <h2 id="g3">Collaboration &amp; Guest Facilitation</h2>
     <p class="prose">I&rsquo;m open to creating with people when there is alignment in values, intention and way of working.</p>
@@ -174,7 +173,7 @@
   </div>
 </section>
 
-<section class="section section--center watermark" aria-labelledby="g4">
+<section class="section section--alt section--center watermark" aria-labelledby="g4">
   <div data-reveal class="wrap stack">
     <h2 id="g4">Start a conversation</h2>
     <p class="muted">If what you are creating feels aligned, I would like to hear from you.</p>
@@ -212,6 +211,6 @@
   </div>
 </footer>
 
-<script src="assets/js/site.js?v=202610022230" defer></script>
+<script src="assets/js/site.js?v=202610022234" defer></script>
 </body>
 </html>

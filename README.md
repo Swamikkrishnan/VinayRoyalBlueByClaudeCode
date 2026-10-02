@@ -130,7 +130,7 @@ Three forms, one per relationship, all delivered by [Web3Forms](https://web3form
 
 **Upcoming group sessions** are a hand-edited list in `groupwork.html`
 (`<ul class="sessions">`); a commented template sits just above it. With no
-items, "No upcoming dates are currently listed." shows automatically.
+items, the Upcoming Sessions section and its index link stay hidden.
 
 ## Still to do before public launch
 

@@ -848,17 +848,19 @@ textarea.finput { min-height: 112px; resize: vertical; }
 @media (min-width: 600px) { .pathways li { grid-template-columns: 12rem 1fr; align-items: center; } }
 
 /* Upcoming group sessions: a static list, edited by hand in groupwork.html.
+   With no <li> in the list the whole section and its index link are hidden.
+   The section shares the hero's ground, separated by a hairline. */
+.section--upcoming { border-top: 1px solid var(--line); }
+.section--upcoming:not(:has(.sessions li)) { display: none; }
+body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
    With no <li> in the list, the empty-state line shows instead. */
 .sessions { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--line); }
-.sessions:not(:has(li)) { display: none; }
-.sessions:has(li) ~ .sessions-empty { display: none; }
 .session { display: grid; gap: 4px; padding: 16px 0; border-bottom: 1px solid var(--line); }
 .session__name { font-size: var(--t-sub); line-height: 1.3; }
 .session__when, .session__where { color: var(--muted); }
 .session__status { color: var(--accent); font-size: var(--t-small); }
 .session__cta { color: var(--text); text-decoration: none; justify-self: start; min-height: 40px; display: inline-flex; align-items: center; gap: 8px; }
 .session__cta span[aria-hidden] { color: var(--accent); }
-.sessions-empty { color: var(--muted); }
 
 /* Contact forms on interior pages: the same form system as the Alignment
    Call, sitting on the content's left axis. */

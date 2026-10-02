@@ -186,7 +186,7 @@
       var current = sectionIds[0];
       sectionIds.forEach(function (id) {
         var el = document.getElementById(id);
-        if (!el) return;
+        if (!el || !el.getClientRects().length) return;   // hidden section
         var top = el.getBoundingClientRect().top;
         if (top < line || (atBottom && top < window.innerHeight * 0.6)) current = id;
       });
