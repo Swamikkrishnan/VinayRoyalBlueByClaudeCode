@@ -786,40 +786,47 @@ textarea.finput { min-height: 112px; resize: vertical; }
    Training archive strips: documentary photos beneath a major section.
    Native horizontal scroll with snap; swipe, drag (mouse) or tap the
    arrows, which glide to the next photo. A counter (2 / 5) shows where you
-   are. Standardise the frame, not the photograph: every slide is the same
-   frame, and the whole photo sits centred inside it (object-fit: contain)
-   on a quiet navy ground, so mixed shapes read as one even row with no
-   crop and no distortion. Phones: one frame at a time, edge to edge.
+   are. Photos are never cropped or stretched.
+   Consistency within each strip, not across strips: each strip sets its own
+   photo height (--h) from the photos it holds. Tablet/desktop: every photo
+   in a strip shares that height at its natural width, so there is no empty
+   frame around it. Phones: one photo per view, edge to edge, in a frame
+   shaped for that strip (--m-ar), the whole photo contained.
    -------------------------------------------------------------------------- */
-.archive {
-  --frame-h: clamp(250px, 26vw, 300px);
-  --frame-w: calc(var(--frame-h) * 4 / 3);
-  display: grid; gap: 8px; margin-top: var(--s-1);
-}
-@media (min-width: 1000px) { .archive { --frame-h: clamp(280px, 22vw, 320px); } }
+.archive { --h: 300px; --m-ar: 4 / 3; display: grid; gap: 8px; margin-top: var(--s-1); }
+/* Certified (4:3 to 3:2 group photos): a generous, even row. */
+.archive[data-archive="certified"] { --h: clamp(260px, 24vw, 320px); --m-ar: 4 / 3; }
+/* Extensive study (1.1 to 1.7, mixed): slightly lower so the wide one fits. */
+.archive[data-archive="study"] { --h: clamp(250px, 22vw, 300px); --m-ar: 4 / 3; }
+/* Personal transformation (1.05 to 1.8, the widest set): lower still. */
+.archive[data-archive="personal"] { --h: clamp(240px, 20vw, 280px); --m-ar: 4 / 3; }
+/* Stillness, Breath & Movement (two near-square photos): large, close to
+   full size; both sit side by side on desktop. */
+.archive[data-archive="ongoing"] { --h: clamp(340px, 33vw, 450px); --m-ar: 1 / 1; }
 .archive__track {
   display: flex; gap: var(--s-2); align-items: start;
   overflow-x: auto; overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory; scrollbar-width: none;
+  container-type: inline-size;
 }
 .archive__track::-webkit-scrollbar { display: none; }
 .archive__track.is-dragging { scroll-snap-type: none; cursor: grabbing; user-select: none; }
 @media (hover: hover) { .archive__track { cursor: grab; } }
 .archive__track:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
-.archive__item { margin: 0; flex: 0 0 auto; width: var(--frame-w); max-width: 100%; display: grid; gap: 6px; scroll-snap-align: start; }
+/* Tablet/desktop: shared height, natural width; captions wrap to the photo. */
+.archive__item { margin: 0; flex: 0 0 auto; display: grid; grid-template-columns: min-content; gap: 6px; scroll-snap-align: start; }
 .archive__item img {
-  display: block; width: 100%; height: var(--frame-h); max-width: none;
-  object-fit: contain; object-position: center;
-  background: var(--ink-3); border-radius: 6px;
+  display: block; width: auto; height: var(--h); max-width: 100cqw;
+  object-fit: contain; border-radius: 6px;
   -webkit-user-drag: none; user-select: none;
 }
 .archive__item figcaption { font-size: var(--t-small); color: var(--muted); line-height: 1.4; text-align: left; }
-/* Phones: one frame per view, the full screen width, no side padding. */
+/* Phones: one photo per view, the full screen width, no side padding. */
 @media (max-width: 599px) {
-  .archive { --frame-h: clamp(220px, 64vw, 270px); margin-inline: calc(-1 * var(--gutter)); gap: 6px; }
+  .archive { margin-inline: calc(-1 * var(--gutter)); gap: 6px; }
   .archive__track { gap: 0; }
-  .archive__item { flex: 0 0 100%; width: 100%; }
-  .archive__item img { border-radius: 0; }
+  .archive__item { flex: 0 0 100%; grid-template-columns: 100%; }
+  .archive__item img { width: 100%; height: auto; max-width: none; aspect-ratio: var(--m-ar); background: var(--ink-3); border-radius: 0; }
   .archive__item figcaption { padding-inline: var(--gutter); }
   .archive__nav { padding-inline: var(--gutter); }
 }

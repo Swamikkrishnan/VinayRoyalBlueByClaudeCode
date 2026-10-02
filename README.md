@@ -165,9 +165,10 @@ reserved before the image loads.
   (`certified`), Extensive Practice & Study (`study`), Personal
   Transformation (`personal`) and Ongoing Practice (`ongoing`, the
   Stillness, Breath & Movement photos). Native scroll with snap: swipe, mouse-drag, or tap the
-  arrows to glide to the next photo; a counter shows the position. Every slide
-  is the same frame; the whole photo sits centred inside it on a quiet navy
-  ground (never cropped or stretched). Phones: one frame at a time, edge to
+  arrows to glide to the next photo; a counter shows the position. Each strip
+  sets its own photo height for the photos it holds (Stillness is the
+  largest); within a strip every photo shares that height at its natural
+  width, never cropped or stretched. Phones: one photo at a time, edge to
   edge. No autoplay, no looping.
   Image URLs in `training.html` carry `?v=2`; bump it if you ever replace a
   photo under an existing file name, so browsers fetch the new one.
