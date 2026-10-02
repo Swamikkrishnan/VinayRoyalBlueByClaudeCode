@@ -78,7 +78,7 @@
          height; nothing is left with a fixed height afterwards, so resizing
          an open accordion is safe. Reduced motion: native instant toggle.
      --------------------------------------------------------------------- */
-  var ACC_MS = 380, ACC_EASE = 'cubic-bezier(.22,.61,.36,1)';
+  var ACC_MS = 560, ACC_EASE = 'cubic-bezier(.3,.7,.3,1)';   // calm, same speed open and close
   document.querySelectorAll('details.accordion').forEach(function (d) {
     var summary = d.querySelector(':scope > summary');
     var body = d.querySelector(':scope > .accordion__body');
@@ -136,42 +136,77 @@
   var revealPhoto = function (fig) { fig.classList.add('is-in'); };
   if (!reduce.matches && 'IntersectionObserver' in window) {
     root.classList.add('motion-ready');
-    var SECTION_MS = 750;                   // --motion-slow
     var targets = document.querySelectorAll('[data-reveal], [data-seq], [data-reveal-img]');
+    // Stagger index for list / grid items (capped so long lists stay calm).
+    document.querySelectorAll('[data-stagger]').forEach(function (list) {
+      Array.prototype.forEach.call(list.children, function (item, i) { item.style.setProperty('--i', Math.min(i, 6)); });
+    });
+    var msOf = function (el) {
+      var v = getComputedStyle(el).getPropertyValue('--rv-dur').trim();
+      return v ? parseFloat(v) * (/ms$/.test(v) ? 1 : 1000) : 850;
+    };
     var reveal = function (el) {
       if (el.classList.contains('is-in')) return;
       el.dataset.inAt = Date.now();
       el.classList.add('is-in');
     };
-    var showPhoto = function (fig) {
+    // A photo inside a revealing section waits for that section's own fade;
+    // a standalone photo (page openings) follows its text a beat later.
+    var showPhoto = function (fig, extra) {
       if (fig.dataset.pending) return;
       fig.dataset.pending = '1';
       whenReady(fig.querySelector('img'), function () {
-        var host = fig.parentElement && fig.parentElement.closest('[data-reveal]');
+        var parent = fig.parentElement;
+        var host = parent && (parent.closest('[data-reveal]') || parent.querySelector(':scope > [data-reveal]'));
         var go = function () { window.requestAnimationFrame(function () { reveal(fig); }); };
-        if (!host) return go();
-        if (!host.classList.contains('is-in')) reveal(host);
-        var left = SECTION_MS - (Date.now() - Number(host.dataset.inAt || 0));
-        if (left > 0) setTimeout(go, left); else go();
+        var wait = 200;
+        if (host) {
+          if (!host.classList.contains('is-in')) { if (host.contains(fig)) reveal(host); else { setTimeout(function () { fig.dataset.pending = ''; showPhoto(fig, extra); }, 150); return; } }
+          wait = msOf(host) * 0.6 - (Date.now() - Number(host.dataset.inAt || 0));
+        }
+        wait = Math.max(0, wait) + (extra || 0);
+        if (wait > 0) setTimeout(go, wait); else go();
       });
     };
-    revealPhoto = function (fig) { photoIO.observe(fig); };
+    // Carousels arrive once, as a group (a short stagger across the first
+    // few photos); after that, swiping through them is completely stable.
+    var stripIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var strip = entry.target;
+        strip.dataset.shown = '1';
+        strip.querySelectorAll('[data-reveal-img]').forEach(function (fig, i) {
+          var img = fig.querySelector('img');
+          if (img) img.loading = 'eager';
+          showPhoto(fig, Math.min(i, 3) * 120);
+        });
+        stripIO.unobserve(strip);
+      });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0 });
+    revealPhoto = function (fig) {
+      var strip = fig.closest('.archive');
+      if (strip && strip.dataset.shown) showPhoto(fig, 0);   // late addition to a shown strip
+    };
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
         reveal(entry.target);
         io.unobserve(entry.target);
       });
-    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
-    // Photos start a little earlier (and sideways, for carousels).
+    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.05 });
+    // Photos start a little earlier.
     var photoIO = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
         showPhoto(entry.target);
         photoIO.unobserve(entry.target);
       });
-    }, { rootMargin: '0px 10% 4% 10%', threshold: 0 });
-    targets.forEach(function (el) { (el.hasAttribute('data-reveal-img') ? photoIO : io).observe(el); });
+    }, { rootMargin: '0px 0px 4% 0px', threshold: 0 });
+    targets.forEach(function (el) {
+      if (!el.hasAttribute('data-reveal-img')) io.observe(el);
+      else if (!el.closest('.archive')) photoIO.observe(el);
+    });
+    document.querySelectorAll('.archive').forEach(function (strip) { stripIO.observe(strip); });
     // Anything already on screen arrives without waiting for a scroll.
     setTimeout(function () {
       targets.forEach(function (el) {

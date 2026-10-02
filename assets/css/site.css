@@ -64,6 +64,13 @@
   --motion-slow: 750ms;   /* text / section reveals */
   --motion-image: 1150ms; /* photographs gradually appearing */
   --ease-image: cubic-bezier(.25,.46,.45,.94); /* soft ease-out, no overshoot */
+  /* Reveal language: calm, unhurried, no overshoot. */
+  --ease-calm: cubic-bezier(.22, 1, .36, 1);
+  --motion-text: 850ms;      /* headings, body copy, CTA blocks (fade up) */
+  --motion-reflect: 1100ms;  /* reflective / centred statements (soft fade) */
+  --stagger: 120ms;          /* between items in a list or grid */
+  --rv-dist: 16px;           /* fade-up distance */
+  --rv-x: 20px;              /* editorial left / right distance */
   --t-fast: var(--motion-fast);
 }
 
@@ -219,30 +226,61 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 /* --------------------------------------------------------------------------
    Reveal-on-scroll — content is visible by default; JS only adds motion
    -------------------------------------------------------------------------- */
+/* A small vocabulary, one per section container (data-reveal):
+   ""        soft fade up      headings, body copy, CTA blocks
+   "soft"    soft fade in      reflective and centred copy (6px, slower)
+   "left" /  editorial reveal  one side of a two-sided composition, 20px
+   "right"
+   data-stagger on a list or grid lets its items follow the container one by
+   one (fade up, or "soft" for opacity only). Photos have their own path. */
 [data-reveal], [data-seq] { opacity: 1; }
-.js.motion-ready [data-reveal] { opacity: 0; transform: translate3d(0,12px,0); }
-.js.motion-ready [data-reveal].is-in { opacity: 1; transform: none; transition: opacity var(--motion-slow) var(--ease), transform var(--motion-slow) var(--ease); }
-.js.motion-ready [data-seq] { opacity: 0; transform: translate3d(0,10px,0); }
-.js.motion-ready [data-seq].is-in { opacity: 1; transform: none; transition: opacity var(--motion-slow) var(--ease), transform var(--motion-slow) var(--ease); }
-.js.motion-ready [data-seq]:nth-child(2).is-in { transition-delay: 90ms; }
-.js.motion-ready [data-seq]:nth-child(3).is-in { transition-delay: 180ms; }
-.js.motion-ready [data-seq]:nth-child(4).is-in { transition-delay: 270ms; }
-/* Photographs: a slow fade with a 5px settle; opacity and transform only, no
-   blur, no zoom. site.js adds .is-in once the image is decoded, so the fade
-   never runs over an empty frame. Space is reserved by --ar beforehand. */
+.js.motion-ready [data-reveal] {
+  --rv-dur: var(--motion-text);
+  opacity: 0; transform: translate3d(var(--rv-tx, 0px), var(--rv-ty, var(--rv-dist)), 0);
+}
+.js.motion-ready [data-reveal="soft"] { --rv-ty: 6px; --rv-dur: var(--motion-reflect); }
+.js.motion-ready [data-reveal="left"] { --rv-tx: calc(-1 * var(--rv-x)); --rv-ty: 0px; }
+.js.motion-ready [data-reveal="right"] { --rv-tx: var(--rv-x); --rv-ty: 0px; }
+.js.motion-ready [data-reveal].is-in {
+  opacity: 1; transform: none;
+  transition: opacity var(--rv-dur) var(--ease-calm), transform var(--rv-dur) var(--ease-calm);
+}
+/* Staggered items: they wait for their section, then follow one by one. */
+.js.motion-ready [data-stagger] > * { opacity: 0; transform: translate3d(0, 10px, 0); }
+.js.motion-ready [data-stagger="soft"] > * { transform: none; }
+.js.motion-ready .is-in [data-stagger] > * {
+  opacity: 1; transform: none;
+  transition: opacity var(--motion-text) var(--ease-calm) calc(160ms + var(--i, 0) * var(--stagger)),
+              transform var(--motion-text) var(--ease-calm) calc(160ms + var(--i, 0) * var(--stagger));
+}
+/* Page openings: title first, then each following line a beat later. */
+.js.motion-ready [data-seq] { opacity: 0; transform: translate3d(0, 10px, 0); }
+.js.motion-ready [data-seq].is-in { opacity: 1; transform: none; transition: opacity var(--motion-text) var(--ease-calm), transform var(--motion-text) var(--ease-calm); }
+.js.motion-ready [data-seq]:nth-child(2).is-in { transition-delay: 140ms; }
+.js.motion-ready [data-seq]:nth-child(3).is-in { transition-delay: 280ms; }
+.js.motion-ready [data-seq]:nth-child(4).is-in { transition-delay: 420ms; }
+/* Photographs: primarily a slow fade with a 5px settle; no blur, no zoom.
+   site.js adds .is-in once the image is decoded (and after its section's
+   own fade), so the fade never runs over an empty frame. Space is reserved
+   beforehand, so nothing shifts. Carousels arrive as one group. */
 [data-reveal-img] { opacity: 1; }
-.js.motion-ready [data-reveal-img] { opacity: 0; transform: translate3d(0,5px,0); }
+.js.motion-ready [data-reveal-img] { opacity: 0; transform: translate3d(0, 5px, 0); }
 .js.motion-ready [data-reveal-img].is-in {
   opacity: 1; transform: none;
-  transition: opacity var(--motion-image) var(--ease-image) 60ms, transform var(--motion-image) var(--ease-image) 60ms;
+  transition: opacity var(--motion-image) var(--ease-image) var(--img-delay, 60ms), transform var(--motion-image) var(--ease-image) var(--img-delay, 60ms);
 }
-/* The homepage hero sigil is a picture too: same duration and curve as every
-   photo, keeping its place in the hero sequence (its 90ms stagger). */
+/* The homepage hero sigil is a picture too: photo duration and curve, in its
+   place in the hero sequence. */
 .js.motion-ready img[data-seq].is-in { transition-duration: var(--motion-image); transition-timing-function: var(--ease-image); }
+/* Phones: shorter distances and a slightly quicker stagger on long pages. */
+@media (max-width: 599px) {
+  :root { --rv-dist: 10px; --rv-x: 10px; --stagger: 90ms; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
-  .js.motion-ready [data-reveal], .js.motion-ready [data-seq], .js.motion-ready [data-reveal-img] { opacity: 1 !important; transform: none !important; filter: none !important; }
+  .js.motion-ready [data-reveal], .js.motion-ready [data-seq], .js.motion-ready [data-reveal-img],
+  .js.motion-ready [data-stagger] > * { opacity: 1 !important; transform: none !important; filter: none !important; transition-delay: 0s !important; }
 }
 
 /* --------------------------------------------------------------------------
