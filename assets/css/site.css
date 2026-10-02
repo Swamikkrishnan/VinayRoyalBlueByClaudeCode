@@ -812,24 +812,19 @@ textarea.finput { min-height: 112px; resize: vertical; }
 /* --------------------------------------------------------------------------
    How the work takes shape: a short bridge between Vinay and the five areas.
    -------------------------------------------------------------------------- */
-/* How the work takes shape: a short bridge into the Five Areas. Two
-   statement rows, one quiet panel holding the longer sentence, then the two
-   closing lines after a short accent rule. Left-aligned, capped at 800px. */
-.shape { display: grid; gap: var(--s-3); max-width: 800px; }
+/* How the work takes shape: a compact pre-frame for the Five Areas. One
+   body size throughout; structure comes from grouping and spacing. The
+   sentence is unpacked into five short places, each with a faint left rule
+   (one column in a narrow column, two, then 3 + 2). */
+.shape { display: grid; gap: var(--s-3); max-width: 800px; container-type: inline-size; }
 .shape p { margin: 0; }
-.shape__statements { display: grid; border-top: 1px solid var(--line); }
-.shape__statements p { font-size: var(--t-sub); line-height: 1.4; padding: 12px 0; border-bottom: 1px solid var(--line); }
-.shape__panel {
-  background: var(--ink-1); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: var(--s-3) calc(var(--s-3) + 4px);
-}
-.shape__begin { position: relative; padding-top: calc(var(--s-2) + 1px); }
-.shape__begin::before { content: ""; position: absolute; left: 0; top: 0; width: 28px; height: 1px; background: var(--accent); opacity: .7; }
-@media (max-width: 599px) {
-  .shape { gap: var(--s-2); }
-  .shape__statements p { padding: 10px 0; }
-  .shape__panel { padding: var(--s-2) calc(var(--s-2) + 2px); }
-}
+.shape__statements { display: grid; gap: 2px; }
+.shape__unpack { display: grid; gap: 12px; }
+.shape__places { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px var(--s-3); }
+.shape__places li { padding-left: 12px; border-left: 1px solid rgba(93, 184, 240, .45); line-height: 1.5; }
+@container (min-width: 420px) { .shape__places { grid-template-columns: repeat(2, max-content); gap: 8px var(--s-4); } }
+@container (min-width: 760px) { .shape__places { grid-template-columns: repeat(3, max-content); } }
+.shape__begin { color: var(--text); }
 
 /* Before you begin (alignment.html): inline Privacy and Scope accordions. */
 .before-begin { display: grid; gap: var(--s-1); }
