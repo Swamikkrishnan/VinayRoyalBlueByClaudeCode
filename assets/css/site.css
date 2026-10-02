@@ -812,32 +812,34 @@ textarea.finput { min-height: 112px; resize: vertical; }
 /* --------------------------------------------------------------------------
    How the work takes shape: a short bridge between Vinay and the five areas.
    -------------------------------------------------------------------------- */
-/* How the work takes shape: a compact pre-frame for the Five Areas. One
-   body size throughout. The middle sentence and its five places sit in one
-   quiet panel (2 columns on phones with the last item spanning, 3 + 2 when
-   there is room); the panel is only as wide as its content. */
-.shape { display: grid; gap: var(--s-3); max-width: 800px; container-type: inline-size; }
+/* How the work takes shape: one editorial composition. Opening pair on the
+   left, a compact framed field on the right (the five places, each with its
+   own short accent line, in two columns), the closing pair beneath both.
+   Stacked when the column is narrow. One body size and line-height. */
+.section--compact { padding-block: clamp(2.75rem, 7vw, 4.5rem); }
+.shape { display: grid; gap: var(--s-3); max-width: 860px; container-type: inline-size; }
 .shape p { margin: 0; }
+.shape__split { display: grid; gap: var(--s-3); }
 .shape__statements { display: grid; gap: 2px; }
-.shape__box {
+.shape__field {
   display: grid; gap: 10px; justify-self: start; max-width: 100%;
   background: var(--ink-1); border: 1px solid var(--line); border-radius: var(--radius);
   padding: var(--s-2) 18px;
 }
-.shape__places { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: auto auto; justify-content: start; gap: 4px 20px; }
+.shape__places { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: auto auto; justify-content: start; gap: 4px 24px; }
 /* each phrase carries its own short accent line, not joined to the next */
-.shape__places li { position: relative; padding-left: 11px; line-height: 1.5; }
+.shape__places li { position: relative; padding-left: 11px; }
 .shape__places li::before {
   content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
   width: 2px; height: 18px; border-radius: 1px; background: var(--accent); opacity: .6;
 }
 .shape__places li:last-child { grid-column: 1 / -1; }
-@container (min-width: 600px) {
-  .shape__box { padding: 20px 24px; gap: 10px; }
-  .shape__places { grid-template-columns: repeat(3, max-content); gap: 6px 32px; }
-  .shape__places li:last-child { grid-column: span 2; }
+@container (min-width: 800px) {
+  /* the opening pair sits on the field's first line, so the two read as one row */
+  .shape__split { grid-template-columns: max-content minmax(0, 27rem); gap: var(--s-4); align-items: start; }
+  .shape__statements { padding-top: 19px; }
+  .shape__field { padding: 18px 24px; justify-self: stretch; }
 }
-.shape__begin { margin-top: 4px; }
 
 /* Before you begin (alignment.html): inline Privacy and Scope accordions. */
 .before-begin { display: grid; gap: var(--s-1); }
