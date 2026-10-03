@@ -564,6 +564,8 @@ html:not(.js) .nav-toggle { display: none !important; }
 .summary-list .icon { grid-row: span 2; margin-top: 2px; }
 .summary-list h3 { font-size: var(--t-sub); }
 .summary-list p { grid-column: 2; color: var(--muted); }
+.summary-list li > a { grid-column: 1 / -1; display: grid; grid-template-columns: 28px 1fr; gap: 4px 16px; align-items: start; color: inherit; text-decoration: none; }
+.summary-list a:hover h3, .summary-list a:focus-visible h3 { color: var(--accent); }
 
 
 /* Metrics */
