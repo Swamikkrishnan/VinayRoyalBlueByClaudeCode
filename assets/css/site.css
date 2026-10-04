@@ -34,6 +34,8 @@
   --warn:       #E0955C;
   /* Warm micro-accent: muted, mineral brass. Lines, nodes and small
      threshold markers only; never body text or headline words. */
+  --emphasis-blue: #5DB8F0; /* the one prose emphasis blue */
+  --accent-brass:  #C8A15A;
   --warm:       #C8A15A;   /* brass */
   --warm-dark:  #8A6F3E;   /* dark brass, on light grounds */
   --warm-soft:  rgba(200,161,90,.5);
@@ -65,7 +67,7 @@
   --section-y: clamp(3.5rem, 7.5vw, 6.75rem);   /* ~56px phones → ~108px desktop */
 
   --measure: 38rem;
-  --header-h: 72px;
+  --header-h: 60px;
   --subnav-h: 0px;
   /* One shared motion system: a single ease-out curve, three durations. */
   --ease: cubic-bezier(.22,.61,.36,1);
@@ -197,8 +199,9 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
    .display-accent  EB Garamond italic in cyan, inside display / reflective lines
    .inline-accent   the body face, italic, in cyan, inside body copy
    (.insight remains a complete quotable sentence in EB Garamond.) */
-.display-accent { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--glow); background: none; }
-.inline-accent { font-family: inherit; font-style: italic; font-weight: 400; color: var(--accent); background: none; }
+.display-accent { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--emphasis-blue); background: none; }
+.brass-accent { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--accent-brass); }
+.inline-accent { font-family: inherit; font-style: italic; font-weight: 400; color: var(--emphasis-blue); background: none; }
 .insight { font-family: var(--serif); font-size: clamp(1.45rem, 5vw, 1.8rem); line-height: 1.3; color: var(--text); max-width: 32ch; text-wrap: pretty; }
 .insight--sm { font-size: clamp(1.2rem, 4.2vw, 1.4rem); line-height: 1.35; max-width: 44ch; }
 .muted { color: var(--muted); }
@@ -492,8 +495,8 @@ html:not(.js) .nav-toggle { display: none !important; }
 /* The four closing lines read as one thought: one family (Gillius), close leading. */
 .home-hero__lead { color: #CDD4E6; font-size: var(--t-sub); line-height: 1.4; max-width: 34ch; text-wrap: balance; }
 .home-hero__trio {
-  font-family: var(--sans); font-weight: 600; font-size: calc(var(--t-sub) * .96); line-height: 1.35; letter-spacing: .03em;
-  color: var(--glow); margin: .2rem 0; text-shadow: 0 0 18px rgba(93,184,240,.35);
+  font-family: var(--sans); font-weight: 600; font-style: italic; font-size: calc(var(--t-sub) * .96); line-height: 1.35; letter-spacing: .03em;
+  color: var(--emphasis-blue); margin: .2rem 0; text-shadow: 0 0 18px rgba(93,184,240,.35);
 }
 .home-hero__trio .sep { color: rgba(127,203,245,.55); font-weight: 400; padding: 0 .3em; }
 
@@ -1151,8 +1154,8 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 
 /* --- Header: the opening edge of the Dark Primary field -------------------- */
 .site-head, .site-head.is-scrolled {
-  background: rgba(14,20,40,.48); border-bottom: 0;
-  -webkit-backdrop-filter: blur(18px) saturate(120%); backdrop-filter: blur(18px) saturate(120%);
+  background: rgba(14,20,40,.40); border-bottom: 0;
+  -webkit-backdrop-filter: blur(20px) saturate(120%); backdrop-filter: blur(20px) saturate(120%);
 }
 .site-head__inner { position: relative; }
 .brand img { width: 30px; }
@@ -1191,8 +1194,8 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
   .site-foot__brand img { height: 20px; }
   .site-foot__brand p { font-size: 10px; line-height: 1.1; }
 }
-@media (max-width: 380px) {
-  .site-foot { padding-inline: 10px; font-size: 9px; gap: 6px; }
+@media (max-width: 390px) {
+  .site-foot { padding-inline: 10px; font-size: 9px; gap: 6px; min-height: 60px; }
   .site-foot__brand p { font-size: 9.5px; }
   .site-foot__brand img { height: 18px; }
 }
@@ -1276,7 +1279,6 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 /* Dark fields: small labels and display emphasis a shade lighter, so they
    stay readable where they cross the brighter veins of the texture. */
 :is(.bg-1, .bg-2, .bg-3, .bg-4) :is(.marker, .eyebrow) { color: #DDBF86; }
-:is(.bg-1, .bg-3) .display-accent { color: #78C6F4; }
 .accordion__body--wide { max-width: 760px; }
 /* 1:1, Working together: the one visible statement. */
 .together-statement { font-family: var(--serif); font-size: var(--t-heading); line-height: 1.15; color: var(--text); max-width: 24ch; text-wrap: balance; }
@@ -1299,3 +1301,12 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 }
 .story__portrait img { object-position: 82% 58%; }
 @media (min-width: 860px) { .story__portrait img { aspect-ratio: 778 / 1100; object-position: 80% 60%; } }
+/* Section-label headings that use the small brass label style. */
+.marker--wrap { text-wrap: wrap; }
+@media (max-width: 599px) { h1.marker, h2.marker { text-wrap: wrap; } }
+/* A lede given slightly more presence (Group Experiences opening). */
+.lede--strong { font-size: calc(var(--t-lede) * 1.12); line-height: 1.45; }
+/* 1:1 opening statements share the Where we begin scale. */
+.page-hero .begin__statements { margin-top: 0; }
+/* FACE close: centred. */
+.statement--face { text-align: center; margin-inline: auto; }
