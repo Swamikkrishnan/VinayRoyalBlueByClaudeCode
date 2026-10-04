@@ -1116,7 +1116,8 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
   background-repeat: no-repeat;
 }
 @media (max-width: 767px) {
-  .bg-1, .bg-2, .bg-3, .bg-4 { --th: 72px; --tar: .5185; }   /* 560 / 1080 */
+  /* 560 / 1080, drawn 3% wide so the artwork's thin edge border is cropped */
+  .bg-1, .bg-2, .bg-3, .bg-4 { --th: 72px; --tar: calc(.5185 * 1.03); }
 }
 :is(.bg-1, .bg-2, .bg-3, .bg-4) > * { position: relative; z-index: 1; }
 .field > section { background: transparent; }
@@ -1367,3 +1368,12 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
    stay readable where they cross the brighter veins of the texture. */
 :is(.bg-1, .bg-3) :is(.marker, .eyebrow) { color: #DDBF86; }
 :is(.bg-1, .bg-3) .display-em { color: #78C6F4; }
+/* The mobile light artwork carries a thin pale border at its left and right
+   edges; on phones it is drawn 3% wider than the field (size from site.js),
+   so the border falls just outside the screen. */
+@media (max-width: 767px) {
+  .bg-2, .bg-4 { background-size: 100% 100%, var(--img-size, cover); }
+}
+@media (max-width: 767px) {
+  :is(.bg-1, .bg-2, .bg-3, .bg-4)::after, :is(.bg-1, .bg-2, .bg-3, .bg-4) + :is(.bg-1, .bg-2, .bg-3, .bg-4)::before { background-size: 103% auto; }
+}
