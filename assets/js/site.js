@@ -81,7 +81,7 @@
          height; nothing is left with a fixed height afterwards, so resizing
          an open accordion is safe. Reduced motion: native instant toggle.
      --------------------------------------------------------------------- */
-  var ACC_MS = 560, ACC_EASE = 'cubic-bezier(.3,.7,.3,1)';   // calm, same speed open and close
+  var ACC_MS = 480, ACC_EASE = 'cubic-bezier(.3,.7,.3,1)';   // calm, same speed open and close
   document.querySelectorAll('details.accordion').forEach(function (d) {
     var summary = d.querySelector(':scope > summary');
     var body = d.querySelector(':scope > .accordion__body');
