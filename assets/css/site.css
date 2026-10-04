@@ -1357,3 +1357,4 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 .home-hero .display-title { font-size: min(calc(var(--t-hero) * 1.09), 9.8vw); text-wrap: balance; }
 .hero-strong { font-weight: 600; }
 .hero-gold { color: var(--accent-brass); font-style: normal; }
+.name-strong { font-weight: 600; }
