@@ -1328,7 +1328,9 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 .key-statement { font-family: var(--serif); font-size: clamp(1.75rem, 2.5vw, 2.4rem); line-height: 1.2; color: var(--text); max-width: 28ch; }
 .scope__title { font-family: var(--sans); font-size: var(--t-sub); }
 
-.home-hero__trio .trio-word { font-style: italic; font-weight: 600; color: var(--emphasis-blue); }
+/* Gillius has no bold-italic file, so the bold is synthesised from the
+   italic and given a fine stroke to read clearly as bold. */
+.home-hero__trio .trio-word { font-style: italic; font-weight: 700; font-synthesis: weight style; -webkit-text-stroke: .45px currentColor; color: var(--emphasis-blue); }
 .story-chapters.section:has(+ .vision) { padding-bottom: 30px; }
 
 /* Hero: the whole composition sits a little above centre. */
