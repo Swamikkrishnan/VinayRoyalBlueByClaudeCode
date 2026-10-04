@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="40" viewBox="0 0 300 40" fill="none">
+<defs>
+<filter id="blueGlow" x="-100%" y="-100%" width="300%" height="300%">
+  <feGaussianBlur stdDeviation="6" result="b"/>
+  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="goldGlow" x="-100%" y="-100%" width="300%" height="300%">
+  <feGaussianBlur stdDeviation="4" result="b"/>
+  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<linearGradient id="blueFade" x1="0" y1="0" x2="1" y2="0">
+  <stop offset="0" stop-color="#5DB8F0" stop-opacity="0"/>
+  <stop offset=".5" stop-color="#5DB8F0" stop-opacity=".7"/>
+  <stop offset="1" stop-color="#5DB8F0" stop-opacity="0"/>
+</linearGradient>
+</defs>
+
+<line x1="8" y1="20" x2="272" y2="20" stroke="#C8A15A" stroke-width="2"/>
+<circle cx="280" cy="20" r="5" fill="#C8A15A" filter="url(#goldGlow)"/>
+</svg>

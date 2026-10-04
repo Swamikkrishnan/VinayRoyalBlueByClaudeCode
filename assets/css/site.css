@@ -27,18 +27,19 @@
   --ink-1:      #0E1428;   /* default page ground */
   --ink-2:      #151C34;   /* alternating band */
   --ink-3:      #1B2448;   /* hover / raised surface */
-  --line:       #2A3563;
+  --line:       rgba(200,161,90,.22);   /* structural rules carry a low brass */
   --text:       #F7F6F2;
   --muted:      #B4BCD4;
   --accent:     #5DB8F0;
   --warn:       #E0955C;
   /* Warm micro-accent: muted, mineral brass. Lines, nodes and small
      threshold markers only; never body text or headline words. */
-  --warm:       #C6A15E;
-  --warm-soft:  rgba(198,161,94,.5);
-  --warm-faint: rgba(198,161,94,.22);
+  --warm:       #C8A15A;   /* brass */
+  --warm-dark:  #8A6F3E;   /* dark brass, on light grounds */
+  --warm-soft:  rgba(200,161,90,.5);
+  --warm-faint: rgba(200,161,90,.22);
   /* Luminous cyan of the sigil's glow: display emphasis and the five glyphs. */
-  --glow:       #7FCBF5;
+  --glow:       #5DB8F0;
 
   /* Type families */
   --serif: "EB Garamond", Garamond, "Times New Roman", Georgia, serif;
@@ -59,12 +60,10 @@
   --s-5: 4rem;
   --gutter: 20px;
   --section-y: clamp(3.5rem, 10vw, 6rem);
-  --blend: clamp(48px, 9vw, 140px);   /* depth of a soft section transition */
 
   --measure: 38rem;
-  --header-h: 60px;
+  --header-h: 72px;
   --subnav-h: 0px;
-  --radius: 14px;
   /* One shared motion system: a single ease-out curve, three durations. */
   --ease: cubic-bezier(.22,.61,.36,1);
   --motion-fast: 240ms;   /* hover, colour, small state changes */
@@ -77,7 +76,7 @@
   --motion-reflect: 777ms;  /* reflective / centred statements (soft fade) */
   --stagger: 120ms;          /* between items in a list or grid */
   --cascade: 160ms;          /* between blocks in a section, top to bottom */
-  --rv-dist: 16px;           /* fade-up distance */
+  --rv-dist: 10px;           /* fade-up distance */
   --rv-x: 20px;              /* editorial left / right distance */
   --t-fast: var(--motion-fast);
 }
@@ -150,9 +149,6 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 .wrap--narrow { max-width: 680px; margin: 0 auto; }
 
 .section { padding: var(--section-y) var(--gutter); background: var(--ink-1); }
-/* Bands blend into their neighbours instead of cutting: every section edge
-   is the ink-1 ground, and each band gathers its own tone within --blend. */
-.section--alt { background: linear-gradient(180deg, var(--ink-1) 0, var(--ink-2) var(--blend), var(--ink-2) calc(100% - var(--blend)), var(--ink-1) 100%); }
 .section--center { text-align: center; }
 
 .stack { display: grid; gap: var(--s-2); align-content: start; }
@@ -490,23 +486,6 @@ html:not(.js) .nav-toggle { display: none !important; }
   padding: clamp(2.5rem, 7vw, 4rem) var(--gutter) clamp(4rem, 12vw, 6rem);
   text-align: center; background: var(--ink-1);
 }
-/* Dawn valley under a navy veil: darker behind the words, open at the
-   horizon, gathering back into the page ground at the foot. */
-.home-hero__field {
-  position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background:
-    radial-gradient(closest-side at 50% 40%, rgba(93,184,240,.16), rgba(42,68,184,.05) 62%, transparent) 50% 40% / min(820px, 150vw) min(820px, 150vw) no-repeat,
-    radial-gradient(ellipse 46% 44% at 50% 46%, rgba(9,14,30,.7), rgba(9,14,30,.32) 65%, transparent 100%),
-    linear-gradient(180deg, rgba(14,20,40,.92) 0, rgba(14,20,40,.45) 26%, rgba(14,20,40,.12) 58%, rgba(14,20,40,.35) 80%, var(--ink-1) 100%),
-    url("../images/brand/cosmic-valley.webp") 50% 78% / cover no-repeat var(--ink-1);
-}
-@media (max-width: 899px) {
-  .home-hero__field { background-image:
-    radial-gradient(closest-side at 50% 40%, rgba(93,184,240,.16), rgba(42,68,184,.05) 62%, transparent),
-    radial-gradient(ellipse 70% 40% at 50% 46%, rgba(9,14,30,.72), rgba(9,14,30,.3) 65%, transparent 100%),
-    linear-gradient(180deg, rgba(14,20,40,.92) 0, rgba(14,20,40,.4) 26%, rgba(14,20,40,.12) 58%, rgba(14,20,40,.35) 82%, var(--ink-1) 100%),
-    url("../images/brand/cosmic-valley-900.webp"); background-position: 50% 40%, 50% 46%, 0 0, 50% 100%; background-size: 150vw 150vw, auto, auto, cover; }
-}
 .home-hero .display-title { font-size: clamp(2.35rem, 9.4vw, 4.5rem); text-shadow: 0 0 10px rgba(247,246,242,.10), 0 0 24px rgba(93,184,240,.12); }
 .home-hero__inner { position: relative; width: 100%; max-width: 760px; margin: 0 auto; display: grid; justify-items: center; }
 .home-hero__sigil { width: clamp(185px, 50vw, 300px); margin: var(--s-3) 0; filter: drop-shadow(0 0 32px rgba(93,184,240,.24)); }
@@ -525,7 +504,6 @@ html:not(.js) .nav-toggle { display: none !important; }
   display: grid; grid-template-columns: 28px 1fr; gap: 4px 16px; align-items: start; position: relative;
   padding: 18px var(--tile-arrow-inset) 18px 0; border-bottom: 1px solid var(--line); text-decoration: none; color: var(--text);
 }
-.doorway-list svg { width: 28px; height: 28px; color: var(--accent); margin-top: 2px; }
 .doorway-list__name { font-size: var(--t-sub); line-height: 1.3; }
 .doorway-list__desc { grid-column: 2; color: var(--muted); }
 /* Tile arrows (Five Areas + Group Offerings): centred on the full row height */
@@ -539,7 +517,6 @@ html:not(.js) .nav-toggle { display: none !important; }
 @media (min-width: 860px) {
   .doorway-list, .summary-list { --tile-arrow-inset: 48px; }
   .doorway-list a { grid-template-columns: 28px 9rem 1fr; align-items: baseline; }
-  .doorway-list svg { align-self: center; margin: 0; }
   .doorway-list__desc { grid-column: 3; }
 }
 
@@ -639,7 +616,6 @@ textarea.finput { min-height: 112px; resize: vertical; }
 .offering { padding: var(--s-3) 0 0; border-bottom: 1px solid var(--line); }
 .offering__head { display: grid; gap: 6px; padding-bottom: var(--s-2); }
 .offering__name { display: flex; align-items: center; gap: 12px; font-family: var(--serif); font-size: var(--t-heading); line-height: 1.1; }
-.offering__name svg { width: 28px; height: 28px; color: var(--accent); flex: none; }
 .offering__subtitle { color: var(--muted); font-size: var(--t-small); letter-spacing: .14em; text-transform: uppercase; }
 .offering__desc { max-width: var(--measure); }
 .offering__meta { display: flex; flex-wrap: wrap; gap: 4px 20px; align-items: baseline; color: var(--muted); margin-top: 4px; }
@@ -657,7 +633,6 @@ textarea.finput { min-height: 112px; resize: vertical; }
 }
 
 .note { padding: 12px 16px; border-left: 2px solid var(--accent); background: var(--ink-2); color: var(--muted); max-width: var(--measure); }
-.section--alt .note { background: var(--ink-1); }
 
 
 /* --------------------------------------------------------------------------
@@ -732,42 +707,7 @@ textarea.finput { min-height: 112px; resize: vertical; }
 /* --------------------------------------------------------------------------
    Footer
    -------------------------------------------------------------------------- */
-.site-foot { background: var(--ink-1); color: var(--muted); border-top: 1px solid var(--line); }
-/* One compact row: links flank the sigil, then a slim legal row. */
-.site-foot__main {
-  max-width: 1120px; margin: 0 auto; padding: var(--s-3) var(--gutter) var(--s-2);
-  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s-2);
-}
-.site-foot__brand { display: grid; justify-items: center; gap: 6px; text-align: center; }
-.site-foot__brand img { width: 40px; height: auto; }
-.site-foot__brand p { color: var(--text); font-family: var(--serif); font-size: 1.1rem; line-height: 1.2; max-width: 9ch; text-wrap: balance; }
-.site-foot__links ul { list-style: none; margin: 0; padding: 0; }
-.site-foot__links--start { justify-self: start; }
-.site-foot__links--end { justify-self: end; text-align: right; }
-.site-foot__links--end li { display: flex; justify-content: flex-end; }
-.site-foot a { color: var(--muted); transition: color var(--t-fast) var(--ease); }
-.site-foot a:hover, .site-foot a:focus-visible { color: var(--text); }
-.site-foot__links a { text-decoration: none; min-height: 40px; display: inline-flex; align-items: center; }
-.site-foot__bottom {
-  max-width: 1120px; margin: 0 auto; padding: 10px var(--gutter) 14px; border-top: 1px solid var(--line);
-  display: flex; flex-wrap: wrap; gap: 4px 20px; justify-content: space-between; align-items: center; font-size: var(--t-small);
-}
-.site-foot__bottom a { text-decoration: underline; text-underline-offset: 3px; min-height: 32px; display: inline-flex; align-items: center; }
-@media (min-width: 768px) {
-  .site-foot__main { padding: var(--s-3) var(--gutter); gap: var(--s-3); }
-  .site-foot__links ul { display: flex; gap: 4px 24px; }
-  .site-foot__brand p { max-width: none; }
-}
-
-/* Desktop (header nav visible): one quiet line, no repeated navigation:
-   © 2026 Vinay Swaminathan · Auroville | Privacy & Scope */
-@media (min-width: 1100px) {
-  .site-foot__main { display: none; }
-  .site-foot__bottom { border-top: 0; justify-content: center; gap: 14px; padding: 12px 32px; }
-  .site-foot__bottom > a::before { content: "|"; color: var(--warm-soft); margin-right: 14px; text-decoration: none; display: inline-block; }
-  .site-foot__bottom > a { text-decoration: none; }
-  .site-foot__bottom > a:hover, .site-foot__bottom > a:focus-visible { text-decoration: underline; text-underline-offset: 3px; }
-}
+/* (footer: see Brand system below) */
 
 /* --------------------------------------------------------------------------
    Editorial photography (home, Meet Vinay): text beside a clearly framed
@@ -952,7 +892,7 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
 /* Display emphasis: EB Garamond italic in the sigil's cyan, for one
    meaningful word or phrase in a display line. */
 .display-em { font-family: var(--serif); font-style: italic; color: var(--glow); }
-.soft-em { color: #B5DEF8; }
+.soft-em { color: #A8D8F6; }
 .quiet-links { display: flex; flex-wrap: wrap; gap: 4px 32px; }
 
 /* Home sections led by a marker: on wide screens the marker holds a left
@@ -982,26 +922,6 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
   .editorial__media--person img { width: min(100%, 520px, calc(min(80vh, 680px) * .8)); aspect-ratio: auto; }
 }
 
-/* --------------------------------------------------------------------------
-   Where we begin: the one atmospheric threshold of the homepage. A dark
-   field with a faint blue illumination, a warm glow low on the opposite
-   side, and a few barely visible arcs and points of light (inline SVG).
-   -------------------------------------------------------------------------- */
-.threshold {
-  position: relative; overflow: hidden; isolation: isolate;
-  background:
-    radial-gradient(55% 60% at 88% 8%, rgba(93,184,240,.11), transparent 70%),
-    radial-gradient(45% 50% at 6% 96%, rgba(196,160,100,.09), transparent 72%),
-    linear-gradient(180deg, #0B1022 0%, var(--ink-1) 55%, #0B1023 100%);
-}
-.threshold--nebula {
-  background:
-    linear-gradient(180deg, var(--ink-1) 0, rgba(14,20,40,0) var(--blend)),
-    linear-gradient(0deg, var(--ink-1) 0, rgba(14,20,40,0) var(--blend)),
-    radial-gradient(ellipse 62% 58% at 32% 48%, rgba(9,14,30,.72), rgba(9,14,30,.25) 70%, transparent),
-    url("../images/brand/midnight-nebula.webp") 50% 50% / cover no-repeat var(--ink-1);
-}
-.threshold--nebula > .wrap { padding-block: calc(var(--blend) * .35); }
 .begin { display: grid; gap: var(--s-3); }
 .begin__statements { display: grid; gap: clamp(.9rem, 2.6vw, 1.6rem); margin-top: var(--s-1); }
 .begin__statements p {
@@ -1031,7 +951,6 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
   background: #0B1124; border: 1px solid var(--warm-soft); color: var(--glow);
   transition: border-color var(--motion-fast) var(--ease), box-shadow var(--motion-fast) var(--ease), transform var(--motion-fast) var(--ease);
 }
-.areas__node svg { width: var(--icon); height: var(--icon); filter: drop-shadow(0 0 4px rgba(127,203,245,.5)); }
 .areas__label { font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; color: var(--text); transition: color var(--motion-fast) var(--ease); }
 .areas a:hover .areas__node, .areas a:focus-visible .areas__node { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(93,184,240,.08), 0 0 22px rgba(93,184,240,.22); }
 .areas a:hover .areas__label, .areas a:focus-visible .areas__label { color: var(--accent); }
@@ -1054,10 +973,6 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
    Story: present self first; the past as three quiet chapters; the vision.
    -------------------------------------------------------------------------- */
 .story { position: relative; overflow: hidden; }
-.story::before {
-  content: ""; position: absolute; right: -10%; top: -30%; width: min(760px, 120vw); aspect-ratio: 1;
-  background: radial-gradient(closest-side, rgba(93,184,240,.09), transparent); pointer-events: none;
-}
 .story__present { position: relative; display: grid; gap: var(--s-3); max-width: 40rem; }
 .story__home { font-size: clamp(2.5rem, 9vw, 4.4rem); line-height: 1.04; }
 .chapters { display: grid; gap: var(--s-4); max-width: 44rem; }
@@ -1122,7 +1037,7 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
 }
 /* The footer always ends clear of the pill. */
 .has-contact-pill .site-foot { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
-@media (min-width: 1100px) { .has-contact-pill .site-foot { padding-bottom: 0; } }
+@media (min-width: 1100px) { .has-contact-pill .site-foot { padding-bottom: 24px; } }
 
 .contact-open { overflow: hidden; }
 .contact-sheet {
@@ -1164,50 +1079,13 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
 }
 .merged-block { margin-top: var(--s-4); }
 
-/* --------------------------------------------------------------------------
-   Light breathing sections. The same environment changing state: the dark
-   ground gives way to ivory within --blend and gathers again at the foot,
-   so no section edge is ever a hard cut. Colours are re-scoped through the
-   custom properties, so every component inside simply works on light.
-   -------------------------------------------------------------------------- */
-.section--light {
-  --text: #151C35; --muted: #4D5675; --accent: #1C6CA3; --glow: #1E6FA8;
-  --warm: #94702F; --warm-soft: rgba(148,112,47,.55); --warm-faint: rgba(148,112,47,.28);
-  --line: rgba(21,28,53,.16); --ink-3: rgba(21,28,53,.06);
-  --blend-l: calc(var(--blend) * 1.15);
-  color: var(--text);
-  padding-block: calc(var(--blend-l) + clamp(1rem, 3vw, 2rem));
-  background:
-    linear-gradient(180deg, #0E1428 0, #1E2540 calc(var(--blend-l) * .3), #8F8F98 calc(var(--blend-l) * .68), #E9E3D7 var(--blend-l),
-                    #F1ECE2 50%,
-                    #E9E3D7 calc(100% - var(--blend-l)), #8F8F98 calc(100% - var(--blend-l) * .68), #1E2540 calc(100% - var(--blend-l) * .3), #0E1428 100%);
-}
-.section--light ::selection { background: rgba(28,108,163,.22); }
-.section--light .scan-mark { background: rgba(28,108,163,.14); }
-/* With the mist: the photograph carries the transition, a soft ivory veil
-   keeps the centre quiet and readable. */
-.section--mist {
-  background:
-    linear-gradient(180deg, #0E1428 0, rgba(14,20,40,.6) calc(var(--blend-l) * .45), rgba(14,20,40,0) var(--blend-l)),
-    linear-gradient(0deg, #0E1428 0, rgba(14,20,40,.55) calc(var(--blend-l) * .45), rgba(14,20,40,0) var(--blend-l)),
-    radial-gradient(ellipse 70% 62% at 45% 50%, rgba(243,238,228,.93), rgba(243,238,228,.7) 55%, rgba(243,238,228,.25) 100%),
-    url("../images/brand/ivory-mist.webp") 50% 58% / cover no-repeat #ECE6DA;
-}
 
-/* A quiet illuminated field for a conceptual moment (Approach, the Wheel). */
-.field-glow {
-  background:
-    radial-gradient(ellipse 52% 48% at 50% 64%, rgba(93,184,240,.10), transparent 72%),
-    radial-gradient(ellipse 38% 30% at 12% 8%, rgba(198,161,94,.07), transparent 72%),
-    var(--ink-1);
-}
 
 /* Linked rows (home 1:1 and group rows): brass structure on the top edge. */
 .doorway-list, .summary-list { position: relative; border-top-color: var(--warm-faint); }
 .doorway-list::before, .summary-list::before {
   content: ""; position: absolute; left: 0; top: -2.5px; width: 4px; height: 4px; border-radius: 50%; background: var(--warm);
 }
-.doorway-list svg, .offering__name svg { color: var(--glow); }
 .doorway-list a:hover .doorway-list__name, .doorway-list a:focus-visible .doorway-list__name { color: var(--accent); }
 
 /* Story: present self beside the present-day photograph. */
@@ -1220,12 +1098,241 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
 }
 .chapter__photo { margin: var(--s-1) 0 0; }
 .chapter__photo img { width: min(100%, 440px); border-radius: 12px; }
-/* My Vision: the sigil over a deep, quiet nebula field. */
-.vision {
-  background:
-    linear-gradient(180deg, var(--ink-1) 0, rgba(14,20,40,0) var(--blend)),
-    linear-gradient(0deg, var(--ink-1) 0, rgba(14,20,40,0) var(--blend)),
-    radial-gradient(ellipse 34% 42% at 50% 50%, rgba(93,184,240,.08), transparent 75%),
-    linear-gradient(rgba(12,18,36,.78), rgba(12,18,36,.78)),
-    url("../images/brand/midnight-nebula.webp") 50% 50% / cover no-repeat var(--ink-1);
+
+/* ==========================================================================
+   Brand system: three background families, paired transitions, mirrored
+   header and footer frames, one button and link language.
+   Assets: assets/images/brand/ (production pack; see README-ASSET-MANIFEST).
+   ========================================================================== */
+@media (min-width: 1100px) { :root { --header-h: 82px; } }
+
+/* --- Three background families -------------------------------------------
+   .bg-1 dark primary · .bg-2 light primary · .bg-3 dark secondary.
+   Every section paints six layers: a transition band at the top (image +
+   colour-matching veil), the same at the bottom, a readability veil and
+   the texture itself. Texture is felt at the left and right edges; the
+   centre, where copy sits, stays quiet. Adjacent sections of one tone fade
+   into each other through their own ground; dark/light boundaries are
+   bridged by the transition artwork, half in each section. */
+.bg-1, .bg-2, .bg-3 {
+  --th: clamp(84px, 11vw, 160px);             /* transition band height */
+  --th2: calc(var(--th) / 2);
+  --tt: none; --tb: none;
+  --tt-veil: linear-gradient(var(--base), transparent);
+  --tb-veil: linear-gradient(transparent, var(--base));
+  background-color: var(--base);
+  background-image: var(--tt-veil), var(--tt), var(--tb-veil), var(--tb), var(--veil), var(--img);
+  background-size: 100% var(--th2), 100% var(--th), 100% var(--th2), 100% var(--th), 100% 100%, cover;
+  background-position: 50% 0, 50% calc(-1 * var(--th2)), 50% 100%, 50% calc(100% + var(--th2)), 0 0, 50% 50%;
+  background-repeat: no-repeat;
 }
+.bg-1, .bg-3 {
+  --base: #0C1426;
+  --veil: linear-gradient(rgba(14,20,40,.8), rgba(14,20,40,.84));
+}
+.bg-1 { --img: url("../images/brand/bg-01-dark-primary-desktop.webp"); }
+.bg-3 { --img: url("../images/brand/bg-03-dark-secondary-desktop.webp"); }
+.bg-2 {
+  --base: #F2F3F0;
+  --veil: linear-gradient(rgba(247,246,242,.88), rgba(247,246,242,.9));
+  --img: url("../images/brand/bg-02-light-primary-desktop.webp");
+}
+@media (max-width: 767px) {
+  .bg-1 { --img: url("../images/brand/bg-01-dark-primary-mobile.webp"); }
+  .bg-2 { --img: url("../images/brand/bg-02-light-primary-mobile.webp"); }
+  .bg-3 { --img: url("../images/brand/bg-03-dark-secondary-mobile.webp"); }
+  .bg-1, .bg-2, .bg-3 { --th: 76px; }
+}
+/* Dark → light: the outgoing dark section shows the artwork's dark half,
+   the incoming light section its light half; each veil fades out toward
+   the seam so both halves meet on the raw artwork. */
+:is(.bg-1, .bg-3):has(+ .bg-2),
+.page-hero:has(+ .section--upcoming + .bg-2):not(:has(~ .section--upcoming .sessions li)) {
+  --tb: url("../images/brand/transition-dark-to-light-desktop.webp");
+  --tb-veil: linear-gradient(rgba(14,20,40,.8), rgba(14,20,40,0));
+}
+:is(.bg-1, .bg-3) + .bg-2 {
+  --tt: url("../images/brand/transition-dark-to-light-desktop.webp");
+  --tt-veil: linear-gradient(rgba(247,246,242,0), rgba(247,246,242,.88));
+}
+.bg-2:has(+ :is(.bg-1, .bg-3)), main > .bg-2:last-child {
+  --tb: url("../images/brand/transition-light-to-dark-desktop.webp");
+  --tb-veil: linear-gradient(rgba(247,246,242,.9), rgba(247,246,242,0));
+}
+.bg-2 + :is(.bg-1, .bg-3) {
+  --tt: url("../images/brand/transition-light-to-dark-desktop.webp");
+  --tt-veil: linear-gradient(rgba(14,20,40,0), rgba(14,20,40,.8));
+}
+@media (max-width: 767px) {
+  :is(.bg-1, .bg-3):has(+ .bg-2), .page-hero:has(+ .section--upcoming + .bg-2):not(:has(~ .section--upcoming .sessions li)) { --tb: url("../images/brand/transition-dark-to-light-mobile.webp"); }
+  :is(.bg-1, .bg-3) + .bg-2 { --tt: url("../images/brand/transition-dark-to-light-mobile.webp"); }
+  .bg-2:has(+ :is(.bg-1, .bg-3)), main > .bg-2:last-child { --tb: url("../images/brand/transition-light-to-dark-mobile.webp"); }
+  .bg-2 + :is(.bg-1, .bg-3) { --tt: url("../images/brand/transition-light-to-dark-mobile.webp"); }
+}
+/* Copy never sits on a band. */
+.section.bg-1, .section.bg-2, .section.bg-3 { padding-block: max(var(--section-y), calc(var(--th2) + 2rem)); }
+
+/* Light ground: every component re-scoped through the custom properties. */
+.bg-2 {
+  --text: #0E1428; --muted: #4A5370; --accent: #1F78B4; --glow: #1F78B4;
+  --warm: #8A6F3E; --warm-soft: rgba(138,111,62,.55); --warm-faint: rgba(138,111,62,.3);
+  --line: rgba(138,111,62,.3);
+  --ink-1: #F4F4F1; --ink-2: #ECEDE9; --ink-3: rgba(14,20,40,.05);
+  color: var(--text);
+}
+.bg-2 ::selection { background: rgba(31,120,180,.2); }
+.bg-2 .scan-mark { background: rgba(31,120,180,.13); }
+.bg-2 .finput { background: rgba(255,255,255,.62); border-color: rgba(138,111,62,.4); color: var(--text); }
+.bg-2 .finput:focus { border-color: #1F78B4; }
+.bg-2 .quad > div { background: rgba(255,255,255,.45); }
+
+/* --- Header: the opening of the frame ------------------------------------- */
+.site-head { background: rgba(14,20,40,.96); border-bottom: 1px solid rgba(200,161,90,.22); }
+.site-head::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+  background: url("../images/brand/header-frame-mobile.svg") 50% 100% / 100% 100% no-repeat;
+}
+@media (min-width: 768px) { .site-head::before { background-image: url("../images/brand/header-frame-desktop.svg"); } }
+.site-head__inner { position: relative; }
+.brand img { width: 32px; }
+.nav__link { color: rgba(247,246,242,.82); }
+.nav__link:hover, .nav__link:focus-visible { color: var(--accent); }
+.nav__link[aria-current="page"] { color: var(--text); border-bottom-color: var(--warm); }
+.nav-toggle { background: #0E1428; border-color: rgba(200,161,90,.45); color: var(--text); }
+.nav-toggle__bars i { background: var(--warm); }
+.nav-toggle:hover, .nav-toggle:focus-visible { border-color: var(--accent); }
+.nav-mobile { border-top-color: rgba(200,161,90,.3); }
+.nav-mobile a span:last-child { color: var(--warm); }
+.nav-mobile a[aria-current="page"] span:last-child { color: var(--accent); }
+
+/* --- Footer: the same frame, inverted ------------------------------------- */
+.site-foot {
+  position: relative; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px 24px;
+  padding: 26px max(var(--gutter), calc((100% - 1440px) / 2 + 32px)) 24px;
+  color: var(--muted); font-size: var(--t-small);
+  border-top: 1px solid rgba(200,161,90,.22);
+  background:
+    url("../images/brand/footer-frame-desktop.svg") 50% 0 / 100% 100% no-repeat,
+    linear-gradient(rgba(12,20,38,.88), rgba(12,20,38,.88)),
+    url("../images/brand/bg-01-dark-primary-desktop.webp") 50% 50% / cover no-repeat #0C1426;
+}
+.site-foot__copy { justify-self: start; }
+.site-foot__privacy { justify-self: end; color: var(--muted); text-decoration: none; min-height: 40px; display: inline-flex; align-items: center; }
+.site-foot__privacy:hover, .site-foot__privacy:focus-visible { color: var(--accent); }
+.site-foot__brand { display: grid; justify-items: center; gap: 6px; text-align: center; }
+.site-foot__brand img { width: auto; height: 38px; }
+.site-foot__brand p { font-family: var(--serif); font-size: 1.05rem; line-height: 1.2; color: var(--text); }
+@media (max-width: 767px) {
+  .site-foot {
+    grid-template-columns: 1fr 1fr; padding: 22px var(--gutter) 16px;
+    background-image: url("../images/brand/footer-frame-mobile.svg"), linear-gradient(rgba(12,20,38,.88), rgba(12,20,38,.88)), url("../images/brand/bg-01-dark-primary-mobile.webp");
+    background-size: 100% 110px, auto, cover; background-position: 50% -40px, 0 0, 50% 50%;
+  }
+  .site-foot__copy { font-size: .8rem; }
+  .site-foot { grid-template-columns: 1fr auto; column-gap: 12px; }
+  .site-foot__privacy { font-size: .8rem; }
+  .site-foot__brand { grid-column: 1 / -1; grid-row: 1; }
+  .site-foot__copy, .site-foot__privacy { grid-row: 2; }
+}
+
+/* --- One button language --------------------------------------------------- */
+.btn {
+  min-height: 46px; padding: 12px 20px; gap: 12px; font-size: 1rem; letter-spacing: .02em;
+  background: rgba(14,20,40,.25); border: 1px solid var(--warm); color: var(--text); box-shadow: none;
+}
+.btn--solid, .btn--outline { background: rgba(14,20,40,.25); border-color: var(--warm); color: var(--text); }
+.btn:hover, .btn:focus-visible { background: rgba(27,36,72,.55); border-color: var(--accent); box-shadow: 0 0 0 1px rgba(93,184,240,.25), 0 0 16px rgba(93,184,240,.18); color: var(--text); }
+.bg-2 .btn { background: transparent; border-color: var(--warm-dark); color: #0E1428; }
+.bg-2 .btn:hover, .bg-2 .btn:focus-visible { background: rgba(14,20,40,.05); border-color: #1F78B4; box-shadow: 0 0 0 3px rgba(31,120,180,.16); }
+@media (max-width: 599px) { .btn { padding: 11px 17px; min-height: 44px; } }
+/* Arrows: the production arrow, drawn through a mask so it can take brass
+   at rest and cyan on interaction. The arrow glyph stays in the markup. */
+.btn span[aria-hidden], .text-cta span[aria-hidden], .doorway-list__arrow, .summary-list__arrow,
+.contact-sheet__choices a span[aria-hidden], .session__cta span[aria-hidden], .nav-mobile a:not(.btn) span:last-child {
+  display: inline-block; width: 20px; height: 8px; flex: none; font-size: 0; line-height: 0; color: transparent;
+  background: var(--warm);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 10' fill='none' stroke='%23000' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1.5 5H24M20 1.2L24 5L20 8.8'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 10' fill='none' stroke='%23000' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1.5 5H24M20 1.2L24 5L20 8.8'/%3E%3C/svg%3E") center / contain no-repeat;   /* arrow-right.svg, redrawn at its proportions for small sizes */
+  transition: transform var(--motion-fast) var(--ease), background-color var(--motion-fast) var(--ease);
+}
+.btn:hover span[aria-hidden], .btn:focus-visible span[aria-hidden],
+.text-cta:hover span[aria-hidden], .text-cta:focus-visible span[aria-hidden],
+.doorway-list a:hover .doorway-list__arrow, .doorway-list a:focus-visible .doorway-list__arrow,
+.summary-list a:hover .summary-list__arrow, .summary-list a:focus-visible .summary-list__arrow,
+.contact-sheet__choices a:hover span[aria-hidden], .contact-sheet__choices a:focus-visible span[aria-hidden],
+.nav-mobile a:hover span:last-child, .nav-mobile a:focus-visible span:last-child { background-color: var(--accent); }
+.doorway-list__arrow, .summary-list__arrow { width: 22px; height: 10px; }
+
+/* --- Editorial link ------------------------------------------------------- */
+.text-cta { gap: 12px; color: var(--text); padding-bottom: 2px; background: linear-gradient(var(--warm-faint), var(--warm-faint)) 0 100% / 100% 1px no-repeat; min-height: 38px; }
+.text-cta:hover, .text-cta:focus-visible { color: var(--accent); }
+
+/* --- Eyebrow: label + the production rule / node -------------------------- */
+.marker, .eyebrow { font-size: .8rem; letter-spacing: .18em; }
+.marker::after, .eyebrow::after {
+  width: clamp(64px, 8vw, 120px); height: 14px; background: var(--warm);
+  -webkit-mask: url("../images/brand/section-rule-node.svg") left center / 100% 100% no-repeat; mask: url("../images/brand/section-rule-node.svg") left center / 100% 100% no-repeat;
+}
+.marker--center::before {
+  width: clamp(64px, 8vw, 120px); height: 14px; background: var(--warm); transform: scaleX(-1);
+  -webkit-mask: url("../images/brand/section-rule-node.svg") left center / 100% 100% no-repeat; mask: url("../images/brand/section-rule-node.svg") left center / 100% 100% no-repeat;
+}
+@media (max-width: 599px) { .marker, .eyebrow { font-size: .74rem; } }
+
+/* --- Editorial display statements ------------------------------------------- */
+.display-statement { font-size: clamp(2rem, 4vw, 3.4rem); line-height: 1.08; max-width: 22ch; color: var(--text); }
+.statement-lead { font-family: var(--serif); font-size: clamp(1.6rem, 3.2vw, 2.4rem); line-height: 1.15; color: var(--text); max-width: 26ch; text-wrap: balance; }
+.display-em { color: var(--glow); }
+
+/* --- Five Areas: the production icons ------------------------------------- */
+.area-icon { display: block; width: var(--icon, 40px); height: var(--icon, 40px); flex: none; }
+.areas { --node: 44px; --icon: 44px; }
+.areas__node { border: 0; background: radial-gradient(circle, #0B1124 62%, transparent 64%); }
+@media (max-width: 599px) { .areas { --node: 34px; --icon: 34px; } }
+.doorway-list a { --icon: 34px; grid-template-columns: 34px 1fr; column-gap: 16px; align-items: center; }
+@media (min-width: 860px) { .doorway-list a { grid-template-columns: 34px 9rem 1fr; } }
+.doorway-list a > .area-icon { grid-row: span 2; }
+@media (min-width: 860px) { .doorway-list a > .area-icon { grid-row: auto; } }
+.doorway-list__name { font-family: var(--serif); font-size: calc(var(--t-sub) * 1.08); }
+.doorway-list a:hover, .doorway-list a:focus-visible { background: linear-gradient(90deg, rgba(93,184,240,.06), transparent 70%); }
+.offering__name .area-icon { --icon: 36px; }
+.doorway-list, .summary-list { border-top-color: var(--warm-faint); }
+.doorway-list a, .summary-list li { border-bottom-color: var(--warm-faint); }
+
+/* --- Evidence / metrics: brass numbers, fine brass dividers ---------------- */
+.evidence dt, .metric dt { color: var(--warm); }
+.metrics--row .metric { border-top-color: var(--warm-faint); }
+
+/* --- Approach details ---------------------------------------------------------- */
+.face__tab { color: var(--warm); }
+.face__tab[aria-selected="true"] { color: var(--warm); border-color: var(--accent); }
+.face__letter { color: var(--warm); }
+
+/* --- Hero: the frame holds the sigil and the words ------------------------ */
+.home-hero__frame {
+  position: absolute; inset: clamp(8px, 2vw, 28px) clamp(0px, 2vw, 32px); z-index: -1; pointer-events: none; opacity: .76;
+  background: url("../images/brand/hero-frame-mobile.svg") 50% 50% / 100% 100% no-repeat;
+}
+@media (min-width: 768px) { .home-hero__frame { background-image: url("../images/brand/hero-frame-desktop.svg"); } }
+.home-hero { isolation: isolate; }
+
+/* --- Decorative overlays (sparingly) ------------------------------------------ */
+#begin, .vision { position: relative; }
+#begin::after {
+  content: ""; position: absolute; right: 0; bottom: var(--th2); width: min(56vw, 760px); aspect-ratio: 10 / 7;
+  background: url("../images/brand/overlay-arcs.svg") 100% 100% / contain no-repeat; opacity: .2; pointer-events: none;
+}
+.vision::after {
+  content: ""; position: absolute; inset: var(--th2) 0; pointer-events: none; opacity: .12;
+  background: url("../images/brand/overlay-particles.svg") 50% 50% / cover no-repeat;
+}
+#begin > .wrap, .vision > * { position: relative; z-index: 1; }
+
+/* --- Radius system: images 20 · surfaces 16 · small UI 12 · pills 999 ------- */
+.editorial__media img, .story__portrait img, .chapter__photo img { border-radius: 20px; }
+.contact-sheet__panel, .field-nest { border-radius: 16px; }
+.field-nest .field-nest { border-radius: 12px; }
+@media (min-width: 600px) { .archive__item img { border-radius: 18px; border: 1px solid var(--warm-faint); } }
+.editorial__media--person img, .story__portrait img { border: 1px solid rgba(200,161,90,.3); }
+.page-hero.bg-1:has(+ .bg-2), .page-hero:has(+ .section--upcoming + .bg-2):not(:has(~ .section--upcoming .sessions li)) { padding-bottom: max(clamp(2.5rem, 8vw, 4rem), calc(var(--th2) + 2rem)); }
+.home-hero { padding-bottom: max(clamp(4rem, 12vw, 6rem), calc(var(--th2) + 2.5rem)); }
+.bg-2 .area-icon { background: #0E1428; border-radius: 50%; box-shadow: 0 0 0 1px rgba(138,111,62,.25); }   /* icons are drawn for dark ground */

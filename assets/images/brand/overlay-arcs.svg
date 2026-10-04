@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700" fill="none">
+<defs>
+<filter id="blueGlow" x="-100%" y="-100%" width="300%" height="300%">
+  <feGaussianBlur stdDeviation="6" result="b"/>
+  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="goldGlow" x="-100%" y="-100%" width="300%" height="300%">
+  <feGaussianBlur stdDeviation="4" result="b"/>
+  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<linearGradient id="blueFade" x1="0" y1="0" x2="1" y2="0">
+  <stop offset="0" stop-color="#5DB8F0" stop-opacity="0"/>
+  <stop offset=".5" stop-color="#5DB8F0" stop-opacity=".7"/>
+  <stop offset="1" stop-color="#5DB8F0" stop-opacity="0"/>
+</linearGradient>
+</defs>
+
+<g opacity=".72">
+  <path d="M10 610 C170 430 330 470 475 320 C590 200 720 145 920 88" stroke="#C8A15A" stroke-width="1.5"/>
+  <path d="M0 650 C165 470 350 500 500 340 C620 210 740 165 950 105" stroke="#5DB8F0" stroke-opacity=".25" stroke-width="1.2"/>
+  <circle cx="475" cy="320" r="4" fill="#C8A15A" filter="url(#goldGlow)"/>
+  <circle cx="920" cy="88" r="3" fill="#5DB8F0" filter="url(#blueGlow)"/>
+</g>
+</svg>
