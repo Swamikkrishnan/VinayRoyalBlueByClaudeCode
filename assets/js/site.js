@@ -401,26 +401,6 @@
   }
 
   /* ---------------------------------------------------------------------
-     3c. Light fields on phones: "cover", but never narrower than 103% of
-         the field, so the artwork's thin edge border stays off-screen.
-     --------------------------------------------------------------------- */
-  if ('ResizeObserver' in window) {
-    var phone = window.matchMedia('(max-width: 767px)');
-    var sizeField = function (el) {
-      var w = el.offsetWidth, h = el.offsetHeight;
-      el.style.setProperty('--img-size', Math.ceil(Math.max(w * 1.03, h * 1080 / 1920)) + 'px auto');
-    };
-    var fieldRO = new ResizeObserver(function (entries) {
-      if (!phone.matches) return;
-      entries.forEach(function (e) { sizeField(e.target); });
-    });
-    document.querySelectorAll('.bg-2, .bg-4').forEach(function (el) { fieldRO.observe(el); });
-    phone.addEventListener && phone.addEventListener('change', function () {
-      document.querySelectorAll('.bg-2, .bg-4').forEach(function (el) { if (phone.matches) sizeField(el); });
-    });
-  }
-
-  /* ---------------------------------------------------------------------
      4. Form helpers. A fieldset[data-require-one] needs at least one box
         ticked (native validation message on the first box).
      --------------------------------------------------------------------- */
