@@ -34,9 +34,11 @@
   --warn:       #E0955C;
   /* Warm micro-accent: muted, mineral brass. Lines, nodes and small
      threshold markers only; never body text or headline words. */
-  --warm:       #C4A064;
-  --warm-soft:  rgba(196,160,100,.42);
-  --warm-faint: rgba(196,160,100,.18);
+  --warm:       #C6A15E;
+  --warm-soft:  rgba(198,161,94,.5);
+  --warm-faint: rgba(198,161,94,.22);
+  /* Luminous cyan of the sigil's glow: display emphasis and the five glyphs. */
+  --glow:       #7FCBF5;
 
   /* Type families */
   --serif: "EB Garamond", Garamond, "Times New Roman", Georgia, serif;
@@ -57,6 +59,7 @@
   --s-5: 4rem;
   --gutter: 20px;
   --section-y: clamp(3.5rem, 10vw, 6rem);
+  --blend: clamp(48px, 9vw, 140px);   /* depth of a soft section transition */
 
   --measure: 38rem;
   --header-h: 60px;
@@ -66,7 +69,7 @@
   --ease: cubic-bezier(.22,.61,.36,1);
   --motion-fast: 240ms;   /* hover, colour, small state changes */
   --motion-base: 360ms;   /* menus, accordions, chevrons, tab switches */
-  --motion-image: 777ms; /* photographs gradually appearing */
+  --motion-image: 1000ms; /* photographs gradually appearing */
   --ease-image: cubic-bezier(.25,.46,.45,.94); /* soft ease-out, no overshoot */
   /* Reveal language: calm, unhurried, no overshoot. */
   --ease-calm: var(--ease-image);   /* one gentle curve for every reveal */
@@ -147,7 +150,9 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 .wrap--narrow { max-width: 680px; margin: 0 auto; }
 
 .section { padding: var(--section-y) var(--gutter); background: var(--ink-1); }
-.section--alt { background: var(--ink-2); }
+/* Bands blend into their neighbours instead of cutting: every section edge
+   is the ink-1 ground, and each band gathers its own tone within --blend. */
+.section--alt { background: linear-gradient(180deg, var(--ink-1) 0, var(--ink-2) var(--blend), var(--ink-2) calc(100% - var(--blend)), var(--ink-1) 100%); }
 .section--center { text-align: center; }
 
 .stack { display: grid; gap: var(--s-2); align-content: start; }
@@ -200,7 +205,6 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 .page-approach .lede { font-size: calc(var(--t-sub) - 2px); }
 .insight { font-family: var(--serif); font-size: clamp(1.45rem, 5vw, 1.8rem); line-height: 1.3; color: var(--text); max-width: 32ch; text-wrap: pretty; }
 .insight--sm { font-size: clamp(1.2rem, 4.2vw, 1.4rem); line-height: 1.35; max-width: 44ch; }
-.eyebrow { font-family: var(--sans); font-weight: 400; line-height: 1.4; color: var(--muted); font-size: var(--t-small); letter-spacing: .14em; text-transform: uppercase; }
 .muted { color: var(--muted); }
 .small { font-size: var(--t-small); }
 .prose { max-width: var(--measure); }
@@ -285,12 +289,8 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
   max-width: 1440px; margin: 0 auto; padding: 0 var(--gutter); height: var(--header-h);
   display: flex; align-items: center; justify-content: space-between; gap: 20px;
 }
-/* Wide screens: brand left, primary nav truly centred, CTA right. */
-@media (min-width: 1100px) {
-  .site-head__inner { display: grid; grid-template-columns: 1fr auto 1fr; padding: 0 32px; }
-  .brand { justify-self: start; }
-  .nav { justify-self: center; }
-}
+/* Wide screens: brand left, navigation right. */
+@media (min-width: 1100px) { .site-head__inner { padding: 0 32px; } }
 .brand {
   display: flex; align-items: center; gap: 10px; min-height: 44px;
   color: var(--text); text-decoration: none;
@@ -298,7 +298,7 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 }
 .brand img { width: 28px; height: auto; }
 
-.nav { display: flex; align-items: center; gap: 24px; }
+.nav { display: flex; align-items: center; gap: 28px; }
 .nav__link {
   color: var(--muted); text-decoration: none; min-height: 44px;
   display: flex; align-items: center; border-bottom: 1px solid transparent;
@@ -348,8 +348,7 @@ html:not(.js) .nav-toggle { display: none !important; }
 .nav-mobile a:not(.btn):hover, .nav-mobile a:not(.btn):focus-visible { color: var(--text); }
 .nav-mobile a[aria-current="page"] { color: var(--text); }
 .nav-mobile a span:last-child { color: var(--accent); }
-.nav-mobile .btn { margin-top: var(--s-2); width: 100%; justify-content: center; color: var(--ink-1); border-bottom: 0; }
-.nav-mobile .btn span:last-child { color: inherit; }
+.nav-mobile .btn { margin-top: var(--s-2); width: 100%; justify-content: center; color: var(--text); border-bottom: 1px solid var(--warm); }
 
 @media (min-width: 1100px) { .nav-mobile, .nav-toggle { display: none; } }
 @media (max-width: 1099px) { .nav { display: none; } .nav-toggle { display: inline-flex; } }
@@ -387,8 +386,10 @@ html:not(.js) .nav-toggle { display: none !important; }
   .has-subnav { --subnav-h: 0px; }
   .subnav {
     position: fixed; top: calc(var(--header-h) + 48px); left: 24px; z-index: 40;
-    width: 150px; background: none; border: 0;
-    -webkit-backdrop-filter: none; backdrop-filter: none;
+    width: 158px; border: 0; padding: 8px 8px 8px 0; border-radius: 12px;
+    /* a soft navy backing keeps the index legible over light sections */
+    background: rgba(14,20,40,.72);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
   }
   .subnav ul {
     height: auto; margin: 0; padding: 0; overflow: visible;
@@ -422,10 +423,10 @@ html:not(.js) .nav-toggle { display: none !important; }
 }
 .btn span[aria-hidden] { display: inline-block; transition: transform var(--motion-fast) var(--ease); }
 @media (hover: hover) { .btn:hover span[aria-hidden] { transform: translateX(2px); } }
-.btn--solid { background: var(--text); color: var(--ink-1); border-color: var(--text); }
-.btn--solid:hover, .btn--solid:focus-visible { background: #DCE3FF; border-color: #DCE3FF; color: var(--ink-1); }
-.btn--outline { background: transparent; border-color: var(--accent); color: var(--text); }
-.btn--outline:hover, .btn--outline:focus-visible { background: var(--ink-3); }
+.btn--solid { background: rgba(27,36,72,.6); border-color: var(--warm); color: var(--text); }
+.btn--outline { background: transparent; border-color: var(--warm-soft); color: var(--text); }
+.btn--solid:hover, .btn--solid:focus-visible, .btn--outline:hover, .btn--outline:focus-visible { background: var(--ink-3); border-color: var(--accent); box-shadow: 0 0 0 3px rgba(93,184,240,.08), 0 0 18px rgba(93,184,240,.18); }
+.btn span[aria-hidden] { color: var(--accent); }
 .btn:active { transform: translateY(1px); transition-duration: 60ms; }
 .btn[disabled] { opacity: .6; cursor: progress; }
 
@@ -482,29 +483,40 @@ html:not(.js) .nav-toggle { display: none !important; }
    Home
    -------------------------------------------------------------------------- */
 .home-hero {
-  position: relative; overflow: hidden;
-  min-height: min(calc(100svh - var(--header-h)), 900px);
-  min-height: min(calc(100svh - var(--header-h)), 78svh, 900px);
+  position: relative; overflow: hidden; isolation: isolate;
+  min-height: calc(100vh - var(--header-h));
+  min-height: calc(100svh - var(--header-h));
   display: flex; align-items: center;
-  padding: clamp(3rem, 9vw, 5rem) var(--gutter) clamp(3.5rem, 10vw, 5.5rem);
+  padding: clamp(2.5rem, 7vw, 4rem) var(--gutter) clamp(4rem, 12vw, 6rem);
   text-align: center; background: var(--ink-1);
 }
-.home-hero::before {
-  content: ""; position: absolute; left: 50%; top: 46%;
-  width: min(820px, 150vw); aspect-ratio: 1; transform: translate(-50%, -50%);
-  background: radial-gradient(closest-side, rgba(93,184,240,.13), rgba(42,68,184,.06) 58%, transparent);
-  pointer-events: none;
+/* Dawn valley under a navy veil: darker behind the words, open at the
+   horizon, gathering back into the page ground at the foot. */
+.home-hero__field {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(closest-side at 50% 40%, rgba(93,184,240,.16), rgba(42,68,184,.05) 62%, transparent) 50% 40% / min(820px, 150vw) min(820px, 150vw) no-repeat,
+    radial-gradient(ellipse 46% 44% at 50% 46%, rgba(9,14,30,.7), rgba(9,14,30,.32) 65%, transparent 100%),
+    linear-gradient(180deg, rgba(14,20,40,.92) 0, rgba(14,20,40,.45) 26%, rgba(14,20,40,.12) 58%, rgba(14,20,40,.35) 80%, var(--ink-1) 100%),
+    url("../images/brand/cosmic-valley.webp") 50% 78% / cover no-repeat var(--ink-1);
 }
-.home-hero .display-title { text-shadow: 0 0 10px rgba(247,246,242,.10), 0 0 24px rgba(93,184,240,.12); }
+@media (max-width: 899px) {
+  .home-hero__field { background-image:
+    radial-gradient(closest-side at 50% 40%, rgba(93,184,240,.16), rgba(42,68,184,.05) 62%, transparent),
+    radial-gradient(ellipse 70% 40% at 50% 46%, rgba(9,14,30,.72), rgba(9,14,30,.3) 65%, transparent 100%),
+    linear-gradient(180deg, rgba(14,20,40,.92) 0, rgba(14,20,40,.4) 26%, rgba(14,20,40,.12) 58%, rgba(14,20,40,.35) 82%, var(--ink-1) 100%),
+    url("../images/brand/cosmic-valley-900.webp"); background-position: 50% 40%, 50% 46%, 0 0, 50% 100%; background-size: 150vw 150vw, auto, auto, cover; }
+}
+.home-hero .display-title { font-size: clamp(2.35rem, 9.4vw, 4.5rem); text-shadow: 0 0 10px rgba(247,246,242,.10), 0 0 24px rgba(93,184,240,.12); }
 .home-hero__inner { position: relative; width: 100%; max-width: 760px; margin: 0 auto; display: grid; justify-items: center; }
-.home-hero__sigil { width: clamp(150px, 40vw, 250px); margin: var(--s-3) 0 var(--s-3); filter: drop-shadow(0 0 32px rgba(93,184,240,.22)); }
-.home-hero__lead { color: var(--muted); font-size: var(--t-sub); line-height: 1.45; max-width: 34ch; text-wrap: balance; }
-/* open · connected · responsive: the living centre of the hero */
+.home-hero__sigil { width: clamp(185px, 50vw, 300px); margin: var(--s-3) 0; filter: drop-shadow(0 0 32px rgba(93,184,240,.24)); }
+/* The four closing lines read as one thought: one family (Gillius), close leading. */
+.home-hero__lead { color: #CDD4E6; font-size: var(--t-sub); line-height: 1.4; max-width: 34ch; text-wrap: balance; }
 .home-hero__trio {
-  font-family: var(--serif); font-style: italic; font-size: clamp(1.7rem, 6.4vw, 2.5rem); line-height: 1.2;
-  color: var(--accent); margin: .35rem 0 .5rem; letter-spacing: .005em;
+  font-family: var(--sans); font-weight: 600; font-size: calc(var(--t-sub) * .96); line-height: 1.35; letter-spacing: .03em;
+  color: var(--glow); margin: .2rem 0; text-shadow: 0 0 18px rgba(93,184,240,.35);
 }
-.home-hero__trio .sep { color: var(--warm); font-style: normal; padding: 0 .28em; }
+.home-hero__trio .sep { color: rgba(127,203,245,.55); font-weight: 400; padding: 0 .3em; }
 
 .icon { width: 28px; height: 28px; flex: none; color: var(--accent); }
 
@@ -747,22 +759,14 @@ textarea.finput { min-height: 112px; resize: vertical; }
   .site-foot__brand p { max-width: none; }
 }
 
-/* Desktop (header nav visible): one slim row. Copyright left, sigil and
-   tagline centred, Privacy right. The header carries navigation, so no
-   links here. The two wrappers dissolve so all three share one grid row. */
+/* Desktop (header nav visible): one quiet line, no repeated navigation:
+   © 2026 Vinay Swaminathan · Auroville | Privacy & Scope */
 @media (min-width: 1100px) {
-  .site-foot {
-    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: var(--s-3);
-    padding: 12px max(32px, calc((100% - 1440px) / 2 + 32px));
-  }
-  .site-foot__main, .site-foot__bottom { display: contents; }
-  .site-foot__links { display: none; }
-  .site-foot__bottom > span { grid-column: 1; grid-row: 1; justify-self: start; }
-  .site-foot__bottom > a { grid-column: 3; grid-row: 1; justify-self: end; }
-  .site-foot__brand { grid-column: 2; grid-row: 1; display: flex; align-items: center; gap: 10px; }
-  .site-foot__brand img { width: 26px; }
-  .site-foot__brand p { font-size: 1.05rem; max-width: none; }
-  .site-foot__bottom > span, .site-foot__bottom > a { font-size: var(--t-small); }
+  .site-foot__main { display: none; }
+  .site-foot__bottom { border-top: 0; justify-content: center; gap: 14px; padding: 12px 32px; }
+  .site-foot__bottom > a::before { content: "|"; color: var(--warm-soft); margin-right: 14px; text-decoration: none; display: inline-block; }
+  .site-foot__bottom > a { text-decoration: none; }
+  .site-foot__bottom > a:hover, .site-foot__bottom > a:focus-visible { text-decoration: underline; text-underline-offset: 3px; }
 }
 
 /* --------------------------------------------------------------------------
@@ -879,6 +883,8 @@ textarea.finput { min-height: 112px; resize: vertical; }
 .shape { display: grid; gap: var(--s-3); max-width: 760px; container-type: inline-size; }
 .shape p { margin: 0; }
 .shape__statements { display: grid; gap: 2px; }
+.shape .begin__statements { gap: .6rem; margin-top: 0; }
+.shape .begin__statements p { font-size: clamp(1.45rem, 5.2vw, 2.2rem); max-width: 22ch; }
 .shape__unpack { display: grid; gap: 10px; }
 .shape__places { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: auto auto; justify-content: start; gap: 4px 24px; }
 /* each phrase carries its own short accent line, not joined to the next */
@@ -919,19 +925,20 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
    what is alive. Used at thresholds only (markers, Where we begin, the
    Story path and vision, selected Approach diagrams).
    -------------------------------------------------------------------------- */
-.marker {
+/* Editorial eyebrow: small tracked Gillius in brass, a short brass rule
+   ending in a node. The one label style for every threshold on the site. */
+.marker, .eyebrow {
   display: flex; align-items: center; gap: 14px;
   font-family: var(--sans); font-size: .82rem; font-weight: 400; line-height: 1.4;
-  letter-spacing: .22em; text-transform: uppercase; color: var(--muted);
+  letter-spacing: .22em; text-transform: uppercase; color: var(--warm);
   text-wrap: nowrap;
 }
-.marker::after {
+.marker::after, .eyebrow::after {
   content: ""; flex: none; width: 56px; height: 5px;
   background:
     linear-gradient(var(--warm-soft), var(--warm-soft)) left center / calc(100% - 4px) 1px no-repeat,
     radial-gradient(circle, var(--warm) 0 2px, transparent 2.6px) right center / 5px 5px no-repeat;
 }
-.marker--warm { color: var(--warm); }
 .marker--center { justify-content: center; }
 .marker--center::before {
   content: ""; flex: none; width: 56px; height: 5px;
@@ -942,6 +949,10 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
 /* A distilled line in EB Garamond: the one sentence a section rests on. */
 .distilled { font-family: var(--serif); font-size: clamp(1.5rem, 4.6vw, 2rem); line-height: 1.25; color: var(--text); max-width: 26ch; text-wrap: balance; }
 .distilled--sm { font-size: clamp(1.25rem, 4vw, 1.5rem); max-width: 34ch; }
+/* Display emphasis: EB Garamond italic in the sigil's cyan, for one
+   meaningful word or phrase in a display line. */
+.display-em { font-family: var(--serif); font-style: italic; color: var(--glow); }
+.soft-em { color: #B5DEF8; }
 .quiet-links { display: flex; flex-wrap: wrap; gap: 4px 32px; }
 
 /* Home sections led by a marker: on wide screens the marker holds a left
@@ -949,7 +960,7 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
 @media (min-width: 900px) {
   .marked { grid-template-columns: 13rem minmax(0, 1fr); column-gap: var(--s-4); align-items: start; }
   .marked > * { grid-column: 2; }
-  .marked > .marker { grid-column: 1; grid-row: 1 / span 6; padding-top: .45rem; }
+  .marked > .marker, .marked > .eyebrow { grid-column: 1; grid-row: 1 / span 6; padding-top: .45rem; }
 }
 
 /* Why welcome? */
@@ -983,24 +994,31 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
     radial-gradient(45% 50% at 6% 96%, rgba(196,160,100,.09), transparent 72%),
     linear-gradient(180deg, #0B1022 0%, var(--ink-1) 55%, #0B1023 100%);
 }
-.threshold__field { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+.threshold--nebula {
+  background:
+    linear-gradient(180deg, var(--ink-1) 0, rgba(14,20,40,0) var(--blend)),
+    linear-gradient(0deg, var(--ink-1) 0, rgba(14,20,40,0) var(--blend)),
+    radial-gradient(ellipse 62% 58% at 32% 48%, rgba(9,14,30,.72), rgba(9,14,30,.25) 70%, transparent),
+    url("../images/brand/midnight-nebula.webp") 50% 50% / cover no-repeat var(--ink-1);
+}
+.threshold--nebula > .wrap { padding-block: calc(var(--blend) * .35); }
 .begin { display: grid; gap: var(--s-3); }
 .begin__statements { display: grid; gap: clamp(.9rem, 2.6vw, 1.6rem); margin-top: var(--s-1); }
 .begin__statements p {
   font-family: var(--serif); font-size: clamp(1.62rem, 6.5vw, 3.2rem); line-height: 1.12;
   max-width: 19ch; text-wrap: balance; color: var(--text);
 }
-.begin__statements em { color: var(--accent); font-style: italic; }
 .begin__intro { color: var(--muted); margin-top: var(--s-2); }
 .begin__close { color: var(--muted); max-width: 34rem; line-height: 1.7; }
 
 /* Five areas: one connected row, on every screen. */
 .areas {
-  --node: 64px; --icon: 28px;
+  --node: 66px; --icon: 34px;
   list-style: none; margin: 0; padding: 0; position: relative;
   display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); max-width: 760px;
 }
 .areas::before {   /* one thin brass connector through the node centres */
+  z-index: 0;
   content: ""; position: absolute; top: calc(var(--node) / 2); left: 10%; right: 10%; height: 1px;
   background: linear-gradient(90deg, transparent, var(--warm-soft) 8%, var(--warm-soft) 92%, transparent);
 }
@@ -1010,16 +1028,16 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
 }
 .areas__node {
   width: var(--node); height: var(--node); border-radius: 50%; display: grid; place-items: center;
-  background: var(--ink-1); border: 1px solid var(--warm-soft); color: var(--accent);
+  background: #0B1124; border: 1px solid var(--warm-soft); color: var(--glow);
   transition: border-color var(--motion-fast) var(--ease), box-shadow var(--motion-fast) var(--ease), transform var(--motion-fast) var(--ease);
 }
-.areas__node svg { width: var(--icon); height: var(--icon); }
+.areas__node svg { width: var(--icon); height: var(--icon); filter: drop-shadow(0 0 4px rgba(127,203,245,.5)); }
 .areas__label { font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; color: var(--text); transition: color var(--motion-fast) var(--ease); }
 .areas a:hover .areas__node, .areas a:focus-visible .areas__node { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(93,184,240,.08), 0 0 22px rgba(93,184,240,.22); }
 .areas a:hover .areas__label, .areas a:focus-visible .areas__label { color: var(--accent); }
 .areas a:focus-visible { outline-offset: 6px; }
 @media (max-width: 599px) {
-  .areas { --node: 46px; --icon: 21px; }
+  .areas { --node: 50px; --icon: 27px; }
   .areas a { gap: 9px; }
   .areas__label { font-size: .68rem; letter-spacing: .1em; }
 }
@@ -1031,14 +1049,6 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
   .areas::before { display: none; }
 }
 
-/* A secondary offering: present, but quieter than the primary pair. */
-.secondary-offer { display: grid; gap: 2px; max-width: var(--measure); padding-left: 16px; border-left: 1px solid var(--warm-faint); }
-.secondary-offer a { color: var(--text); text-decoration-color: rgba(93,184,240,.5); text-underline-offset: 4px; justify-self: start; }
-.secondary-offer a:hover { text-decoration-color: var(--accent); }
-.secondary-offer span, .secondary-offer__note { color: var(--muted); font-size: var(--t-small); }
-.secondary-offer__title { font-family: var(--sans); font-size: 1.05rem; line-height: 1.4; }
-.secondary-offer__note { font-style: italic; }
-.secondary-offer--row { margin-top: calc(-1 * var(--s-1)); }
 
 /* --------------------------------------------------------------------------
    Story: present self first; the past as three quiet chapters; the vision.
@@ -1063,11 +1073,7 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
 .chapters__bridge { justify-self: center; text-align: center; max-width: 30ch; padding-top: var(--s-2); }
 
 .vision { text-align: center; }
-.vision::after {   /* a soft light behind the sigil */
-  content: ""; position: absolute; left: 50%; top: 50%; width: min(720px, 130vw); aspect-ratio: 1; transform: translate(-50%, -50%);
-  background: radial-gradient(closest-side, rgba(93,184,240,.08), transparent); pointer-events: none; z-index: 0;
-}
-.vision__inner { display: grid; justify-items: center; gap: var(--s-3); position: relative; z-index: 1; }
+.vision__inner { display: grid; justify-items: center; gap: var(--s-3); position: relative; }
 .vision__statement { font-size: clamp(2.1rem, 7vw, 3.3rem); line-height: 1.1; max-width: 16ch; }
 .vision .accordion { width: 100%; max-width: 34rem; text-align: left; }
 .vision .accordion > summary { display: flex; justify-content: center; gap: 12px; }
@@ -1102,21 +1108,21 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
 .contact-pill {
   position: fixed; z-index: 55; right: 24px; bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 20px 0 16px;
-  border-radius: 999px; border: 1px solid rgba(93,184,240,.5);
-  background: rgba(17,24,46,.9); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  border-radius: 999px; border: 1px solid var(--warm-soft);
+  background: rgba(12,18,38,.92); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
   color: var(--text); font: inherit; font-size: .95rem; letter-spacing: .02em; cursor: pointer;
   box-shadow: 0 10px 28px rgba(3,6,16,.45);
   transition: border-color var(--motion-fast) var(--ease), background-color var(--motion-fast) var(--ease), opacity var(--motion-base) var(--ease), transform var(--motion-base) var(--ease);
 }
 .contact-pill::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--warm); box-shadow: 0 0 8px rgba(196,160,100,.6); }
-.contact-pill:hover, .contact-pill:focus-visible { border-color: var(--accent); background: rgba(27,36,72,.95); }
+.contact-pill:hover, .contact-pill:focus-visible { border-color: var(--accent); background: rgba(20,28,56,.95); box-shadow: 0 10px 28px rgba(3,6,16,.45), 0 0 16px rgba(93,184,240,.22); }
 .contact-open .contact-pill, .nav-is-open .contact-pill { opacity: 0; transform: translateY(6px); pointer-events: none; }
 @media (max-width: 599px) {
   .contact-pill { right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); min-height: 42px; padding: 0 16px 0 14px; font-size: .9rem; }
 }
 /* The footer always ends clear of the pill. */
 .has-contact-pill .site-foot { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
-@media (min-width: 1100px) { .has-contact-pill .site-foot { padding-bottom: 84px; } }
+@media (min-width: 1100px) { .has-contact-pill .site-foot { padding-bottom: 0; } }
 
 .contact-open { overflow: hidden; }
 .contact-sheet {
@@ -1157,3 +1163,69 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
   .contact-sheet__panel { border-radius: 20px 20px 0 0; border-bottom: 0; padding: 22px var(--gutter) calc(14px + env(safe-area-inset-bottom, 0px)); }
 }
 .merged-block { margin-top: var(--s-4); }
+
+/* --------------------------------------------------------------------------
+   Light breathing sections. The same environment changing state: the dark
+   ground gives way to ivory within --blend and gathers again at the foot,
+   so no section edge is ever a hard cut. Colours are re-scoped through the
+   custom properties, so every component inside simply works on light.
+   -------------------------------------------------------------------------- */
+.section--light {
+  --text: #151C35; --muted: #4D5675; --accent: #1C6CA3; --glow: #1E6FA8;
+  --warm: #94702F; --warm-soft: rgba(148,112,47,.55); --warm-faint: rgba(148,112,47,.28);
+  --line: rgba(21,28,53,.16); --ink-3: rgba(21,28,53,.06);
+  --blend-l: calc(var(--blend) * 1.15);
+  color: var(--text);
+  padding-block: calc(var(--blend-l) + clamp(1rem, 3vw, 2rem));
+  background:
+    linear-gradient(180deg, #0E1428 0, #1E2540 calc(var(--blend-l) * .3), #8F8F98 calc(var(--blend-l) * .68), #E9E3D7 var(--blend-l),
+                    #F1ECE2 50%,
+                    #E9E3D7 calc(100% - var(--blend-l)), #8F8F98 calc(100% - var(--blend-l) * .68), #1E2540 calc(100% - var(--blend-l) * .3), #0E1428 100%);
+}
+.section--light ::selection { background: rgba(28,108,163,.22); }
+.section--light .scan-mark { background: rgba(28,108,163,.14); }
+/* With the mist: the photograph carries the transition, a soft ivory veil
+   keeps the centre quiet and readable. */
+.section--mist {
+  background:
+    linear-gradient(180deg, #0E1428 0, rgba(14,20,40,.6) calc(var(--blend-l) * .45), rgba(14,20,40,0) var(--blend-l)),
+    linear-gradient(0deg, #0E1428 0, rgba(14,20,40,.55) calc(var(--blend-l) * .45), rgba(14,20,40,0) var(--blend-l)),
+    radial-gradient(ellipse 70% 62% at 45% 50%, rgba(243,238,228,.93), rgba(243,238,228,.7) 55%, rgba(243,238,228,.25) 100%),
+    url("../images/brand/ivory-mist.webp") 50% 58% / cover no-repeat #ECE6DA;
+}
+
+/* A quiet illuminated field for a conceptual moment (Approach, the Wheel). */
+.field-glow {
+  background:
+    radial-gradient(ellipse 52% 48% at 50% 64%, rgba(93,184,240,.10), transparent 72%),
+    radial-gradient(ellipse 38% 30% at 12% 8%, rgba(198,161,94,.07), transparent 72%),
+    var(--ink-1);
+}
+
+/* Linked rows (home 1:1 and group rows): brass structure on the top edge. */
+.doorway-list, .summary-list { position: relative; border-top-color: var(--warm-faint); }
+.doorway-list::before, .summary-list::before {
+  content: ""; position: absolute; left: 0; top: -2.5px; width: 4px; height: 4px; border-radius: 50%; background: var(--warm);
+}
+.doorway-list svg, .offering__name svg { color: var(--glow); }
+.doorway-list a:hover .doorway-list__name, .doorway-list a:focus-visible .doorway-list__name { color: var(--accent); }
+
+/* Story: present self beside the present-day photograph. */
+.story__grid { display: grid; gap: var(--s-4); align-items: center; }
+.story__portrait { margin: 0; }
+.story__portrait img { width: 100%; aspect-ratio: 5 / 4; object-fit: cover; object-position: 50% 30%; border-radius: 18px; }
+@media (min-width: 860px) {
+  .story__grid { grid-template-columns: minmax(0, 1fr) minmax(260px, 360px); column-gap: var(--s-5); }
+  .story__portrait img { aspect-ratio: 3 / 4; }
+}
+.chapter__photo { margin: var(--s-1) 0 0; }
+.chapter__photo img { width: min(100%, 440px); border-radius: 12px; }
+/* My Vision: the sigil over a deep, quiet nebula field. */
+.vision {
+  background:
+    linear-gradient(180deg, var(--ink-1) 0, rgba(14,20,40,0) var(--blend)),
+    linear-gradient(0deg, var(--ink-1) 0, rgba(14,20,40,0) var(--blend)),
+    radial-gradient(ellipse 34% 42% at 50% 50%, rgba(93,184,240,.08), transparent 75%),
+    linear-gradient(rgba(12,18,36,.78), rgba(12,18,36,.78)),
+    url("../images/brand/midnight-nebula.webp") 50% 50% / cover no-repeat var(--ink-1);
+}

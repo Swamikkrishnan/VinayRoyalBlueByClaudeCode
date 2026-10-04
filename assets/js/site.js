@@ -161,14 +161,14 @@
       var cs = getComputedStyle(document.documentElement);
       var step = parseFloat(cs.getPropertyValue('--cascade')) || 160;
       var stag = parseFloat(cs.getPropertyValue('--stagger')) || 120;
-      var at = 0;
+      var at = 0, CAP = 1200;   // long sections never keep their last block waiting
       items.forEach(function (it) {
         it.classList.add('rv-item');
-        it.style.setProperty('--cd', Math.round(at) + 'ms');
+        it.style.setProperty('--cd', Math.round(Math.min(at, CAP)) + 'ms');
         var list = it.matches('[data-stagger]') ? it : null;
         at += step + (list ? 160 + Math.max(0, Math.min(list.children.length, 7) - 1) * stag : 0);
       });
-      box.dataset.span = Math.round(at);
+      box.dataset.span = Math.round(Math.min(at, CAP));
       box.classList.add('rv-ready');
     });
     // Page openings: each line a beat after the one before, in reading order.
@@ -197,7 +197,8 @@
     var nextSlot = 0;
     var revealSection = function (el) {
       if (el.classList.contains('is-in') || el.dataset.queued) return;
-      var now = Date.now(), start = Math.max(now, nextSlot);
+      // ...but never more than 600ms behind: a fast fling never leaves text waiting.
+      var now = Date.now(), start = Math.max(now, Math.min(nextSlot, now + 600));
       nextSlot = start + Math.min(1400, Number(el.dataset.span) || 160);
       if (start - now < 20) return reveal(el);
       el.dataset.queued = '1';
