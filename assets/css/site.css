@@ -1367,3 +1367,4 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 .page-approach main :is(h1, h2, h3) :is(.gold-accent, .gold-strong) { font-weight: 400; }
 .page-approach .statement--face { text-align: left; margin-inline: 0; }
 .page-approach main :is(h1, h2, h3) .heading-light { font-weight: 400; }
+.page-approach main h3.pair__title { font-weight: 400; }
