@@ -1364,7 +1364,7 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 /* Approach headings: upright; ivory words bold, gold words regular. */
 .page-approach main :is(h1, h2, h3) { font-weight: 600; }
 .page-approach main :is(h1, h2, h3) :is(em, .gold-accent, .gold-strong, .display-accent, .inline-accent) { font-style: normal; }
-.page-approach main :is(h1, h2, h3) :is(.gold-accent, .gold-strong) { font-weight: 400; }
 .page-approach .statement--face { text-align: left; margin-inline: 0; }
-.page-approach main :is(h1, h2, h3) .heading-light { font-weight: 400; }
-.page-approach main h3.pair__title { font-weight: 400; }
+.page-approach main h3.pair__title, .page-approach main h3.pair__title * { font-weight: 400; }
+.page-approach main :is(h1, h2, h3) :is(.gold-accent, .gold-strong, .display-accent) { font-weight: 600; }
+.page-approach main h3.pair__title :is(.display-accent, .inline-accent) { font-weight: 400; }
