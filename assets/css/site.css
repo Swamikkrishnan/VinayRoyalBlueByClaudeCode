@@ -1349,3 +1349,9 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 @media (max-width: 599px) { .face-note { max-width: 100%; font-size: .98rem; } }
 .statement--face { margin-top: 10px; }   /* + the 24px stack gap = 34px */
 @media (max-width: 599px) { .statement--face { margin-top: 4px; } }
+/* Homepage hero title: "Welcoming" and "life." in EB Garamond 600; "all of
+   life." in brass, upright. About 9% larger than the shared hero size;
+   on phones it stays within one line. */
+.home-hero .display-title { font-size: min(calc(var(--t-hero) * 1.09), 9.8vw); text-wrap: balance; }
+.hero-strong { font-weight: 600; }
+.hero-gold { color: var(--accent-brass); font-style: normal; }
