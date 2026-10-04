@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="preload" href="assets/fonts/GilliusADFNo2-Regular.otf" as="font" type="font/otf" crossorigin>
-<link rel="stylesheet" href="assets/css/site.css?v=202610050322">
+<link rel="stylesheet" href="assets/css/site.css?v=202610050352">
 </head>
 <body class="has-subnav">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -79,7 +79,7 @@
 <section id="healing" class="page-hero bg-1" aria-labelledby="o1">
   <div class="wrap stack stack--lg">
     <h1 data-seq id="o1" class="marker">Healing simplified</h1>
-    <div class="begin__statements">
+    <div class="begin__statements begin__statements--wide">
       <p data-seq>Healing is our <em class="display-accent">natural capacity</em> to regenerate, adapt and grow.</p>
       <p data-seq>A healer <em class="display-accent">does not</em> heal you.</p>
     </div>
@@ -308,34 +308,42 @@
       <a class="btn btn--solid" href="alignment.html">Request a 30-Min Alignment Call <span aria-hidden="true">&rarr;</span></a>
     </div>
     <div id="availability" data-reveal="right" class="stack stack--lg">
-      <h2>Availability</h2>
-      <dl class="ruled">
-        <div><dt>Sessions</dt><dd>Monday to Saturday at 11:00 AM India time.</dd></div>
-        <div><dt>Alignment Calls</dt><dd>Monday to Saturday at 3:00 PM or 3:45 PM India time.</dd></div>
-        <div><dt>Where</dt><dd>Sessions are available in person in Auroville and online, depending on the nature of the work.</dd></div>
-      </dl>
+      <h2 class="marker">Availability</h2>
+      <details class="accordion">
+        <summary><span class="accordion__label">Read more<span class="visually-hidden">: Availability</span></span></summary>
+        <div class="accordion__body">
+          <dl class="ruled">
+            <div><dt>Sessions</dt><dd>Monday to Saturday at 11:00 AM India time.</dd></div>
+            <div><dt>Alignment Calls</dt><dd>Monday to Saturday at 3:00 PM or 3:45 PM India time.</dd></div>
+            <div><dt>Where</dt><dd>Sessions are available in person in Auroville and online, depending on the nature of the work.</dd></div>
+          </dl>
+        </div>
+      </details>
     </div>
   </div>
 </section>
 
 <section id="scope" class="section bg-3" aria-labelledby="o6">
   <div data-reveal class="wrap stack stack--lg">
-    <div class="stack stack--sm">
-      <p class="eyebrow">Scope &amp; Suitability</p>
-      <h2 id="o6">What this work is, and is not</h2>
-    </div>
-    <div class="prose">
-      <p>This work can support healing, self-understanding, emotional processing, embodiment, clarity, behaviour change and personal growth.</p>
-      <p class="note">It <em class="inline-accent">does not replace</em> medical care, psychiatric treatment, psychotherapy, emergency support or other licensed professional services where those are needed. <strong style="color:var(--text)">If you are in crisis or need clinical care, please reach a qualified medical professional or local emergency services first.</strong></p>
-      <p class="muted">The form and Alignment Call help us assess whether what I offer is appropriate for your situation. If it is not, I will say so clearly and, where possible, point you toward a more suitable kind of support.</p>
-    </div>
+    <h2 id="o6" class="marker">Scope &amp; Suitability</h2>
+    <details class="accordion">
+      <summary><span class="accordion__label">Read more<span class="visually-hidden">: Scope and suitability</span></span></summary>
+      <div class="accordion__body accordion__body--wide">
+        <h3 class="scope__title">What this work is, and is not</h3>
+        <div class="prose">
+          <p>This work can support healing, self-understanding, emotional processing, embodiment, clarity, behaviour change and personal growth.</p>
+          <p class="note">It <em class="inline-accent">does not replace</em> medical care, psychiatric treatment, psychotherapy, emergency support or other licensed professional services where those are needed. <strong style="color:var(--text)">If you are in crisis or need clinical care, please reach a qualified medical professional or local emergency services first.</strong></p>
+          <p class="muted">The form and Alignment Call help us assess whether what I offer is appropriate for your situation. If it is not, I will say so clearly and, where possible, point you toward a more suitable kind of support.</p>
+        </div>
+      </div>
+    </details>
   </div>
 </section>
 
 </main>
 
 <footer class="site-foot">
-  <span class="site-foot__copy">&copy; 2026 Vinay Swaminathan &middot; Auroville</span>
+  <span class="site-foot__copy">&copy; 2026 Vinay Swaminathan<span class="site-foot__sep"> &middot; </span><span class="site-foot__place">Auroville</span></span>
   <div class="site-foot__brand">
     <img src="assets/images/sigil-small.png" alt="" width="56" height="58" loading="lazy">
     <p>Welcoming all of life.</p>
@@ -343,6 +351,6 @@
   <a class="site-foot__privacy" href="privacy.html">Privacy &amp; Scope</a>
 </footer>
 
-<script src="assets/js/site.js?v=202610050322" defer></script>
+<script src="assets/js/site.js?v=202610050352" defer></script>
 </body>
 </html>

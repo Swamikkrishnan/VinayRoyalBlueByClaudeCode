@@ -64,10 +64,10 @@
   --s-4: 2.5rem;
   --s-5: 4rem;
   --gutter: 20px;
-  --section-y: clamp(3.5rem, 7.5vw, 6.75rem);   /* ~56px phones → ~108px desktop */
+  --section-y: 68px;
 
   --measure: 38rem;
-  --header-h: 60px;
+  --header-h: 54px;
   --subnav-h: 0px;
   /* One shared motion system: a single ease-out curve, three durations. */
   --ease: cubic-bezier(.22,.61,.36,1);
@@ -170,7 +170,7 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 }
 
 /* Interior page openings: content-height, generous padding. */
-.page-hero { padding: clamp(2.5rem, 9vw, 5rem) var(--gutter) clamp(2.5rem, 8vw, 4rem); background: var(--ink-1); }
+.page-hero { padding: var(--section-y) var(--gutter); background: var(--ink-1); }
 
 /* Sigil watermark behind a band. Sized to fit inside the section (height
    and width both capped, aspect ratio kept) so the artwork is never cropped. */
@@ -200,7 +200,8 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
    .inline-accent   the body face, italic, in cyan, inside body copy
    (.insight remains a complete quotable sentence in EB Garamond.) */
 .display-accent { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--emphasis-blue); background: none; }
-.brass-accent { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--accent-brass); }
+/* Gold: orientation and conceptual anchors inside headings; never italic. */
+.gold-accent { font-style: normal; color: var(--accent-brass); }
 .inline-accent { font-family: inherit; font-style: italic; font-weight: 400; color: var(--emphasis-blue); background: none; }
 .insight { font-family: var(--serif); font-size: clamp(1.45rem, 5vw, 1.8rem); line-height: 1.3; color: var(--text); max-width: 32ch; text-wrap: pretty; }
 .insight--sm { font-size: clamp(1.2rem, 4.2vw, 1.4rem); line-height: 1.35; max-width: 44ch; }
@@ -483,8 +484,8 @@ html:not(.js) .nav-toggle { display: none !important; }
    -------------------------------------------------------------------------- */
 .home-hero {
   position: relative; overflow: hidden; isolation: isolate;
-  min-height: calc(100vh - var(--header-h));
-  min-height: calc(100svh - var(--header-h));
+  box-sizing: border-box;
+  min-height: 100vh; min-height: 100svh; min-height: 100dvh;
   display: flex; align-items: center;
   padding: clamp(2.5rem, 7vw, 4rem) var(--gutter) clamp(4rem, 12vw, 6rem);
   text-align: center; background: var(--ink-1);
@@ -495,10 +496,9 @@ html:not(.js) .nav-toggle { display: none !important; }
 /* The four closing lines read as one thought: one family (Gillius), close leading. */
 .home-hero__lead { color: #CDD4E6; font-size: var(--t-sub); line-height: 1.4; max-width: 34ch; text-wrap: balance; }
 .home-hero__trio {
-  font-family: var(--sans); font-weight: 600; font-style: italic; font-size: calc(var(--t-sub) * .96); line-height: 1.35; letter-spacing: .03em;
+  font-family: var(--sans); font-weight: 400; font-style: italic; font-size: calc(var(--t-sub) * .96); line-height: 1.35; letter-spacing: .01em;
   color: var(--emphasis-blue); margin: .2rem 0; text-shadow: 0 0 18px rgba(93,184,240,.35);
 }
-.home-hero__trio .sep { color: rgba(127,203,245,.55); font-weight: 400; padding: 0 .3em; }
 
 .icon { width: 28px; height: 28px; flex: none; color: var(--accent); }
 
@@ -1139,9 +1139,9 @@ main > :is(.bg-1, .bg-3):last-child::after {
 }
 
 /* Copy never sits on a transition. */
-.section:is(.bg-1, .bg-2, .bg-3, .bg-4), .field > .section { padding-block: max(var(--section-y), calc(var(--th2) + 1.75rem)); }
-.page-hero:is(.bg-1, .bg-2, .bg-3, .bg-4), .field > .page-hero { padding-bottom: max(clamp(2.5rem, 8vw, 4rem), calc(var(--th2) + 1.75rem)); }
-main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last-child > :last-child { padding-bottom: max(var(--section-y), calc(var(--th) + 1.75rem)); }
+.section:is(.bg-1, .bg-2, .bg-3, .bg-4), .field > .section { padding-block: max(var(--section-y), calc(var(--th2) + 6px)); }
+.page-hero:is(.bg-1, .bg-2, .bg-3, .bg-4), .field > .page-hero { padding-bottom: max(var(--section-y), calc(var(--th2) + 6px)); }
+main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last-child > :last-child { padding-bottom: max(var(--section-y), calc(var(--th) + 6px)); }
 .field > .section--compact { padding-top: clamp(1.5rem, 4vw, 2.5rem); }
 
 /* --- Text colour per field --------------------------------------------------
@@ -1154,8 +1154,8 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 
 /* --- Header: the opening edge of the Dark Primary field -------------------- */
 .site-head, .site-head.is-scrolled {
-  background: rgba(14,20,40,.40); border-bottom: 0;
-  -webkit-backdrop-filter: blur(20px) saturate(120%); backdrop-filter: blur(20px) saturate(120%);
+  background: rgba(14,20,40,.32); border-bottom: 0;
+  -webkit-backdrop-filter: blur(22px) saturate(120%); backdrop-filter: blur(22px) saturate(120%);
 }
 .site-head__inner { position: relative; }
 .brand img { width: 30px; }
@@ -1182,22 +1182,21 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 .site-foot__brand { display: grid; justify-items: center; gap: 2px; text-align: center; }
 .site-foot__brand img { width: auto; height: 28px; }
 .site-foot__brand p { font-family: var(--serif); font-size: .92rem; line-height: 1.2; color: var(--text); }
-@media (max-width: 430px) {
+.site-foot { position: relative; }
+@media (max-width: 767px) {
   .site-foot {
     display: flex; align-items: center; justify-content: space-between; gap: 8px;
-    min-height: 64px; padding: 14px 14px; font-size: 10px; line-height: 1.1;
+    min-height: 66px; padding: 10px; font-size: 9px; line-height: 1.1;
     background-image: url("../vinay-brand-assets/footer-dark-primary-mobile.webp");
   }
-  .site-foot > * { white-space: nowrap; min-width: 0; }
-  .site-foot__copy, .site-foot__privacy { flex: 0 1 auto; overflow: hidden; text-overflow: clip; min-height: 0; }
-  .site-foot__brand { flex: none; gap: 2px; }
-  .site-foot__brand img { height: 20px; }
+  .site-foot__sep { display: none; }
+  .site-foot__place { display: block; }
+  .site-foot__copy, .site-foot__privacy { position: relative; z-index: 1; min-height: 0; max-width: calc(50% - 64px); }
+  .site-foot__privacy { text-align: right; white-space: nowrap; }
+  /* The sigil and phrase sit at the true centre of the viewport. */
+  .site-foot__brand { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); gap: 2px; white-space: nowrap; }
+  .site-foot__brand img { height: 19px; }
   .site-foot__brand p { font-size: 10px; line-height: 1.1; }
-}
-@media (max-width: 390px) {
-  .site-foot { padding-inline: 10px; font-size: 9px; gap: 6px; min-height: 60px; }
-  .site-foot__brand p { font-size: 9.5px; }
-  .site-foot__brand img { height: 18px; }
 }
 /* The floating contact pill steps aside while the footer is on screen. */
 .foot-in-view .contact-pill { opacity: 0; transform: translateY(6px); pointer-events: none; }
@@ -1289,9 +1288,8 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 /* Story: qualities line at the paragraph's size; tighter chapters on phones. */
 .story__qualities { font-size: var(--t-body); line-height: 1.6; color: var(--text); }
 @media (max-width: 768px) {
-  .story-chapters.section { padding-block: 26px 10px !important; }
-  .story-chapters.section:last-of-type, .story-chapters.section:has(+ .vision) { padding-bottom: 42px !important; }
-  section.story-chapters:first-of-type { padding-top: 42px !important; }
+  .story-chapters.section { padding-block: 24px 6px !important; }
+  .story-chapters.section:has(+ .vision) { padding-bottom: 28px !important; }
   .chapter { gap: 6px; padding-top: 0; border-top: 0; }
   .chapter::before { display: none; }
   .chapter__more { margin-top: 10px; }
@@ -1310,3 +1308,21 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 .page-hero .begin__statements { margin-top: 0; }
 /* FACE close: centred. */
 .statement--face { text-align: center; margin-inline: auto; }
+/* Sections: one rhythm. */
+@media (max-width: 768px) { :root { --section-y: 38px; } }
+.story-chapters.section { padding-block: 32px; }
+.vision.section { padding-top: max(32px, calc(var(--th2) + 6px)); }
+/* Story opening: two display lines at one size. */
+.story__qualities.story__home { font-family: var(--serif); font-size: var(--t-hero); line-height: 1.04; }
+/* Approach pair titles: display, at the secondary heading scale. */
+.pair__title { font-family: var(--serif); font-size: var(--t-heading); line-height: 1.12; }
+/* Homepage / 1:1 Five Areas: the statement matches "Where life is stuck…". */
+#focus .statement-lead { font-size: var(--t-display); line-height: 1.08; max-width: 22ch; }
+/* 1:1 opening: wide enough that phrases do not break early. */
+.begin__statements--wide p { max-width: min(100%, 980px); }
+@media (max-width: 599px) { .begin__statements--wide p { max-width: none; font-size: clamp(1.6rem, 6.9vw, 2.55rem); } }
+/* Group page: one size for the three section introductions. */
+.section-intro { font-family: var(--serif); font-size: clamp(1.6rem, 2.2vw, 2.15rem); line-height: 1.25; color: var(--text); max-width: 34ch; text-wrap: pretty; }
+/* Background: the two key statements. */
+.key-statement { font-family: var(--serif); font-size: clamp(1.75rem, 2.5vw, 2.4rem); line-height: 1.2; color: var(--text); max-width: 28ch; }
+.scope__title { font-family: var(--sans); font-size: var(--t-sub); }
