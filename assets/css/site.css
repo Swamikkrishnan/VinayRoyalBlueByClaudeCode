@@ -1375,3 +1375,7 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 #alignment.section { padding-bottom: 12px; }
 #scope.section { padding-top: 8px; padding-bottom: 96px; }
 @media (max-width: 768px) { #scope.section { padding-bottom: 72px; } }
+/* Story: the opening's second line at the heading size; the bridge line smaller. */
+.story__qualities.story-heading { color: var(--text); }
+.chapters__bridge.story-heading { font-size: clamp(1.55rem, 2.3vw, 2.1rem); line-height: 1.2; }
+@media (max-width: 599px) { .chapters__bridge.story-heading { font-size: clamp(1.45rem, 6vw, 1.75rem); } }
