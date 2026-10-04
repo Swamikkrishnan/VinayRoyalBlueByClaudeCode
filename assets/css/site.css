@@ -488,7 +488,7 @@ html:not(.js) .nav-toggle { display: none !important; }
 }
 .home-hero .display-title { font-size: clamp(2.35rem, 9.4vw, 4.5rem); text-shadow: 0 0 10px rgba(247,246,242,.10), 0 0 24px rgba(93,184,240,.12); }
 .home-hero__inner { position: relative; width: 100%; max-width: 760px; margin: 0 auto; display: grid; justify-items: center; }
-.home-hero__sigil { width: clamp(185px, 50vw, 300px); margin: var(--s-3) 0; filter: drop-shadow(0 0 32px rgba(93,184,240,.24)); }
+.home-hero__sigil { width: clamp(160px, min(50vw, 30vh), 300px); margin: var(--s-3) 0; filter: drop-shadow(0 0 32px rgba(93,184,240,.24)); }
 /* The four closing lines read as one thought: one family (Gillius), close leading. */
 .home-hero__lead { color: #CDD4E6; font-size: var(--t-sub); line-height: 1.4; max-width: 34ch; text-wrap: balance; }
 .home-hero__trio {
@@ -1308,11 +1308,19 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
 .face__letter { color: var(--warm); }
 
 /* --- Hero: the frame holds the sigil and the words ------------------------ */
-.home-hero__frame {
-  position: absolute; inset: clamp(8px, 2vw, 28px) clamp(0px, 2vw, 32px); z-index: -1; pointer-events: none; opacity: .76;
+/* Anchored to the hero content (title → closing line), so it always
+   surrounds the words and the sigil, whatever the viewport height. */
+.home-hero__inner::before {
+  content: ""; position: absolute; z-index: -1; pointer-events: none; opacity: .76;
+  top: -96px; bottom: -84px; left: calc((100% - 96vw) / 2); right: calc((100% - 96vw) / 2);
   background: url("../images/brand/hero-frame-mobile.svg") 50% 50% / 100% 100% no-repeat;
 }
-@media (min-width: 768px) { .home-hero__frame { background-image: url("../images/brand/hero-frame-desktop.svg"); } }
+@media (min-width: 768px) {
+  .home-hero__inner::before {
+    top: -136px; bottom: -118px; left: calc((100% - min(92vw, 1400px)) / 2); right: calc((100% - min(92vw, 1400px)) / 2);
+    background-image: url("../images/brand/hero-frame-desktop.svg");
+  }
+}
 .home-hero { isolation: isolate; }
 
 /* --- Decorative overlays (sparingly) ------------------------------------------ */
