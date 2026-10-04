@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="preload" href="assets/fonts/GilliusADFNo2-Regular.otf" as="font" type="font/otf" crossorigin>
-<link rel="stylesheet" href="assets/css/site.css?v=202610032237">
+<link rel="stylesheet" href="assets/css/site.css?v=202610041749">
 </head>
 <body class="has-subnav">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -40,25 +40,24 @@
       <span>Vinay Swaminathan</span>
     </a>
     <nav class="nav" aria-label="Primary">
-      <a class="nav__link" href="approach.html">The Approach</a>
-      <a class="nav__link" href="offerings.html">1:1 Offerings</a>
-      <a class="nav__link" href="groupwork.html" aria-current="page">Group Offerings</a>
+      <a class="nav__link" href="approach.html">Approach</a>
+      <a class="nav__link" href="offerings.html">1:1</a>
+      <a class="nav__link" href="groupwork.html" aria-current="page">Groups</a>
       <a class="nav__link" href="about.html">Story</a>
       <a class="nav__link" href="training.html">Background</a>
     </nav>
-    <a class="btn head-cta" href="alignment.html">Request an Alignment Call</a>
     <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-mobile">
       <span class="nav-toggle__bars" aria-hidden="true"><i></i><i></i></span>
       <span data-label>Menu</span>
     </button>
   </div>
   <nav class="nav-mobile" id="nav-mobile" aria-label="Primary mobile">
-    <a href="approach.html">The Approach <span aria-hidden="true">&rarr;</span></a>
-    <a href="offerings.html">1:1 Offerings <span aria-hidden="true">&rarr;</span></a>
-    <a href="groupwork.html" aria-current="page">Group Offerings <span aria-hidden="true">&rarr;</span></a>
+    <a href="approach.html">Approach <span aria-hidden="true">&rarr;</span></a>
+    <a href="offerings.html">1:1 <span aria-hidden="true">&rarr;</span></a>
+    <a href="groupwork.html" aria-current="page">Groups <span aria-hidden="true">&rarr;</span></a>
     <a href="about.html">Story <span aria-hidden="true">&rarr;</span></a>
     <a href="training.html">Background <span aria-hidden="true">&rarr;</span></a>
-    <a class="btn btn--solid" href="alignment.html">Request an Alignment Call</a>
+    <a class="btn btn--solid" href="alignment.html" data-contact-open>Get in touch</a>
   </nav>
 </header>
 
@@ -84,16 +83,16 @@
         <h2 class="accordion__title">Breath of Becoming</h2>
         <p class="accordion__desc">A deep breathwork journey through expression, release, wholeness and completion.</p>
       </div>
-      <div class="plain-row icon-row" id="conscious-dance-journeys">
-        <svg class="icon" viewBox="0 0 28 28" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M3 17c3-7 5.5 4 8.5-1.5S17 6 20 11.5s3.5 4.5 5 2.5"/><path d="M3 22c3-5 5.5 3 8.5-1s5.5-5 8.5-1 3.5 3 5 1.5" opacity=".5"/></svg>
-        <h2 class="accordion__title">Conscious Dance Journeys</h2>
-        <p class="accordion__desc">A primal, non-verbal journey through movement, emotion, connection and celebration, returning again to stillness.</p>
-      </div>
       <div class="plain-row icon-row" id="listening-temples">
         <svg class="icon" viewBox="0 0 28 28" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="14" cy="14" r="9" opacity=".45"/><circle cx="14" cy="5" r="2"/><circle cx="22.6" cy="11.2" r="2"/><circle cx="19.3" cy="21.3" r="2"/><circle cx="8.7" cy="21.3" r="2"/><circle cx="5.4" cy="11.2" r="2"/><circle cx="14" cy="14" r="1.6"/></svg>
         <h2 class="accordion__title">Listening Temples</h2>
         <p class="accordion__desc">Sharing circles devoted to listening as a sacred practice.</p>
       </div>
+    </div>
+    <div data-seq class="secondary-offer secondary-offer--row" id="conscious-dance-journeys">
+      <h2 class="secondary-offer__title">Conscious Dance Journeys</h2>
+      <p class="muted">A primal, non-verbal journey through movement, emotion, connection and celebration, returning again to stillness.</p>
+      <p class="secondary-offer__note">Available by invitation, request or within appropriate collaborations.</p>
     </div>
     <a data-seq class="btn btn--outline" href="group-interest.html">Express interest <span aria-hidden="true">&rarr;</span></a>
   </div>
@@ -176,14 +175,6 @@
   </div>
 </section>
 
-<section class="section section--alt section--center watermark" aria-labelledby="g4">
-  <div data-reveal="soft" class="wrap stack">
-    <h2 id="g4">Start a conversation</h2>
-    <p class="muted">If what you are creating feels aligned, I would like to hear from you.</p>
-    <a class="btn btn--solid" href="collaborate.html">Get in touch <span aria-hidden="true">&rarr;</span></a>
-  </div>
-</section>
-
 </main>
 
 <footer class="site-foot">
@@ -203,7 +194,7 @@
       <ul>
         <li><a href="offerings.html">1:1</a></li>
         <li><a href="groupwork.html">Group</a></li>
-        <li><a href="alignment.html">Alignment Call</a></li>
+        <li><a href="alignment.html" data-contact-open>Get in touch</a></li>
       </ul>
     </nav>
   </div>
@@ -213,6 +204,6 @@
   </div>
 </footer>
 
-<script src="assets/js/site.js?v=202610032237" defer></script>
+<script src="assets/js/site.js?v=202610041749" defer></script>
 </body>
 </html>

@@ -3,8 +3,9 @@
    Content is visible in plain HTML/CSS by default; this file only adds a
    one-shot entrance animation, the header/nav toggle, the interior pages'
    sticky section nav, the Approach FACE selector, the Alignment Call
-   scheduler + submission, a settle-safe hash landing, and open/close
-   motion for the native <details> accordions (which still work without JS).
+   scheduler + submission, the Get in touch chooser, a settle-safe hash
+   landing, and open/close motion for the native <details> accordions
+   (which still work without JS).
    ========================================================================= */
 (function () {
   'use strict';
@@ -49,6 +50,7 @@
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
       toggle.querySelector('[data-label]').textContent = open ? 'Close' : 'Menu';
       mobileNav.classList.toggle('is-open', open);
+      root.classList.toggle('nav-is-open', open);
     };
     toggle.addEventListener('click', function () {
       setNav(toggle.getAttribute('aria-expanded') !== 'true');
@@ -398,25 +400,6 @@
   }
 
   /* ---------------------------------------------------------------------
-     3c. Balanced photo/text pairs — set --balance-h from the text block's
-         rendered height so the photo matches it (CSS keeps the natural
-         ratio and only applies this in the two-column layout).
-     --------------------------------------------------------------------- */
-  if ('ResizeObserver' in window) {
-    document.querySelectorAll('.editorial--balanced').forEach(function (ed) {
-      var parts = Array.prototype.filter.call(ed.children, function (c) { return !c.classList.contains('editorial__media'); });
-      var measure = function () {
-        var top = Infinity, bottom = -Infinity;
-        parts.forEach(function (p) { var b = p.getBoundingClientRect(); if (b.height) { top = Math.min(top, b.top); bottom = Math.max(bottom, b.bottom); } });
-        if (bottom > top) ed.style.setProperty('--balance-h', Math.round((bottom - top) * 1.08) + 'px');
-      };
-      var ro = new ResizeObserver(function () { window.requestAnimationFrame(measure); });
-      parts.forEach(function (p) { ro.observe(p); });
-      measure();
-    });
-  }
-
-  /* ---------------------------------------------------------------------
      4. Form helpers. A fieldset[data-require-one] needs at least one box
         ticked (native validation message on the first box).
      --------------------------------------------------------------------- */
@@ -629,6 +612,8 @@
     track.addEventListener('scroll', function () { window.requestAnimationFrame(update); }, { passive: true });
     window.addEventListener('resize', update);
     update();
+    var holder = strip.closest('details');
+    if (holder) holder.addEventListener('toggle', function () { window.requestAnimationFrame(update); });
 
     // Auto-discovery of further numbered photos, once the strip is near view.
     var series = strip.getAttribute('data-archive');
@@ -666,6 +651,79 @@
       start();
     }
   });
+
+  /* ---------------------------------------------------------------------
+     4d. Get in touch — one persistent, understated contact entry. A small
+         pill (not on the destination form pages, body[data-contact="off"])
+         and any [data-contact-open] link open a short chooser: a modal
+         <dialog> (popover on wide screens, bottom sheet on phones). Escape,
+         the close button or the backdrop close it; focus returns to the
+         control that opened it. Without JS the links simply go to the
+         Alignment Call form.
+     --------------------------------------------------------------------- */
+  var CHOICES = [['1:1 work', 'alignment.html'], ['Group experiences', 'group-interest.html'], ['Collaboration', 'collaborate.html']];
+  var sheet = document.createElement('dialog');
+  if (typeof sheet.showModal === 'function') {
+    sheet.className = 'contact-sheet';
+    sheet.setAttribute('aria-labelledby', 'contact-q');
+    sheet.innerHTML = '<div class="contact-sheet__panel">' +
+      '<button type="button" class="contact-sheet__close" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+      '<h2 class="contact-sheet__q" id="contact-q">What are you reaching out about?</h2>' +
+      '<ul class="contact-sheet__choices">' + CHOICES.map(function (c) {
+        return '<li><a href="' + c[1] + '">' + c[0] + ' <span aria-hidden="true">&rarr;</span></a></li>';
+      }).join('') + '</ul></div>';
+    document.body.appendChild(sheet);
+    var opener = null, closeTimer = null;
+    var openSheet = function (from) {
+      if (sheet.open) return;
+      clearTimeout(closeTimer);
+      opener = from || document.activeElement;
+      root.classList.add('contact-open');
+      sheet.showModal();
+      sheet.querySelector('.contact-sheet__choices a').focus();
+      window.requestAnimationFrame(function () { window.requestAnimationFrame(function () { sheet.classList.add('is-shown'); }); });
+    };
+    var closeSheet = function () {
+      if (!sheet.open) return;
+      sheet.classList.remove('is-shown');
+      var done = function () {
+        sheet.close();
+        root.classList.remove('contact-open');
+        if (opener && document.contains(opener) && opener.focus) opener.focus();
+      };
+      closeTimer = setTimeout(done, reduce.matches ? 0 : 360);
+    };
+    sheet.addEventListener('cancel', function (e) { e.preventDefault(); closeSheet(); });   // Escape
+    // Keep Tab inside the sheet in every browser (Safari's Tab skips links
+    // by default, which would otherwise let focus leave a modal dialog).
+    sheet.addEventListener('keydown', function (e) {
+      if (e.key !== 'Tab') return;
+      var f = Array.prototype.slice.call(sheet.querySelectorAll('a[href], button'));
+      var i = f.indexOf(document.activeElement);
+      e.preventDefault();
+      f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
+    });
+    sheet.querySelector('.contact-sheet__close').addEventListener('click', closeSheet);
+    sheet.addEventListener('click', function (e) { if (e.target === sheet) closeSheet(); });   // backdrop
+    // Leaving for a form, then coming back (bfcache): never return to an open sheet.
+    window.addEventListener('pageshow', function () { if (sheet.open) { sheet.classList.remove('is-shown'); sheet.close(); root.classList.remove('contact-open'); } });
+    document.addEventListener('click', function (e) {
+      var t = e.target.closest('[data-contact-open]');
+      if (!t) return;
+      e.preventDefault();
+      openSheet(t.closest('.nav-mobile') ? toggle : t);
+    });
+    if (document.body.getAttribute('data-contact') !== 'off') {
+      var pill = document.createElement('button');
+      pill.type = 'button';
+      pill.className = 'contact-pill';
+      pill.setAttribute('data-contact-open', '');
+      pill.setAttribute('aria-haspopup', 'dialog');
+      pill.textContent = 'Get in touch';
+      document.body.appendChild(pill);
+      document.body.classList.add('has-contact-pill');
+    }
+  }
 
   /* ---------------------------------------------------------------------
      5. Hash landing. The browser's own jump happens before web fonts and
