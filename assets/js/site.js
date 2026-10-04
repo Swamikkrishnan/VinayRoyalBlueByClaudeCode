@@ -173,7 +173,7 @@
     });
     // Page openings: each line a beat after the one before, in reading order.
     var SEQ_STEP = 220, seqCount = 0;
-    document.querySelectorAll('main > section').forEach(function (sec) {
+    document.querySelectorAll('main section').forEach(function (sec) {
       var lines = sec.querySelectorAll('[data-seq]');
       if (lines.length && !seqCount) seqCount = lines.length;
       lines.forEach(function (el, i) { el.style.setProperty('--sd', (i * SEQ_STEP) + 'ms'); });
@@ -723,6 +723,13 @@
       pill.textContent = 'Get in touch';
       document.body.appendChild(pill);
       document.body.classList.add('has-contact-pill');
+      // The footer stays slim: the pill steps aside while it is on screen.
+      var foot = document.querySelector('.site-foot');
+      if (foot && 'IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+          root.classList.toggle('foot-in-view', entries[0].isIntersecting);
+        }).observe(foot);
+      }
     }
   }
 
