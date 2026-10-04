@@ -11,9 +11,6 @@
   'use strict';
   var root = document.documentElement;
   window.__siteJs = true;                 // tells the inline head script we arrived
-  // This script's ?v= stamp, bumped on every release; used to keep photo
-  // look-ups from reusing a stale cached copy of a renamed file.
-  var BUILD = ((document.currentScript && document.currentScript.src.match(/[?&]v=(\d+)/)) || [])[1] || '';
   root.classList.add('js');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -130,21 +127,19 @@
         motion-ready mode uses that to transition from a JS-added start
         state. Nothing is hidden until root carries .motion-ready.
      --------------------------------------------------------------------- */
-  // One photo rule for the whole site (figure[data-reveal-img], including
-  // Training carousel slides): a photo fades in only when it is near view,
+  // One photo rule for the whole site (figure[data-reveal-img]): a photo
+  // fades in only when it is near view,
   // fully loaded and decoded, and after any section fade around it has
   // finished. So every photo gets the identical fade on every device and
-  // connection, cached or not. revealPhoto() is also used for photos that
-  // are added later (carousel auto-discovery).
-  var revealPhoto = function (fig) { fig.classList.add('is-in'); };
+  // connection, cached or not.
   var T0 = performance.now();
   if (!reduce.matches && 'IntersectionObserver' in window) {
     root.classList.add('motion-ready');
     var targets = document.querySelectorAll('[data-reveal], [data-seq], [data-reveal-img]');
     // Cascade: the readable blocks inside each section, in reading order.
     // Layout wrappers are opened up; lists, figures, dropdowns, forms,
-    // carousels and other composed pieces count as one block each.
-    var KEEP = 'p,h1,h2,h3,h4,ul,ol,dl,figure,details,form,svg,a,button,.btn-row,[data-stagger],.archive,.face,.accordion-group,.metrics,.quad,.pair,.form-sent,.form-errors,.link-list,.sessions,.contact-form';
+    // and other composed pieces count as one block each.
+    var KEEP = 'p,h1,h2,h3,h4,ul,ol,dl,figure,details,form,svg,a,button,.btn-row,[data-stagger],.face,.accordion-group,.metrics,.quad,.pair,.form-sent,.form-errors,.link-list,.sessions,.contact-form';
     document.querySelectorAll('[data-reveal]').forEach(function (box) {
       var items = [];
       var collect = function (el, depth) {
@@ -229,25 +224,6 @@
         if (wait > 0) setTimeout(go, wait); else go();
       });
     };
-    // Carousels arrive once, as a group (a short stagger across the first
-    // few photos); after that, swiping through them is completely stable.
-    var stripIO = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        var strip = entry.target;
-        strip.dataset.shown = '1';
-        strip.querySelectorAll('[data-reveal-img]').forEach(function (fig, i) {
-          var img = fig.querySelector('img');
-          if (img) img.loading = 'eager';
-          showPhoto(fig, Math.min(i, 3) * 120);
-        });
-        stripIO.unobserve(strip);
-      });
-    }, { rootMargin: '0px 0px -10% 0px', threshold: 0 });
-    revealPhoto = function (fig) {
-      var strip = fig.closest('.archive');
-      if (strip && strip.dataset.shown) showPhoto(fig, 0);   // late addition to a shown strip
-    };
     var opening = true;                       // first second: the 80ms pass decides
     setTimeout(function () {
       opening = false;
@@ -275,9 +251,8 @@
     }, { rootMargin: '0px 0px 4% 0px', threshold: 0 });
     targets.forEach(function (el) {
       if (!el.hasAttribute('data-reveal-img')) io.observe(el);
-      else if (!el.closest('.archive')) photoIO.observe(el);
+      else photoIO.observe(el);
     });
-    document.querySelectorAll('.archive').forEach(function (strip) { stripIO.observe(strip); });
     // Anything already on screen arrives without waiting for a scroll: the
     // page opening (data-seq) first, then any section below it that is also
     // in view, after the opening has had its moment.
@@ -524,133 +499,6 @@
           restore('Your message did not go through. This can be a connection issue. Please try again in a moment.');
         });
     });
-  });
-
-  /* ---------------------------------------------------------------------
-     4c. Training archive strips — native horizontal scroll with snap.
-         Swipe (touch), drag (mouse) or tap the arrows, which glide to the
-         next photo; a counter shows the position. Arrows are disabled at
-         either end. No autoplay, no looping.
-         Each strip names its series (data-archive="certified" | "study" |
-         "personal" | "ongoing"). Photos in the markup carry captions and alt
-         text; any further numbered files (assets/images/training-<series>-
-         NN.jpg) are found automatically and appended, stopping at the first gap.
-     --------------------------------------------------------------------- */
-  document.querySelectorAll('[data-archive]').forEach(function (strip) {
-    var track = strip.querySelector('.archive__track');
-    var nav = strip.querySelector('.archive__nav');
-    if (!track || !nav) return;
-    var prev = nav.querySelector('[data-dir="-1"]');
-    var next = nav.querySelector('[data-dir="1"]');
-    var count = document.createElement('span');
-    count.className = 'archive__count';
-    count.setAttribute('aria-live', 'polite');
-    nav.insertBefore(count, next);
-    var smooth = function () { return reduce.matches ? 'auto' : 'smooth'; };
-    var items = function () { return track.querySelectorAll('.archive__item'); };
-    var maxScroll = function () { return track.scrollWidth - track.clientWidth; };
-    var posOf = function (el) { return el.getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft; };
-    // Index of the photo the strip is resting on (the last one at the far end).
-    var current = function () {
-      var list = items(), best = 0, dist = Infinity;
-      if (track.scrollLeft >= maxScroll() - 2) return list.length - 1;
-      list.forEach(function (it, i) {
-        var d = Math.abs(posOf(it) - track.scrollLeft);
-        if (d < dist) { dist = d; best = i; }
-      });
-      return best;
-    };
-    var goTo = function (i) {
-      var list = items();
-      i = Math.max(0, Math.min(list.length - 1, i));
-      track.scrollTo({ left: Math.min(posOf(list[i]), maxScroll()), behavior: smooth() });
-    };
-    var update = function () {
-      var max = maxScroll(), n = items().length;
-      nav.hidden = max <= 2;
-      prev.disabled = track.scrollLeft <= 2;
-      next.disabled = track.scrollLeft >= max - 2;
-      count.textContent = (current() + 1) + ' / ' + n;
-    };
-    // Start at the first photo. Some browsers (Safari) re-snap a strip to a
-    // later photo while images load or are added, so hold it at the start
-    // until the visitor moves it themselves.
-    var touched = false;
-    var hold = function () { if (!touched && track.scrollLeft !== 0) track.scrollLeft = 0; update(); };
-    ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach(function (ev) {
-      track.addEventListener(ev, function () { touched = true; }, { passive: true });
-    });
-    nav.addEventListener('click', function () { touched = true; });
-    track.querySelectorAll('img').forEach(function (img) { img.addEventListener('load', hold); });
-    window.addEventListener('load', hold);
-    hold();
-    prev.addEventListener('click', function () { goTo(current() - 1); });
-    next.addEventListener('click', function () { goTo(current() + 1); });
-    // Mouse drag: follow the pointer, then settle on the nearest photo in the
-    // direction of travel. Touch keeps the browser's native swipe.
-    var drag = null;
-    track.addEventListener('dragstart', function (e) { e.preventDefault(); });
-    track.addEventListener('pointerdown', function (e) {
-      if (e.pointerType !== 'mouse' || e.button !== 0) return;
-      drag = { x: e.clientX, left: track.scrollLeft, from: current(), moved: 0 };
-      track.classList.add('is-dragging');
-      track.setPointerCapture(e.pointerId);
-    });
-    track.addEventListener('pointermove', function (e) {
-      if (!drag) return;
-      drag.moved = e.clientX - drag.x;
-      track.scrollLeft = drag.left - drag.moved;
-    });
-    var endDrag = function () {
-      if (!drag) return;
-      var d = drag; drag = null;
-      track.classList.remove('is-dragging');
-      if (Math.abs(d.moved) > 40) goTo(d.from + (d.moved < 0 ? 1 : -1));
-      else goTo(d.from);
-    };
-    track.addEventListener('pointerup', endDrag);
-    track.addEventListener('pointercancel', endDrag);
-    track.addEventListener('scroll', function () { window.requestAnimationFrame(update); }, { passive: true });
-    window.addEventListener('resize', update);
-    update();
-    var holder = strip.closest('details');
-    if (holder) holder.addEventListener('toggle', function () { window.requestAnimationFrame(update); });
-
-    // Auto-discovery of further numbered photos, once the strip is near view.
-    var series = strip.getAttribute('data-archive');
-    if (!/^[a-z]+$/.test(series || '')) return;
-    var label = track.getAttribute('aria-label') || 'Training photograph';
-    var probe = function (n) {
-      var src = 'assets/images/training-' + series + '-' + (n < 10 ? '0' : '') + n + '.jpg';
-      if (track.querySelector('img[src^="' + src + '"]')) { probe(n + 1); return; }   // already in the markup (any ?v=)
-      if (BUILD) src += '?v=' + BUILD;
-      var img = new Image();
-      img.onload = function () {
-        var fig = document.createElement('figure');
-        fig.className = 'archive__item';
-        fig.setAttribute('data-reveal-img', '');
-        img.alt = label.replace(/^Photographs/, 'Photograph');
-        img.width = img.naturalWidth; img.height = img.naturalHeight;
-        fig.appendChild(img);
-        track.appendChild(fig);
-        revealPhoto(fig);
-        update();
-        hold();
-        probe(n + 1);
-      };
-      img.src = src;                       // a missing file simply ends the search
-    };
-    var start = function () { probe(track.querySelectorAll('.archive__item').length + 1); };
-    if ('IntersectionObserver' in window) {
-      var seen = new IntersectionObserver(function (entries) {
-        if (!entries[0].isIntersecting) return;
-        seen.disconnect();
-        start();
-      }, { rootMargin: '600px 0px' });
-      seen.observe(strip);
-    } else {
-      start();
-    }
   });
 
   /* ---------------------------------------------------------------------

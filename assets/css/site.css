@@ -47,10 +47,10 @@
 
   /* Type scale — four tiers plus one utility size */
   /* One responsive type scale, shared by every page and section. */
-  --t-hero:    clamp(2.4rem, 5.2vw, 4.8rem);    /* home hero / page-opening display */
-  --t-display: clamp(2.2rem, 3.6vw, 3.6rem);    /* section display statements and h1/h2 */
-  --t-heading: clamp(1.75rem, 2.6vw, 2.6rem);   /* secondary headings and statements */
-  --t-lede:    clamp(1.08rem, 1.4vw, 1.28rem);  /* ledes */
+  --t-hero:    clamp(2.4rem, 5vw, 4.6rem);    /* home hero / page-opening display */
+  --t-display: clamp(2.2rem, 3.5vw, 3.4rem);    /* section display statements and h1/h2 */
+  --t-heading: clamp(1.75rem, 2.5vw, 2.45rem);   /* secondary headings and statements */
+  --t-lede:    clamp(1.05rem, 1.3vw, 1.22rem);  /* ledes */
   --t-sub:     clamp(1.2rem, 4.2vw, 1.4rem);   /* ledes, item titles, summaries */
   --t-body:    clamp(1.03rem, 3.8vw, 1.125rem);
   --t-small:   0.9rem;                         /* eyebrows, metadata, labels */
@@ -190,15 +190,15 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 .statement { font-family: var(--serif); font-size: var(--t-display); line-height: 1.08; text-wrap: balance; max-width: 18ch; }
 /* The FACE close: never more than two balanced lines on phones. */
 .statement--face { max-width: 24ch; }
-@media (max-width: 599px) { .statement--face { font-size: clamp(1.8rem, 7.6vw, 2.35rem); max-width: none; } }
+@media (max-width: 480px) { .statement--face { width: 100%; max-width: none; margin-inline: 0; font-size: clamp(1.85rem, 7.3vw, 2.2rem); line-height: 1.08; } }
 .lede { font-size: var(--t-lede); line-height: 1.5; color: var(--text); text-wrap: pretty; max-width: 30ch; }
 .lede--wide { max-width: var(--measure); }
 /* One emphasis language, colour only (no marker backgrounds):
    .display-accent  EB Garamond italic in cyan, inside display / reflective lines
-   .inline-accent   the body face, semibold, in cyan, inside body copy
+   .inline-accent   the body face, italic, in cyan, inside body copy
    (.insight remains a complete quotable sentence in EB Garamond.) */
 .display-accent { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--glow); background: none; }
-.inline-accent { font-family: inherit; font-style: normal; font-weight: 600; color: var(--accent); background: none; }
+.inline-accent { font-family: inherit; font-style: italic; font-weight: 400; color: var(--accent); background: none; }
 .insight { font-family: var(--serif); font-size: clamp(1.45rem, 5vw, 1.8rem); line-height: 1.3; color: var(--text); max-width: 32ch; text-wrap: pretty; }
 .insight--sm { font-size: clamp(1.2rem, 4.2vw, 1.4rem); line-height: 1.35; max-width: 44ch; }
 .muted { color: var(--muted); }
@@ -261,7 +261,7 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 .js.motion-ready img[data-seq].is-in { transition-duration: var(--motion-image); transition-timing-function: var(--ease-image); }
 /* Phones: shorter distances and a slightly quicker stagger on long pages. */
 @media (max-width: 599px) {
-  :root { --rv-dist: 10px; --rv-x: 12px; --stagger: 90ms; --cascade: 120ms; }
+  :root { --t-display: clamp(2rem, 8vw, 2.55rem); --rv-dist: 10px; --rv-x: 12px; --stagger: 90ms; --cascade: 120ms; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -650,9 +650,6 @@ textarea.finput { min-height: 112px; resize: vertical; }
 /* --------------------------------------------------------------------------
    Approach
    -------------------------------------------------------------------------- */
-.word-list { list-style: none; margin: 0; padding: var(--s-2) 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 2px 0; font-size: var(--t-sub); line-height: 1.4; }
-.word-list li:not(:last-child)::after { content: "·"; color: var(--accent); padding: 0 .45em; }
-.word-list li:nth-child(even) { color: var(--muted); }
 
 .quad { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); max-width: 760px; }
 .quad > div { background: var(--ink-1); padding: 18px 16px 22px; display: grid; gap: 4px; align-content: start; }
@@ -752,65 +749,6 @@ textarea.finput { min-height: 112px; resize: vertical; }
   .editorial--media-first .editorial__head.stack { justify-items: start; }
 }
 
-/* --------------------------------------------------------------------------
-   Training archive strips: documentary photos beneath a major section.
-   Native horizontal scroll with snap; swipe, drag (mouse) or tap the
-   arrows, which glide to the next photo. A counter (2 / 5) shows where you
-   are. Photos are never cropped or stretched.
-   Consistency within each strip, not across strips: each strip sets its own
-   photo height (--h) from the photos it holds. Tablet/desktop: every photo
-   in a strip shares that height at its natural width, so there is no empty
-   frame around it. Phones: one photo per view, edge to edge, in a frame
-   shaped for that strip (--m-ar), the whole photo contained.
-   -------------------------------------------------------------------------- */
-.archive { --h: 300px; --m-ar: 4 / 3; display: grid; gap: 8px; margin-top: var(--s-1); }
-/* Certified (4:3 to 3:2 group photos): a generous, even row. */
-.archive[data-archive="certified"] { --h: clamp(260px, 24vw, 320px); --m-ar: 4 / 3; }
-/* Extensive study (1.1 to 1.7, mixed): slightly lower so the wide one fits. */
-.archive[data-archive="study"] { --h: clamp(250px, 22vw, 300px); --m-ar: 4 / 3; }
-/* Personal transformation (1.05 to 1.8, the widest set): lower still. */
-.archive[data-archive="personal"] { --h: clamp(240px, 20vw, 280px); --m-ar: 4 / 3; }
-/* Stillness, Breath & Movement (two near-square photos): large, close to
-   full size; both sit side by side on desktop. */
-.archive[data-archive="ongoing"] { --h: clamp(340px, 33vw, 450px); --m-ar: 1 / 1; }
-.archive__track {
-  display: flex; gap: var(--s-2); align-items: start;
-  overflow-x: auto; overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory; scrollbar-width: none;
-  container-type: inline-size;
-}
-.archive__track::-webkit-scrollbar { display: none; }
-.archive__track.is-dragging { scroll-snap-type: none; cursor: grabbing; user-select: none; }
-@media (hover: hover) { .archive__track { cursor: grab; } }
-.archive__track:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
-/* Tablet/desktop: shared height, natural width; captions wrap to the photo. */
-.archive__item { margin: 0; flex: 0 0 auto; display: grid; grid-template-columns: min-content; gap: 6px; scroll-snap-align: start; }
-.archive__item img {
-  display: block; width: auto; height: var(--h); max-width: 100cqw;
-  object-fit: contain; border-radius: 6px;
-  -webkit-user-drag: none; user-select: none;
-}
-.archive__item figcaption { font-size: var(--t-small); color: var(--muted); line-height: 1.4; text-align: left; }
-/* Phones: one photo per view, the full screen width, no side padding. */
-@media (max-width: 599px) {
-  .archive { margin-inline: calc(-1 * var(--gutter)); gap: 6px; }
-  .archive__track { gap: 0; }
-  .archive__item { flex: 0 0 100%; grid-template-columns: 100%; }
-  .archive__item img { width: 100%; height: auto; max-width: none; aspect-ratio: var(--m-ar); background: var(--ink-3); border-radius: 0; }
-  .archive__item figcaption { padding-inline: var(--gutter); }
-  .archive__nav { padding-inline: var(--gutter); }
-}
-/* Controls: previous / counter / next, under the strip on every screen. */
-.archive__nav { display: none; }
-.archive__nav:not([hidden]) { display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
-.archive__count { font-size: var(--t-small); color: var(--muted); min-width: 3.2em; text-align: center; font-variant-numeric: tabular-nums; }
-.archive__btn {
-  width: 40px; height: 40px; display: inline-grid; place-items: center;
-  border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--text);
-  font: inherit; cursor: pointer; transition: border-color var(--motion-fast) var(--ease), opacity var(--motion-fast) var(--ease);
-}
-.archive__btn:hover, .archive__btn:focus-visible { border-color: var(--accent); }
-.archive__btn:disabled { opacity: .35; cursor: default; border-color: var(--line); }
 
 
 /* --------------------------------------------------------------------------
@@ -891,7 +829,6 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
 .distilled--sm { font-size: clamp(1.25rem, 4vw, 1.5rem); max-width: 34ch; }
 /* Display emphasis: EB Garamond italic in the sigil's cyan, for one
    meaningful word or phrase in a display line. */
-.soft-em { color: #A8D8F6; }
 .quiet-links { display: flex; flex-wrap: wrap; gap: 4px 32px; }
 
 /* Home sections led by a marker: on wide screens the marker holds a left
@@ -906,7 +843,7 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
 .why { display: grid; gap: var(--s-3); justify-items: start; }
 .why .lede { max-width: 34ch; }
 .why__triad {
-  font-size: var(--t-sub); line-height: 1.75; color: var(--text);
+  font-size: var(--t-lede); line-height: 1.5; color: var(--text);
   padding-left: 18px; border-left: 1px solid var(--warm-soft);
 }
 
@@ -995,11 +932,6 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
 .vision__questions { line-height: 1.75; padding-left: 16px; border-left: 1px solid var(--warm-soft); }
 .vision__questions strong { color: var(--text); }
 
-/* Background: the photo archive waits behind one disclosure. */
-.archive-set { margin-top: var(--s-1); }
-.archive-set > .accordion__body { max-width: none; gap: var(--s-1); }
-.archive-set__title { font-size: var(--t-small); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: var(--s-3); }
-.archive-set__title:first-child { margin-top: 0; }
 
 /* --------------------------------------------------------------------------
    Approach: the same line · node language where it carries structure.
@@ -1093,8 +1025,6 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
   .story__grid { grid-template-columns: minmax(0, 1fr) minmax(260px, 360px); column-gap: var(--s-5); }
   .story__portrait img { aspect-ratio: 3 / 4; }
 }
-.chapter__photo { margin: var(--s-1) 0 0; }
-.chapter__photo img { width: min(100%, 440px); border-radius: 12px; }
 
 /* ==========================================================================
    Four-field background system + streamlined chrome.
@@ -1218,12 +1148,11 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 .bg-2 { --muted: #C3CEE2; --accent: #8FD3FA; --glow: #8FD3FA; }
 .bg-3 { --muted: #A9B3CC; }
 .bg-4 { --muted: #BAC5DC; --accent: #7FCBF6; --glow: #7FCBF6; }
-.bg-2 .soft-em, .bg-4 .soft-em { color: #CDEBFF; }
 
 /* --- Header: the opening edge of the Dark Primary field -------------------- */
 .site-head, .site-head.is-scrolled {
-  background: rgba(14,20,40,.68); border-bottom: 0;
-  -webkit-backdrop-filter: blur(14px) saturate(115%); backdrop-filter: blur(14px) saturate(115%);
+  background: rgba(14,20,40,.48); border-bottom: 0;
+  -webkit-backdrop-filter: blur(18px) saturate(120%); backdrop-filter: blur(18px) saturate(120%);
 }
 .site-head__inner { position: relative; }
 .brand img { width: 30px; }
@@ -1250,19 +1179,23 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 .site-foot__brand { display: grid; justify-items: center; gap: 2px; text-align: center; }
 .site-foot__brand img { width: auto; height: 28px; }
 .site-foot__brand p { font-family: var(--serif); font-size: .92rem; line-height: 1.2; color: var(--text); }
-@media (max-width: 767px) {
+@media (max-width: 430px) {
   .site-foot {
-    grid-template-columns: 1fr auto; gap: 4px 12px; min-height: 0; padding: 12px var(--gutter) 6px;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    min-height: 64px; padding: 14px 14px; font-size: 10px; line-height: 1.1;
     background-image: url("../vinay-brand-assets/footer-dark-primary-mobile.webp");
-    font-size: .75rem;
   }
-  .site-foot__brand { grid-column: 1 / -1; grid-row: 1; }
-  .site-foot__copy, .site-foot__privacy { grid-row: 2; }
-  .site-foot__brand img { height: 28px; }
-  .site-foot__brand p { font-size: .92rem; }
-  .site-foot__privacy { min-height: 32px; }
+  .site-foot > * { white-space: nowrap; min-width: 0; }
+  .site-foot__copy, .site-foot__privacy { flex: 0 1 auto; overflow: hidden; text-overflow: clip; min-height: 0; }
+  .site-foot__brand { flex: none; gap: 2px; }
+  .site-foot__brand img { height: 20px; }
+  .site-foot__brand p { font-size: 10px; line-height: 1.1; }
 }
-@media (max-width: 389px) { .site-foot { font-size: .7rem; column-gap: 8px; padding-inline: 14px; } }
+@media (max-width: 380px) {
+  .site-foot { padding-inline: 10px; font-size: 9px; gap: 6px; }
+  .site-foot__brand p { font-size: 9.5px; }
+  .site-foot__brand img { height: 18px; }
+}
 /* The floating contact pill steps aside while the footer is on screen. */
 .foot-in-view .contact-pill { opacity: 0; transform: translateY(6px); pointer-events: none; }
 
@@ -1336,10 +1269,9 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 .face__letter { color: var(--warm); }
 
 /* --- Radius system: images 20 · surfaces 16 · small UI 12 · pills 999 ------- */
-.editorial__media img, .story__portrait img, .chapter__photo img { border-radius: 20px; }
+.editorial__media img, .story__portrait img { border-radius: 20px; }
 .contact-sheet__panel, .field-nest { border-radius: 16px; }
 .field-nest .field-nest { border-radius: 12px; }
-@media (min-width: 600px) { .archive__item img { border-radius: 18px; border: 1px solid var(--warm-faint); } }
 .editorial__media--person img, .story__portrait img { border: 1px solid rgba(200,161,90,.3); }
 /* Dark fields: small labels and display emphasis a shade lighter, so they
    stay readable where they cross the brighter veins of the texture. */
@@ -1348,3 +1280,22 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 .accordion__body--wide { max-width: 760px; }
 /* 1:1, Working together: the one visible statement. */
 .together-statement { font-family: var(--serif); font-size: var(--t-heading); line-height: 1.15; color: var(--text); max-width: 24ch; text-wrap: balance; }
+
+/* Approach word list: one size, one colour, dot separators. */
+.word-list { list-style: none; margin: 0; padding: var(--s-2) 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 2px 0; font-size: inherit; line-height: 1.6; color: var(--text); }
+.word-list li:not(:last-child)::after { content: "·"; color: var(--warm); padding: 0 .45em; }
+/* Story: qualities line at the paragraph's size; tighter chapters on phones. */
+.story__qualities { font-size: var(--t-body); line-height: 1.6; color: var(--text); }
+@media (max-width: 768px) {
+  .story-chapters.section { padding-block: 26px 10px !important; }
+  .story-chapters.section:last-of-type, .story-chapters.section:has(+ .vision) { padding-bottom: 42px !important; }
+  section.story-chapters:first-of-type { padding-top: 42px !important; }
+  .chapter { gap: 6px; padding-top: 0; border-top: 0; }
+  .chapter::before { display: none; }
+  .chapter__more { margin-top: 10px; }
+  .chapter__more > summary { min-height: 40px; padding: 4px 0; }
+  .chapter__more .accordion__body { padding-bottom: 22px; }
+  .story-chapters:has(+ .story-chapters), .story-chapters + .story-chapters { --th: 32px; }
+}
+.story__portrait img { object-position: 82% 58%; }
+@media (min-width: 860px) { .story__portrait img { aspect-ratio: 778 / 1100; object-position: 80% 60%; } }
