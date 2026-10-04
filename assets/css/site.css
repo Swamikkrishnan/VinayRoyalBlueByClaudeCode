@@ -494,7 +494,7 @@ html:not(.js) .nav-toggle { display: none !important; }
 }
 .home-hero .display-title { font-size: var(--t-hero); text-shadow: 0 0 10px rgba(247,246,242,.10), 0 0 24px rgba(93,184,240,.12); }
 .home-hero__inner { position: relative; width: 100%; max-width: 760px; margin: 0 auto; display: grid; justify-items: center; }
-.home-hero__sigil { width: clamp(160px, min(50vw, 30vh), 300px); margin: var(--s-3) 0; filter: drop-shadow(0 0 32px rgba(93,184,240,.24)); }
+.home-hero__sigil { width: clamp(175px, min(54vw, 33vh), 327px); margin: 22px 0; filter: drop-shadow(0 0 32px rgba(93,184,240,.24)); }
 /* The four closing lines read as one thought: one family (Gillius), close leading. */
 .home-hero__lead { color: #CDD4E6; font-size: var(--t-sub); line-height: 1.4; max-width: 34ch; text-wrap: balance; }
 .home-hero__trio {
@@ -1315,8 +1315,6 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 @media (min-width: 769px) { :root { --header-h: 58px; } }
 .story-chapters.section { padding-block: 30px; }
 .vision.section { padding-top: max(30px, calc(var(--th2) + 4px)); }
-/* Story opening: two display lines at one size. */
-.story__qualities.story__home { font-family: var(--serif); font-size: var(--t-hero); line-height: 1.04; }
 /* Approach pair titles: display, at the secondary heading scale. */
 .pair__title { font-family: var(--serif); font-size: var(--t-heading); line-height: 1.12; }
 /* Homepage / 1:1 Five Areas: the statement matches "Where life is stuck…". */
@@ -1332,3 +1330,15 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 
 .home-hero__trio .trio-word { font-style: italic; font-weight: 600; color: var(--emphasis-blue); }
 .story-chapters.section:has(+ .vision) { padding-bottom: 30px; }
+
+/* Hero: the whole composition sits a little above centre. */
+.home-hero__inner { transform: translateY(-24px); }
+@media (max-width: 599px) { .home-hero__inner { transform: translateY(-16px); } .home-hero__sigil { margin: 18px 0; } }
+/* Availability / Scope: the gold label is the accordion row. */
+.accordion--label > summary { padding: 12px 0; min-height: 48px; }
+.accordion--label > summary .marker { margin: 0; }
+/* Story: one heading size for every chapter, the bridge and the vision. */
+.story-heading.story-heading { font-family: var(--serif); font-weight: 400; font-size: clamp(2.15rem, 3.4vw, 3.25rem); line-height: 1.08; max-width: 24ch; }
+@media (max-width: 599px) { .story-heading.story-heading { font-size: clamp(2rem, 8vw, 2.5rem); } }
+.chapter__summary { font-size: var(--t-body); line-height: 1.6; }
+.chapters__bridge.story-heading { max-width: 30ch; }

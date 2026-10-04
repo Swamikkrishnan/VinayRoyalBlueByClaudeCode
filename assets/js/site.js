@@ -350,17 +350,21 @@
       panels[i].setAttribute('aria-labelledby', t.id);
       panels[i].setAttribute('tabindex', '0');
     });
+    // Nothing is selected until the visitor chooses a letter (i = -1).
+    // Choosing the open letter again closes it.
+    var current = -1;
     var select = function (i, focus) {
+      current = i;
       tabs.forEach(function (t, k) {
         var on = k === i;
         t.setAttribute('aria-selected', on ? 'true' : 'false');
-        t.tabIndex = on ? 0 : -1;
+        t.tabIndex = (on || (i < 0 && k === 0)) ? 0 : -1;
         panels[k].hidden = !on;
       });
-      if (focus) tabs[i].focus();
+      if (focus && i >= 0) tabs[i].focus();
     };
     tabs.forEach(function (t, i) {
-      t.addEventListener('click', function () { select(i, false); });
+      t.addEventListener('click', function () { select(current === i ? -1 : i, false); });
       t.addEventListener('keydown', function (e) {
         var n = tabs.length, k = null;
         if (e.key === 'ArrowRight' || e.key === 'ArrowDown') k = (i + 1) % n;
@@ -372,7 +376,7 @@
     });
     tablist.hidden = false;
     face.classList.add('is-tabs');
-    select(0, false);
+    select(-1, false);
   }
 
   /* ---------------------------------------------------------------------
