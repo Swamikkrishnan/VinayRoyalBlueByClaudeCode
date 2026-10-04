@@ -494,7 +494,7 @@ html:not(.js) .nav-toggle { display: none !important; }
 }
 .home-hero .display-title { font-size: var(--t-hero); text-shadow: 0 0 10px rgba(247,246,242,.10), 0 0 24px rgba(93,184,240,.12); }
 .home-hero__inner { position: relative; width: 100%; max-width: 760px; margin: 0 auto; display: grid; justify-items: center; }
-.home-hero__sigil { width: clamp(192px, min(59vw, 36vh), 360px); margin: 0 0 30px; filter: drop-shadow(0 0 32px rgba(93,184,240,.24)); }
+.home-hero__sigil { width: clamp(192px, min(59vw, 36vh), 360px); margin: 30px 0; filter: drop-shadow(0 0 32px rgba(93,184,240,.24)); }
 /* The four closing lines read as one thought: one family (Gillius), close leading. */
 .home-hero__lead { color: #CDD4E6; font-size: var(--t-sub); line-height: 1.4; max-width: 34ch; text-wrap: balance; }
 .home-hero__trio {
@@ -1333,8 +1333,7 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 
 /* Hero: the whole composition sits a little above centre. */
 .home-hero__inner { transform: translateY(-42px); }
-.home-hero .display-title { margin-bottom: 30px; }
-@media (max-width: 599px) { .home-hero__inner { transform: translateY(-28px); } .home-hero__sigil { margin-bottom: 24px; } .home-hero .display-title { margin-bottom: 24px; } }
+@media (max-width: 599px) { .home-hero__inner { transform: translateY(-28px); } .home-hero__sigil { margin: 24px 0; } }
 /* Availability / Scope: the gold label is the accordion row. */
 .accordion--label > summary { padding: 12px 0; min-height: 48px; }
 .accordion--label > summary .marker { margin: 0; }
