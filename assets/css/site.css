@@ -1357,4 +1357,7 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 .home-hero .display-title { font-size: min(calc(var(--t-hero) * 1.09), 9.8vw); text-wrap: balance; }
 .hero-strong { font-weight: 600; }
 .hero-gold { color: var(--accent-brass); font-style: normal; }
-.name-strong { font-weight: 600; }
+/* Bold, upright brass for heading anchors; plain bold for heading lead-ins. */
+.gold-strong { color: var(--accent-brass); font-style: normal; font-weight: 600; }
+.strong { font-weight: 600; }
+.evidence--strong dt { font-weight: 600; }
