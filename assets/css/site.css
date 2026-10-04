@@ -1371,3 +1371,7 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 /* Availability / Scope: centred like "The wider dream", brass lines either side. */
 .accordion--label > summary { display: flex; justify-content: center; align-items: center; gap: 12px; }
 .accordion--label > summary::after { margin: 0 0 4px; }
+/* 1:1: Scope & Suitability sits close under Availability, with room before the footer. */
+#alignment.section { padding-bottom: 12px; }
+#scope.section { padding-top: 8px; padding-bottom: 96px; }
+@media (max-width: 768px) { #scope.section { padding-bottom: 72px; } }
