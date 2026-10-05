@@ -1036,12 +1036,12 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
 
 .bg-1 { --base: #06131F; --veil: linear-gradient(90deg, rgba(10,16,32,.06), rgba(10,16,32,.4) calc(50% - 620px), rgba(10,16,32,.4) calc(50% + 620px), rgba(10,16,32,.06)); --img: url("../vinay-brand-assets/bg-01-dark-primary-desktop.webp"); }
 .bg-2 { --base: #0B3A60; --veil: linear-gradient(90deg, rgba(8,22,44,.12), rgba(8,22,44,.62) calc(50% - 620px), rgba(8,22,44,.62) calc(50% + 620px), rgba(8,22,44,.12)); --img: url("../vinay-brand-assets/bg-light-primary-desktop.webp"); }
-.bg-3 { --base: #04101A; --veil: linear-gradient(90deg, rgba(10,16,32,.06), rgba(10,16,32,.36) calc(50% - 620px), rgba(10,16,32,.36) calc(50% + 620px), rgba(10,16,32,.06)); --img: url("../vinay-brand-assets/bg-03-dark-secondary-desktop.webp"); }
+.bg-3 { --base: #04101A; --veil: linear-gradient(90deg, rgba(10,16,32,.06), rgba(10,16,32,.36) calc(50% - 620px), rgba(10,16,32,.36) calc(50% + 620px), rgba(10,16,32,.06)); --img: url("../vinay-brand-assets/bg-03-dark-secondary-desktop-v2.webp"); }
 .bg-4 { --base: #04182F; --veil: linear-gradient(90deg, rgba(8,22,44,.08), rgba(8,22,44,.46) calc(50% - 620px), rgba(8,22,44,.46) calc(50% + 620px), rgba(8,22,44,.08)); --img: url("../vinay-brand-assets/bg-light-secondary-desktop.webp"); }
 @media (max-width: 767px) {
   .bg-1 { --img: url("../vinay-brand-assets/bg-01-dark-primary-mobile.webp"); }
   .bg-2 { --img: url("../vinay-brand-assets/bg-light-primary-mobile.webp"); }
-  .bg-3 { --img: url("../vinay-brand-assets/bg-03-dark-secondary-mobile.webp"); }
+  .bg-3 { --img: url("../vinay-brand-assets/bg-03-dark-secondary-mobile-v2.webp"); }
   .bg-4 { --img: url("../vinay-brand-assets/bg-light-secondary-mobile.webp"); }
 }
 /* Narrower screens: copy spans the full width, so the dark veils sit a
@@ -1472,8 +1472,11 @@ a { -webkit-tap-highlight-color: transparent; }
 }
 
 /* Header: transparent at the top; the translucent navy glass after ~24px. */
+/* The header floats over the page: transparent at the top (the first
+   section's background runs up behind it), glass once scrolled. */
 .site-head {
-  background: #071A2B; border-bottom: 0; box-shadow: none;   /* the navy behind the hero sigil */
+  position: fixed; top: 0; left: 0; right: 0;
+  background: transparent; border-bottom: 0; box-shadow: none;
   -webkit-backdrop-filter: none; backdrop-filter: none;
   transition: background-color 220ms ease, -webkit-backdrop-filter 220ms ease, backdrop-filter 220ms ease;
 }
@@ -1524,7 +1527,6 @@ a { -webkit-tap-highlight-color: transparent; }
   .areas .icon-box.icon-box { width: var(--node); height: var(--node); }
 }
 .areas__node { background: none; }
-.areas::before { display: none; }   /* the kit icons are transparent; a thread would run through them */
 .doorway-list a { grid-template-columns: var(--icon-box) 1fr; align-items: center; }
 @media (min-width: 860px) { .doorway-list a { grid-template-columns: var(--icon-box) 9rem 1fr; } }
 /* Group rows (homepage summary + Groups page): one shared layout; the
@@ -1760,3 +1762,83 @@ a { -webkit-tap-highlight-color: transparent; }
 }
 :is(#mind, #breath).offering .gold-accent,
 .doorway-list a:is([href$="#mind"], [href$="#breath"]) .gold-accent { color: var(--emphasis-blue); }
+
+
+/* ==========================================================================
+   Header overlay, five-area overview, Approach accents, asset reveal
+   ========================================================================== */
+/* First section starts at y=0 behind the header; its content clears the
+   header (and, on narrower screens, the section strip) with padding. */
+body { --hdr-offset: calc(var(--header-h) + var(--subnav-h)); }   /* on body: .has-subnav sets --subnav-h there */
+@media (max-width: 1099px) {
+  .subnav { position: fixed; top: var(--header-h); left: 0; right: 0; }
+}
+main > .page-hero:first-child,
+main > .field:first-child > .page-hero:first-child { padding-top: calc(var(--section-y) + var(--hdr-offset)); }
+main > .home-hero:first-child { padding-top: calc(clamp(2.5rem, 7vw, 4rem) + var(--header-h)); }
+/* Without JS the small-screen header stays in flow, so no clearance is added. */
+@media (max-width: 1099px) {
+  html:not(.js) main > .page-hero:first-child, html:not(.js) main > .field:first-child > .page-hero:first-child { padding-top: var(--section-y); }
+  html:not(.js) .subnav { position: sticky; }
+}
+/* The open mobile menu keeps a solid ground for legibility. */
+.site-head:has(.nav-toggle[aria-expanded="true"]) { background: #08101E; }
+
+/* Homepage: the header starts with the name only; site.js carries the hero
+   sigil up into the brand position as the page scrolls. */
+html.js .page-home .brand img { opacity: 0; }
+.page-home .brand img, .page-home .brand span { transition: opacity 200ms ease; }
+.sigil-flight {
+  position: fixed; left: 0; top: 0; z-index: 61; margin: 0; pointer-events: none;
+  transform-origin: 0 0; will-change: transform; visibility: hidden;
+}
+.hero-sigil-wrap::before { opacity: var(--glow-o, 1); }
+
+/* Five-area overview (homepage + 1:1 "What is the work?"): icon, label, one
+   word, all on one connected movement. */
+.areas { --node: 74px; --icon: 74px; margin-top: calc(52px - var(--s-3)); margin-bottom: calc(36px - var(--s-3)); }
+.areas .icon-box.icon-box { width: var(--node); height: var(--node); }
+.areas .area-icon[src*="icon-mind"], .areas .area-icon[src*="icon-breath"] { filter: drop-shadow(0 0 5px rgba(93,184,240,.28)); }
+.areas .area-icon:is([src*="icon-body"], [src*="icon-emotion"], [src*="icon-action"]) { filter: drop-shadow(0 0 5px rgba(200,161,90,.28)); }
+.areas a { gap: 8px; }
+.areas__label { margin-top: 6px; }
+.areas__word { font-family: var(--serif); font-size: 1.08rem; line-height: 1.2; color: rgba(247,246,242,.82); white-space: nowrap; }
+.areas::before {   /* the ethereal movement, through the icon centres */
+  content: ""; display: block; position: absolute; z-index: -1; pointer-events: none;
+  left: 0; right: 0; top: calc(var(--node) / 2); height: auto; aspect-ratio: 1920 / 320; transform: translateY(-50%);
+  background: url("../vinay-brand-assets/ethereal-movement-desktop.webp") center / 100% 100% no-repeat;
+  opacity: .76;
+}
+@media (max-width: 767px) {
+  .areas::before { aspect-ratio: 1080 / 220; background-image: url("../vinay-brand-assets/ethereal-movement-mobile.webp"); opacity: .66; }
+}
+@media (max-width: 599px) {
+  .areas { --node: min(56px, calc((100vw - 2 * var(--gutter, 16px)) / 5 - 4px)); --icon: var(--node); }
+  .areas__label { margin-top: 4px; }
+  .areas__word { font-size: .92rem; }
+}
+@media (max-width: 339px) { .areas::before { display: none; } }
+
+/* Approach: italic accents inside the (otherwise upright) headings. */
+.page-approach main :is(h1, h2, h3) em.is-italic { font-style: italic; }
+/* Approach: Where change begins — a dark-blue, see-through box. */
+.quad { background: rgba(93,184,240,.18); border-color: rgba(93,184,240,.18); box-shadow: none; }
+.quad > div { background: rgba(5,24,41,.38); box-shadow: none; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+
+/* Asset reveal: each field's texture (and its transition art) fades in once
+   this page's backgrounds have loaded (site.js adds .assets-ready, or a
+   1.3s safety timeout does). Without JS nothing is hidden. */
+@property --cover { syntax: "<number>"; inherits: false; initial-value: 0; }
+:is(.bg-1, .bg-2, .bg-3, .bg-4) { box-shadow: inset 0 0 0 9999px rgba(6, 19, 31, var(--cover)); transition: --cover 600ms ease; }
+html.js:not(.assets-ready) :is(.bg-1, .bg-2, .bg-3, .bg-4) { --cover: 1; }
+:is(.bg-1, .bg-2, .bg-3, .bg-4)::before, :is(.bg-1, .bg-2, .bg-3, .bg-4)::after { transition: opacity 600ms ease; }
+html.js:not(.assets-ready) :is(.bg-1, .bg-2, .bg-3, .bg-4)::before,
+html.js:not(.assets-ready) :is(.bg-1, .bg-2, .bg-3, .bg-4)::after,
+html.js:not(.assets-ready) .areas::before { opacity: 0; }
+.areas::before { transition: opacity 700ms ease; }
+/* Photographs: hold their space, then fade in once decoded. */
+html.js :is(.editorial__media, .story__portrait) img { transition: opacity 400ms ease; }
+html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  :is(.bg-1, .bg-2, .bg-3, .bg-4) { transition-duration: 1ms; }
+}

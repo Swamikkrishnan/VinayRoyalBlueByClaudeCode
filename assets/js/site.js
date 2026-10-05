@@ -69,12 +69,67 @@
   var siteHead = document.getElementById('site-head');
   if (siteHead) {
     var headTick = false;
-    var markScrolled = function () { headTick = false; siteHead.classList.toggle('is-scrolled', window.scrollY > 24); };
+    var markScrolled = function () { headTick = false; siteHead.classList.toggle('is-scrolled', window.scrollY > 28); };
     window.addEventListener('scroll', function () {
       if (!headTick) { headTick = true; window.requestAnimationFrame(markScrolled); }
     }, { passive: true });
     window.addEventListener('pageshow', markScrolled);   // restored scroll positions
     markScrolled();
+  }
+
+  // Homepage: the hero sigil travels up into the header's brand position as
+  // the page scrolls, and the name gives way to it; scrolling back reverses
+  // it. A fixed-position clone does the travelling (transform + opacity
+  // only); geometry is measured on load/resize, never per frame.
+  var heroSig = document.querySelector('.page-home .home-hero__sigil');
+  var brandImg = document.querySelector('.page-home .brand img');
+  var brandName = document.querySelector('.page-home .brand span');
+  if (heroSig && brandImg && brandName) {
+    var sigWrap = heroSig.parentNode;
+    var flight = heroSig.cloneNode(false);
+    flight.removeAttribute('fetchpriority');
+    flight.className = 'home-hero__sigil sigil-flight';
+    flight.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(flight);
+    var geo = null, flightTick = false, lastP = -1;
+    var measure = function () {
+      var y = window.scrollY, sr = heroSig.getBoundingClientRect(), tr = brandImg.getBoundingClientRect();
+      if (!sr.width || !tr.width) return;
+      geo = { sx: sr.left, sy: sr.top + y, sw: sr.width, tx: tr.left, ty: tr.top, k: tr.width / sr.width,
+              end: Math.max(1, sr.top + y + sr.height / 2 - (tr.top + tr.height / 2)) };
+      flight.style.width = sr.width + 'px'; flight.style.height = sr.height + 'px';
+      lastP = -1; fly();
+    };
+    var ease = function (t) { return t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; };
+    var fly = function () {
+      flightTick = false;
+      if (!geo) return;
+      var y = window.scrollY, p = Math.min(1, Math.max(0, y / geo.end));
+      if (reduce.matches) p = p >= .5 ? 1 : 0;          // no travel: a simple swap
+      if (p === lastP && p !== 0 && p !== 1) return;
+      lastP = p;
+      var moving = p > 0 && p < 1;
+      flight.style.visibility = moving ? 'visible' : 'hidden';
+      heroSig.style.visibility = p > 0 ? 'hidden' : '';
+      sigWrap.style.setProperty('--glow-o', String(1 - p));
+      brandImg.style.opacity = p >= 1 ? '1' : '0';
+      brandName.style.opacity = String(Math.max(0, 1 - p * 1.4));
+      if (moving) {
+        var e = ease(p);
+        var x = geo.sx + (geo.tx - geo.sx) * e;
+        var top = (geo.sy - y) + (geo.ty - (geo.sy - y)) * e;
+        var k = 1 + (geo.k - 1) * e;
+        flight.style.transform = 'translate3d(' + x + 'px,' + top + 'px,0) scale(' + k + ')';
+      }
+    };
+    window.addEventListener('scroll', function () {
+      if (!flightTick) { flightTick = true; window.requestAnimationFrame(fly); }
+    }, { passive: true });
+    window.addEventListener('resize', measure);
+    window.addEventListener('orientationchange', measure);
+    window.addEventListener('load', function () { measure(); setTimeout(measure, 1600); setTimeout(measure, 3200); });   // again once the opening has settled
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+    measure();
   }
 
   /* ---------------------------------------------------------------------
@@ -129,6 +184,38 @@
         anim.onfinish = function () { finish(true); };
       }
     });
+  });
+
+  /* ---------------------------------------------------------------------
+     1b. Background assets — preload only the textures this page uses (each
+         field, its transition art, the five-area connector), then add
+         .assets-ready so the CSS fades them in. A 1.3s cap means a slow or
+         failed request never leaves the page bare.
+     --------------------------------------------------------------------- */
+  var assetsReady = new Promise(function (resolve) {
+    var finish = function () { root.classList.add('assets-ready'); resolve(); };
+    setTimeout(finish, 1300);
+    var urls = {};
+    var collect = function (el, pseudo) {
+      var bi = window.getComputedStyle(el, pseudo).backgroundImage || '';
+      bi.replace(/url\(["']?([^"')]+)["']?\)/g, function (m, u) { urls[u] = true; return m; });
+    };
+    Array.prototype.forEach.call(document.querySelectorAll('.bg-1, .bg-2, .bg-3, .bg-4'), function (el) {
+      collect(el, null); collect(el, '::before'); collect(el, '::after');
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.areas'), function (el) { collect(el, '::before'); });
+    var list = Object.keys(urls), left = list.length;
+    if (!left) return finish();
+    list.forEach(function (u) {
+      var im = new Image();
+      im.onload = im.onerror = function () { if (--left === 0) finish(); };
+      im.src = u;
+    });
+  });
+
+  // Photographs keep their space and fade in once decoded (CSS holds them at 0).
+  Array.prototype.forEach.call(document.querySelectorAll('.editorial__media img, .story__portrait img'), function (img) {
+    whenReady(img, function () { img.classList.add('is-loaded'); });
   });
 
   /* ---------------------------------------------------------------------
@@ -271,7 +358,10 @@
     // a dropped frame. T0 marks the moment it begins.
     var afterSettle = function (fn) {
       var go = function () { window.requestAnimationFrame(function () { window.requestAnimationFrame(fn); }); };
-      var done = false, once = function () { if (!done) { done = true; go(); } };
+      var done = false, once = function () {
+        if (done) return; done = true;
+        assetsReady.then(function () { setTimeout(go, 180); });   // texture first, then the words
+      };
       // The first heavy frame ends just before the load event; cap the wait
       // so a slow image never holds the opening back.
       if (document.readyState === 'complete') once();
