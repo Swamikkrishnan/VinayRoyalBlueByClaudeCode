@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <defs>
+    <radialGradient id="c" cx="60" cy="60" r="10" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#E4F5FF"/><stop offset="1" stop-color="#5DB8F0"/>
+    </radialGradient>
+    <filter id="g" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="2" result="s"/><feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="60" cy="60" r="52" stroke="#5DB8F0" stroke-opacity=".28" stroke-width="1"/>
+  <g filter="url(#g)">
+    <circle cx="60" cy="60" r="36" stroke="#5DB8F0" stroke-opacity=".7" stroke-width="1.6"/>
+    <g fill="#BFE6FF">
+      <circle cx="60" cy="24" r="3.6"/><circle cx="91.2" cy="42" r="3.6"/><circle cx="91.2" cy="78" r="3.6"/>
+      <circle cx="60" cy="96" r="3.6"/><circle cx="28.8" cy="78" r="3.6"/><circle cx="28.8" cy="42" r="3.6"/>
+    </g>
+    <g stroke="#9AD6FA" stroke-width="2.4" stroke-linecap="round">
+      <path d="M48 50A14 14 0 0 0 48 70"/><path d="M72 50A14 14 0 0 1 72 70"/>
+      <path d="M41 45A21 21 0 0 0 41 75" stroke-opacity=".5" stroke-width="1.6"/><path d="M79 45A21 21 0 0 1 79 75" stroke-opacity=".5" stroke-width="1.6"/>
+    </g>
+    <circle cx="60" cy="60" r="5.5" fill="url(#c)"/>
+  </g>
+  <g fill="#5DB8F0"><circle cx="60" cy="8" r="2"/><circle cx="60" cy="112" r="2"/></g>
+</svg>

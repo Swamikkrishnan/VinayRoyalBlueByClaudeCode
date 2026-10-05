@@ -1709,3 +1709,10 @@ a { -webkit-tap-highlight-color: transparent; }
   filter: brightness(1.18) saturate(1.4) contrast(1.06)
     drop-shadow(0 0 6px rgba(200,161,90,.58)) drop-shadow(0 0 14px rgba(200,161,90,.32));
 }
+
+/* Homepage group rows: icons at the same presence as the five areas
+   (the line icons fill their box, so they sit a little inside it). */
+.summary-list li > a { grid-template-columns: var(--icon-box) minmax(0, 1fr); }
+.summary-list .icon-box.icon-box { width: calc(var(--icon-box) * .72); height: calc(var(--icon-box) * .72); }
+/* Homepage hero on wide screens: its own framed artwork. */
+@media (min-width: 768px) { .home-hero.bg-1 { --img: url("../vinay-brand-assets/hero-home-desktop.webp"); } }
