@@ -1461,4 +1461,4 @@ dd > .word-list { margin-top: 10px; color: var(--text); }
 }
 /* Homepage hero on phones: its own portrait artwork. */
 @media (max-width: 767px) { .home-hero.bg-1 { --img: url("../vinay-brand-assets/hero-home-mobile.webp"); } }
-.ruled--values dt { color: var(--accent-brass); }
+.ruled--values dt { color: var(--accent-brass); font-weight: 600; }
