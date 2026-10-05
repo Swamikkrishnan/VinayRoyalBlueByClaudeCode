@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&display=swap" rel="stylesheet">
 <link rel="preload" href="assets/fonts/GilliusADFNo2-Regular.otf" as="font" type="font/otf" crossorigin>
-<link rel="stylesheet" href="assets/css/site.css?v=202610051340">
+<link rel="stylesheet" href="assets/css/site.css?v=202610051838">
 </head>
 <body class="has-subnav">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -81,17 +81,17 @@
     <p data-seq class="section-intro">Humans have always gathered for ritual, movement, celebration, grief, <em class="display-accent">initiation</em> and <em class="gold-accent">transformation</em>.</p>
     <div data-seq class="accordion-group" style="margin-top:var(--s-2)">
       <div class="plain-row icon-row" id="breath-of-becoming">
-        <svg class="icon" viewBox="0 0 28 28" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="14" cy="14" r="11" opacity=".4"/><circle cx="14" cy="14" r="6.5" opacity=".7"/><circle cx="14" cy="14" r="2"/></svg>
+        <img class="icon icon--kit" src="assets/vinay-icon-kit-1/icon-breath-of-becoming.webp" alt="" width="512" height="512" aria-hidden="true">
         <h2 class="accordion__title">Breath of Becoming</h2>
         <p class="accordion__desc">A deep breathwork journey through expression, release, <em class="inline-accent">wholeness</em> and completion.</p>
       </div>
       <div class="plain-row icon-row" id="conscious-dance-journeys">
-        <svg class="icon" viewBox="0 0 28 28" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M3 17c3-7 5.5 4 8.5-1.5S17 6 20 11.5s3.5 4.5 5 2.5"/><path d="M3 22c3-5 5.5 3 8.5-1s5.5-5 8.5-1 3.5 3 5 1.5" opacity=".5"/></svg>
+        <img class="icon icon--kit" src="assets/vinay-icon-kit-1/icon-conscious-dance-journeys.webp" alt="" width="512" height="512" aria-hidden="true">
         <h2 class="accordion__title">Conscious Dance Journeys</h2>
-        <p class="accordion__desc">A primal, non-verbal journey through <em class="inline-accent">movement</em>, emotion, connection and celebration, returning again to stillness.</p>
+        <p class="accordion__desc">A primal, non-verbal journey through <em class="inline-accent">movement</em>, emotion, connection and celebration, returning to stillness.</p>
       </div>
       <div class="plain-row icon-row" id="listening-temples">
-        <svg class="icon" viewBox="0 0 28 28" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="14" cy="14" r="9" opacity=".45"/><circle cx="14" cy="5" r="2"/><circle cx="22.6" cy="11.2" r="2"/><circle cx="19.3" cy="21.3" r="2"/><circle cx="8.7" cy="21.3" r="2"/><circle cx="5.4" cy="11.2" r="2"/><circle cx="14" cy="14" r="1.6"/></svg>
+        <img class="icon icon--kit" src="assets/vinay-icon-kit-1/listening-temples-icon.webp" alt="" width="512" height="512" aria-hidden="true">
         <h2 class="accordion__title">Listening Temples</h2>
         <p class="accordion__desc">Sharing circles devoted to <em class="inline-accent">listening</em> as a sacred practice.</p>
       </div>
@@ -138,24 +138,27 @@
     </dl>
     <figure class="field" style="margin:var(--s-2) 0 0">
       <svg class="field-svg" viewBox="0 0 640 450" role="img" aria-label="The container: Intention at the centre; Participants, Facilitators, Sequence and Pacing around it; Environment, Transitions, Inclusion, Safety and Integration in the outer layer.">
-        <g fill="none" stroke="var(--accent)" stroke-width="1.2">
+        <defs>
+          <mask id="field-gaps" maskUnits="userSpaceOnUse" x="-40" y="-40" width="720" height="530">
+            <rect x="-40" y="-40" width="720" height="530" fill="#fff"/>
+            <g class="field-svg__knock" text-anchor="middle" dominant-baseline="central">
+              <text class="field-svg__core" x="320" y="225">INTENTION</text>
+              <text x="320" y="100">PARTICIPANTS</text><text class="fx-r" x="445" y="225">FACILITATORS</text><text x="320" y="350">SEQUENCE</text><text class="fx-l" x="195" y="225">PACING</text>
+              <text x="320" y="30">ENVIRONMENT</text><text x="505" y="165">TRANSITIONS</text><text x="435" y="383">INCLUSION</text><text x="205" y="383">SAFETY</text><text x="135" y="165">INTEGRATION</text>
+            </g>
+          </mask>
+        </defs>
+        <g fill="none" stroke="var(--accent)" stroke-width="1.2" mask="url(#field-gaps)">
           <circle cx="320" cy="225" r="195" stroke-opacity=".4"/>
           <circle cx="320" cy="225" r="125" stroke-opacity=".65"/>
           <circle cx="320" cy="225" r="56"/>
         </g>
         <g text-anchor="middle" dominant-baseline="central">
-          <text class="field-svg__core" x="320" y="225">Intention</text>
-          <text x="320" y="100">Participants</text><text x="445" y="225">Facilitators</text><text x="320" y="350">Sequence</text><text x="195" y="225">Pacing</text>
-          <text x="320" y="30">Environment</text><text x="505" y="165">Transitions</text><text x="435" y="383">Inclusion</text><text x="205" y="383">Safety</text><text x="135" y="165">Integration</text>
+          <text class="field-svg__core" x="320" y="225">INTENTION</text>
+          <text x="320" y="100">PARTICIPANTS</text><text class="fx-r" x="445" y="225">FACILITATORS</text><text x="320" y="350">SEQUENCE</text><text class="fx-l" x="195" y="225">PACING</text>
+          <text x="320" y="30">ENVIRONMENT</text><text x="505" y="165">TRANSITIONS</text><text x="435" y="383">INCLUSION</text><text x="205" y="383">SAFETY</text><text x="135" y="165">INTEGRATION</text>
         </g>
       </svg>
-      <div class="field-nest">
-        <p>Environment &middot; Transitions &middot; Inclusion &middot; Safety &middot; Integration</p>
-        <div class="field-nest">
-          <p>Participants &middot; Facilitators &middot; Sequence &middot; Pacing</p>
-          <p class="field-nest__core">Intention</p>
-        </div>
-      </div>
     </figure>
     <a class="btn btn--outline" href="collaborate.html">Enquire about Design &amp; Curation <span aria-hidden="true">&rarr;</span></a>
   </div>
@@ -176,6 +179,7 @@
         <div class="accordion__body"><p>This may include breathwork, conscious dance, listening spaces, 1:1 support, bodywork or another appropriate part of my work.</p></div>
       </details>
     </div>
+    <a class="text-cta" href="collaborate.html">Explore Collaboration <span aria-hidden="true">&rarr;</span></a>
   </div>
 </section>
 
@@ -190,6 +194,6 @@
   <a class="site-foot__privacy" href="privacy.html">Privacy &amp; Scope</a>
 </footer>
 
-<script src="assets/js/site.js?v=202610051340" defer></script>
+<script src="assets/js/site.js?v=202610051838" defer></script>
 </body>
 </html>

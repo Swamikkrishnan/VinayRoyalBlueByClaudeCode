@@ -64,11 +64,16 @@
     });
   }
 
-  // Header: a slightly firmer ground once the page is scrolled (colour only).
+  // Header: transparent at the top of the page; the translucent navy glass
+  // arrives once the page has scrolled about 24px (one rAF per frame).
   var siteHead = document.getElementById('site-head');
   if (siteHead) {
-    var markScrolled = function () { siteHead.classList.toggle('is-scrolled', window.scrollY > 8); };
-    window.addEventListener('scroll', markScrolled, { passive: true });
+    var headTick = false;
+    var markScrolled = function () { headTick = false; siteHead.classList.toggle('is-scrolled', window.scrollY > 24); };
+    window.addEventListener('scroll', function () {
+      if (!headTick) { headTick = true; window.requestAnimationFrame(markScrolled); }
+    }, { passive: true });
+    window.addEventListener('pageshow', markScrolled);   // restored scroll positions
     markScrolled();
   }
 
@@ -375,48 +380,41 @@
   }
 
   /* ---------------------------------------------------------------------
-     3b. FACE (Approach) — progressive tab selector. Without JS the four
-         panels stay stacked and fully readable.
+     3b. FACE (Approach) — a letter rail on the left, the chosen letter's
+         panel on the right. Real disclosure buttons (aria-expanded); nothing
+         is open until the visitor chooses a letter, and choosing the open
+         letter closes it again. Without JS the four panels stay stacked
+         and fully readable, and the rail stays hidden.
      --------------------------------------------------------------------- */
   var face = document.querySelector('[data-face]');
   if (face) {
-    var tablist = face.querySelector('.face__tabs');
-    var tabs = Array.prototype.slice.call(face.querySelectorAll('.face__tab'));
-    var panels = tabs.map(function (t) { return document.getElementById(t.getAttribute('aria-controls')); });
-    tablist.setAttribute('role', 'tablist');
-    tabs.forEach(function (t, i) {
-      t.setAttribute('role', 'tab');
-      panels[i].setAttribute('role', 'tabpanel');
-      panels[i].setAttribute('aria-labelledby', t.id);
-      panels[i].setAttribute('tabindex', '0');
-    });
-    // Nothing is selected until the visitor chooses a letter (i = -1).
-    // Choosing the open letter again closes it.
+    var rail = face.querySelector('.face__rail');
+    var hint = face.querySelector('.face__hint');
+    var btns = Array.prototype.slice.call(face.querySelectorAll('.face__btn'));
+    var panels = btns.map(function (b) { return document.getElementById(b.getAttribute('aria-controls')); });
+    panels.forEach(function (p, i) { p.setAttribute('role', 'region'); p.setAttribute('aria-labelledby', btns[i].id); });
     var current = -1;
-    var select = function (i, focus) {
+    var open = function (i) {
       current = i;
-      tabs.forEach(function (t, k) {
-        var on = k === i;
-        t.setAttribute('aria-selected', on ? 'true' : 'false');
-        t.tabIndex = (on || (i < 0 && k === 0)) ? 0 : -1;
-        panels[k].hidden = !on;
+      btns.forEach(function (b, k) {
+        b.setAttribute('aria-expanded', k === i ? 'true' : 'false');
+        panels[k].hidden = k !== i;
       });
-      if (focus && i >= 0) tabs[i].focus();
+      face.classList.toggle('has-open', i >= 0);
     };
-    tabs.forEach(function (t, i) {
-      t.addEventListener('click', function () { select(current === i ? -1 : i, false); });
-      t.addEventListener('keydown', function (e) {
-        var n = tabs.length, k = null;
-        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') k = (i + 1) % n;
-        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') k = (i - 1 + n) % n;
-        else if (e.key === 'Home') k = 0;
-        else if (e.key === 'End') k = n - 1;
-        if (k !== null) { e.preventDefault(); select(k, true); }
+    btns.forEach(function (b, i) {
+      b.addEventListener('click', function () { open(current === i ? -1 : i); });
+      b.addEventListener('keydown', function (e) {   // arrows move between letters
+        var n = btns.length, k = null;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') k = (i + 1) % n;
+        else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') k = (i - 1 + n) % n;
+        if (k !== null) { e.preventDefault(); btns[k].focus(); }
       });
     });
-    tablist.hidden = false;
-    face.classList.add('is-tabs');
-    select(-1, false);
+    rail.hidden = false;
+    if (hint) hint.hidden = false;
+    face.classList.add('is-js');
+    open(-1);
   }
 
   /* ---------------------------------------------------------------------
