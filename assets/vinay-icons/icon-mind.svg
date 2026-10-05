@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+<defs>
+<filter id="blueGlow" x="-100%" y="-100%" width="300%" height="300%">
+  <feGaussianBlur stdDeviation="6" result="b"/>
+  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="goldGlow" x="-100%" y="-100%" width="300%" height="300%">
+  <feGaussianBlur stdDeviation="4" result="b"/>
+  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<linearGradient id="blueFade" x1="0" y1="0" x2="1" y2="0">
+  <stop offset="0" stop-color="#5DB8F0" stop-opacity="0"/>
+  <stop offset=".5" stop-color="#5DB8F0" stop-opacity=".7"/>
+  <stop offset="1" stop-color="#5DB8F0" stop-opacity="0"/>
+</linearGradient>
+</defs>
+
+<circle cx="256" cy="256" r="208" stroke="#5DB8F0" stroke-width="8"/>
+<circle cx="256" cy="256" r="186" stroke="#5DB8F0" stroke-opacity=".14" stroke-width="2"/>
+
+<path d="M256 146 C220 110 165 132 165 183 C120 194 124 257 165 267 C133 303 161 353 208 341
+ C221 382 256 369 256 334
+ M256 146 C292 110 347 132 347 183 C392 194 388 257 347 267 C379 303 351 353 304 341
+ C291 382 256 369 256 334
+ M256 146 V334"
+ stroke="#5DB8F0" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#blueGlow)"/>
+
+</svg>
