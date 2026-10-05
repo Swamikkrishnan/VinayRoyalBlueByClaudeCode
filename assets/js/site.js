@@ -323,7 +323,7 @@
             var pad = 20, itemL = a.parentNode.offsetLeft - bar.offsetLeft, itemR = itemL + a.offsetWidth;
             var target = null;
             if (itemL - pad < bar.scrollLeft) target = itemL - pad;
-            else if (itemR + pad > bar.scrollLeft + bar.clientWidth) target = itemR + pad - bar.clientWidth;
+            else if (itemR + pad + 36 > bar.scrollLeft + bar.clientWidth) target = itemR + pad + 36 - bar.clientWidth;   // clear the more-arrow
             if (target !== null) {
               if (bar.scrollTo) bar.scrollTo({ left: Math.max(0, target), behavior: reduce.matches ? 'auto' : 'smooth' });
               else bar.scrollLeft = Math.max(0, target);
@@ -336,6 +336,27 @@
     window.addEventListener('scroll', function () { window.requestAnimationFrame(setActive); }, { passive: true });
     window.addEventListener('resize', setActive);
     setActive();
+
+    // Phones / tablets: show when more sections sit off-screen (edge fade and
+    // a brass arrow that slides the bar along); otherwise keep it plain.
+    var bar = subnav.querySelector('ul');
+    var more = document.createElement('button');
+    more.type = 'button';
+    more.className = 'subnav__more';
+    more.setAttribute('aria-label', 'More sections');
+    more.innerHTML = '<span aria-hidden="true">&rsaquo;</span>';
+    subnav.appendChild(more);
+    var markBar = function () {
+      var max = bar.scrollWidth - bar.clientWidth;
+      subnav.classList.toggle('has-more', max > 4 && bar.scrollLeft < max - 4);
+      subnav.classList.toggle('is-scrolled', bar.scrollLeft > 4);
+    };
+    more.addEventListener('click', function () {
+      bar.scrollBy({ left: Math.round(bar.clientWidth * 0.7), behavior: reduce.matches ? 'auto' : 'smooth' });
+    });
+    bar.addEventListener('scroll', function () { window.requestAnimationFrame(markBar); }, { passive: true });
+    window.addEventListener('resize', markBar);
+    markBar();
   }
 
   /* ---------------------------------------------------------------------

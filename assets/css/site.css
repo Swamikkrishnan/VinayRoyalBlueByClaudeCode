@@ -1411,3 +1411,49 @@ dd > .word-list { margin-top: 10px; color: var(--text); }
   #scope .accordion__body .prose { margin-inline: auto; }
   #scope .accordion__body .note { margin-inline: auto; border-left: 0; border-top: 2px solid var(--accent); }
 }
+
+/* --------------------------------------------------------------------------
+   Section menu (phones / tablets): part of the header's glass, with a brass
+   hairline, clear pills, the current section in brass, soft edge fades and
+   a brass "more" arrow while further sections sit off-screen.
+   -------------------------------------------------------------------------- */
+@media (max-width: 1099px) {
+  .subnav {
+    background: rgba(14,20,40,.74); border-bottom: 0;
+    -webkit-backdrop-filter: blur(16px) saturate(120%); backdrop-filter: blur(16px) saturate(120%);
+  }
+  .subnav::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(200,161,90,.55) 12%, rgba(200,161,90,.55) 88%, transparent);
+  }
+  .subnav ul { gap: 8px; scroll-padding-inline: 20px 56px; padding-right: 52px; scroll-behavior: smooth; }
+  .subnav.has-more ul { -webkit-mask: linear-gradient(90deg, #000 calc(100% - 64px), transparent); mask: linear-gradient(90deg, #000 calc(100% - 64px), transparent); }
+  .subnav.is-scrolled ul { -webkit-mask: linear-gradient(90deg, transparent, #000 28px); mask: linear-gradient(90deg, transparent, #000 28px); }
+  .subnav.has-more.is-scrolled ul { -webkit-mask: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 64px), transparent); mask: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 64px), transparent); }
+  .subnav a {
+    min-height: 34px; padding: 0 15px; font-size: .86rem; letter-spacing: .01em;
+    color: rgba(247,246,242,.9); border-color: rgba(247,246,242,.24); background: rgba(247,246,242,.05);
+  }
+  .subnav a:hover, .subnav a:focus-visible { color: var(--text); border-color: rgba(200,161,90,.7); }
+  .subnav a[aria-current="location"] {
+    color: var(--text); border-color: var(--accent-brass); background: rgba(200,161,90,.16);
+    box-shadow: 0 0 0 1px rgba(200,161,90,.18), 0 0 14px rgba(200,161,90,.14);
+  }
+  .subnav a[aria-current="location"]::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--accent-brass); margin-right: 8px; flex: none;
+  }
+  .subnav__more {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%); z-index: 2;
+    width: 30px; height: 30px; display: grid; place-items: center; padding: 0; cursor: pointer;
+    border-radius: 50%; border: 1px solid rgba(200,161,90,.55); background: rgba(14,20,40,.82); color: var(--accent-brass);
+    font: inherit; font-size: 1rem; line-height: 1;
+    transition: opacity var(--motion-fast) var(--ease), border-color var(--motion-fast) var(--ease);
+  }
+  .subnav__more:hover, .subnav__more:focus-visible { border-color: var(--accent); color: var(--text); }
+  .subnav:not(.has-more) .subnav__more { opacity: 0; pointer-events: none; }
+}
+@media (min-width: 1100px) {
+  .subnav__more { display: none; }
+  .subnav a[aria-current="location"] { color: var(--text); }
+  .subnav a[aria-current="location"]::before { background: var(--accent-brass); }
+}
