@@ -1706,7 +1706,7 @@ a { -webkit-tap-highlight-color: transparent; }
 .summary-list li > a { grid-template-columns: var(--icon-box) minmax(0, 1fr); }
 
 /* Homepage hero on wide screens: its own framed artwork. */
-@media (min-width: 768px) { .home-hero.bg-1 { --img: url("../vinay-brand-assets/hero-home-desktop-v2.webp"); } }
+@media (min-width: 768px) { .home-hero.bg-1 { --img: url("../vinay-brand-assets/hero-home-desktop-v3.webp"); } }
 
 /* Icon rows on wide screens (Five Areas, homepage Group Offerings, Groups
    journeys): icon | label | description. The icon is two description lines
@@ -1856,7 +1856,6 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
   position: absolute; left: 40px; top: 50%; transform: translateY(-50%);
   white-space: nowrap; opacity: 0; pointer-events: none;
 }
-@media (max-width: 420px) { .page-home .brand__tagline { font-size: 1.05rem; } }
 .title-flight {
   position: fixed; left: 0; top: 0; z-index: 61; margin: 0; pointer-events: none; visibility: hidden;
   transform-origin: 0 0; will-change: transform, opacity; white-space: nowrap;
@@ -1864,11 +1863,65 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
 /* Homepage footer: just the copyright and Privacy & Scope. */
 .page-home .site-foot__brand { display: none; }
 .page-home .site-foot { grid-template-columns: 1fr 1fr; }
-.page-home .brand__name { transition: opacity 300ms ease; }
-.page-home .brand img, .page-home .brand__tagline { transition: opacity 150ms ease; }
+/* Header pieces swap with the flying copies in the same frame: no CSS fades
+   (a fade here showed as a flash at the end of every flight). */
+.page-home .brand img, .page-home .brand__name, .page-home .brand__tagline { transition: none; }
 /* The flight clones stay rendered (opacity 0) so their layers are already
    rasterised when the flight starts: no first-frame hitch. */
 .sigil-flight, .title-flight { visibility: visible; opacity: 0; backface-visibility: hidden; }
-@media (max-width: 340px) { .page-home .brand__tagline { font-size: .9rem; } }
 .sigil-flight { filter: none; }   /* plain while flying: the glow filter cost a frame on Safari */
 .title-flight { text-shadow: none !important; }
+
+/* Header: the same translucent glass from the very top (no fully clear start). */
+.site-head, .site-head.is-scrolled {
+  background: rgba(14,20,40,.32);
+  -webkit-backdrop-filter: blur(22px) saturate(120%); backdrop-filter: blur(22px) saturate(120%);
+}
+/* Homepage docked header: "Welcoming all of Life." plain, all white. */
+.brand__tagline .hero-strong { font-weight: 400; }
+.brand__tagline .hero-gold { color: var(--text); }
+.title-flight .tf-b { position: absolute; left: 0; top: 0; opacity: 0; color: var(--text); }
+.title-flight .tf-b .hero-strong { font-weight: 400; }
+.title-flight .tf-b .hero-gold { color: var(--text); }
+
+/* Hover / focus on every CTA, button and menu item: a gold hue. */
+.btn:is(:hover, :focus-visible), .btn--solid:is(:hover, :focus-visible), .btn--outline:is(:hover, :focus-visible) {
+  background: rgba(200,161,90,.10); border-color: var(--accent-brass); color: var(--text);
+  box-shadow: 0 0 0 1px rgba(200,161,90,.22), 0 0 16px rgba(200,161,90,.20);
+}
+.text-cta:is(:hover, :focus-visible), .quiet-links a:is(:hover, :focus-visible),
+.nav__link:is(:hover, :focus-visible), .nav-mobile a:not(.btn):is(:hover, :focus-visible),
+.subnav a:is(:hover, :focus-visible), .site-foot__privacy:is(:hover, :focus-visible),
+.contact-sheet__choices a:is(:hover, :focus-visible), .session__cta:is(:hover, :focus-visible) { color: var(--accent-brass); }
+.subnav a:is(:hover, :focus-visible) { border-color: rgba(200,161,90,.7); }
+.btn:is(:hover, :focus-visible) span[aria-hidden],
+.text-cta:is(:hover, :focus-visible) span[aria-hidden],
+.contact-sheet__choices a:is(:hover, :focus-visible) span[aria-hidden],
+.session__cta:is(:hover, :focus-visible) span[aria-hidden],
+.nav-mobile a:not(.btn):is(:hover, :focus-visible) span:last-child { background-color: var(--accent-brass); }
+.contact-pill:is(:hover, :focus-visible) { border-color: rgba(200,161,90,.82); }
+@media (hover: none) {
+  .text-cta:hover:not(:focus-visible), .quiet-links a:hover:not(:focus-visible) { color: var(--text); }
+}
+
+/* Approach: Where change begins — darker and more see-through. */
+.quad > div { background: rgba(2,9,18,.26); -webkit-backdrop-filter: none; backdrop-filter: none; }
+/* Header brand on small screens: the name and the docked title both stay on
+   one line, scaling down together with the screen width. */
+.brand, .brand__name { white-space: nowrap; }
+@media (max-width: 420px) {
+  .brand { font-size: clamp(.8rem, 5.2vw, 1.3rem); }
+  .page-home .brand__tagline { font-size: clamp(.74rem, 4.4vw, 1.05rem); }
+}
+/* Very narrow screens: the Menu button keeps just its icon (the label stays
+   available to screen readers) so the name and title have room. */
+@media (max-width: 340px) {
+  .site-head__inner { padding-inline: 14px; gap: 10px; }
+  .nav-toggle { padding: 0; width: 44px; min-width: 44px; justify-content: center; }
+  .nav-toggle [data-label] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+/* Footer on very narrow screens: the privacy link may wrap rather than spill
+   past the edge; on the homepage (no centre mark) it simply has the room. */
+.page-home .site-foot__copy, .page-home .site-foot__privacy { max-width: none; }
+@media (max-width: 300px) { .site-foot__privacy { white-space: normal; } }
+@media (max-width: 300px) { .accordion--label > summary .marker { white-space: normal; } }   /* "Scope & Suitability" may wrap only on the very narrowest screens */

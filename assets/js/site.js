@@ -98,9 +98,11 @@
     var tFly = document.createElement('div');
     tFly.className = 'title-flight';
     tFly.setAttribute('aria-hidden', 'true');
-    tFly.innerHTML = heroTitle.innerHTML;
+    // Two layers: the hero's styling fades into the header's plain white as it docks.
+    tFly.innerHTML = '<span class="tf-a">' + heroTitle.innerHTML + '</span><span class="tf-b">' + heroTitle.innerHTML + '</span>';
+    var tfA = tFly.firstChild, tfB = tFly.lastChild;
     document.body.appendChild(sFly); document.body.appendChild(tFly);
-    var geo = null, docked = false, anims = [], token = 0, tick = false;
+    var geo = null, docked = false, anims = [], token = 0, tick = false, handing = false;
     var textRect = function (el) { var r = document.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect(); };
     var measure = function () {
       if (anims.length) return;                       // never re-measure mid-flight
@@ -135,17 +137,23 @@
       var froms = [sFly, tFly].map(function (el, i) {    // pick up mid-flight if reversing
         return anims.length ? window.getComputedStyle(el).transform : at(i ? geo.t : geo.s, toDock);
       });
+      var aFrom = +(anims.length ? window.getComputedStyle(tfA).opacity : (toDock ? 1 : 0));
       anims.forEach(function (an) { an.cancel(); }); anims = [];
       heroSig.style.opacity = heroTitle.style.opacity = '0';
       brandImg.style.opacity = brandTag.style.opacity = '0';
       sFly.style.opacity = tFly.style.opacity = '1';
       sigWrap.style.setProperty('--glow-o', toDock ? '0' : '1');
-      brandName.style.opacity = toDock ? '0' : '1';
+      var nFrom = +window.getComputedStyle(brandName).opacity;
       anims = [sFly, tFly].map(function (el, i) {
         el.style.transform = froms[i];
         return el.animate([{ transform: froms[i] }, { transform: at(i ? geo.t : geo.s, !toDock) }],
                           { duration: DUR, easing: EASE, fill: 'forwards' });
       });
+      anims.push(tfA.animate([{ opacity: aFrom }, { opacity: toDock ? 0 : 1 }], { duration: DUR, fill: 'forwards' }));
+      anims.push(tfB.animate([{ opacity: 1 - aFrom }, { opacity: toDock ? 1 : 0 }], { duration: DUR, fill: 'forwards' }));
+      // The name gives way in the first half of a dock and returns in the second half of an undock.
+      anims.push(brandName.animate([{ opacity: nFrom }, { opacity: toDock ? 0 : 1 }],
+                                   { duration: DUR * .55, delay: toDock ? 0 : DUR * .45, fill: 'both' }));
       anims[0].onfinish = function () {
         if (my !== token) return;
         anims.forEach(function (an) { an.cancel(); }); anims = [];
@@ -154,19 +162,132 @@
     };
     var check = function () {
       tick = false;
+      if (handing) return;                           // a page hand-off is running; it settles itself
       var want = window.scrollY > 2;
       if (want !== docked) { docked = want; fly(want); }
     };
     window.addEventListener('scroll', function () {
       if (!tick) { tick = true; window.requestAnimationFrame(check); }
     }, { passive: true });
-    var remeasure = function () { measure(); if (!anims.length) rest(docked); };
+    var remeasure = function () { measure(); if (!anims.length && !handing) rest(docked); };
     window.addEventListener('resize', remeasure);
     window.addEventListener('orientationchange', function () { setTimeout(remeasure, 120); });
     window.addEventListener('load', function () { remeasure(); setTimeout(remeasure, 1600); setTimeout(remeasure, 3200); });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
+    // Leaving the homepage from the top: the sigil rises into the header and
+    // the name steps aside to make room (as every other page shows it), then
+    // the next page opens. Arriving from another page: the reverse.
+    var SHIFT = 40, HAND = 480, leaving = false;
+    var handOff = function (down, done) {               // down: header -> hero
+      var my = ++token;
+      heroSig.style.transition = 'none';
+      heroSig.style.opacity = '0'; brandImg.style.opacity = '0';
+      sFly.style.opacity = '1';
+      sigWrap.style.setProperty('--glow-o', '0');
+      var a = at(geo.s, true), b = at(geo.s, false);
+      var an = sFly.animate([{ transform: down ? b : a }, { transform: down ? a : b }], { duration: HAND, easing: EASE, fill: 'forwards' });
+      brandName.animate([{ transform: 'translateX(' + (down ? SHIFT : 0) + 'px)' }, { transform: 'translateX(' + (down ? 0 : SHIFT) + 'px)' }], { duration: HAND, easing: EASE, fill: 'forwards' });
+      an.onfinish = function () { if (my === token) done(); };
+    };
+    // Header text hand-off while the sigil stays docked:
+    // toTag  — "Vinay Swaminathan" (shifted, as on other pages) → "Welcoming all of Life."
+    // !toTag — the reverse, before leaving for another page.
+    var swapText = function (toTag, done) {
+      var my = ++token, opt = { duration: 420, easing: EASE, fill: 'forwards' };
+      sFly.style.opacity = tFly.style.opacity = '0';
+      brandImg.style.opacity = '1';
+      brandTag.style.transition = brandName.style.transition = 'none';
+      brandTag.style.opacity = brandName.style.opacity = '';
+      // Overlapped crossfade: the incoming line is fully there before the
+      // outgoing one leaves, so the header never dims.
+      var inK = [{ opacity: 0, offset: 0 }, { opacity: 1, offset: .55 }, { opacity: 1, offset: 1 }];
+      var outK = [{ opacity: 1, offset: 0 }, { opacity: 1, offset: .45 }, { opacity: 0, offset: 1 }];
+      var X = 'translateX(' + SHIFT + 'px)';
+      brandTag.animate(toTag ? inK : outK, opt);
+      var an = brandName.animate((toTag ? outK : inK).map(function (k) { return { opacity: k.opacity, offset: k.offset, transform: X }; }), opt);
+      an.onfinish = function () { if (my === token) done(); };
+    };
+    // Arrived at the top but scrolled before the hand-off began: the sigil is
+    // already in the header, so only the title flies up beside it.
+    var titleUp = function (done) {
+      var my = ++token, opt = { duration: DUR, easing: EASE, fill: 'forwards' };
+      heroTitle.style.transition = 'none'; heroTitle.style.opacity = '0';
+      sFly.style.opacity = '0'; tFly.style.opacity = '1'; brandImg.style.opacity = '1';
+      var an = tFly.animate([{ transform: at(geo.t, true) }, { transform: at(geo.t, false) }], opt);
+      tfA.animate([{ opacity: 1 }, { opacity: 0 }], { duration: DUR, fill: 'forwards' });
+      tfB.animate([{ opacity: 0 }, { opacity: 1 }], { duration: DUR, fill: 'forwards' });
+      var X = 'translateX(' + SHIFT + 'px)';
+      brandName.animate([{ opacity: 1, transform: X }, { opacity: 0, transform: X }], { duration: DUR * .55, fill: 'forwards' });
+      an.onfinish = function () { if (my === token) done(); };
+    };
+    var isHome = function (path) { return /(^|\/)(index\.html)?$/.test(path); };
+    document.addEventListener('click', function (e) {
+      var link = e.target.closest && e.target.closest('a[href]');
+      if (!link || leaving || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      if (link.target === '_blank' || link.hasAttribute('download') || link.hasAttribute('data-contact-open')) return;
+      var url = new URL(link.href, location.href);
+      if (url.origin !== location.origin || !/\.html$|\/$/.test(url.pathname)) return;
+      if (isHome(url.pathname)) {                        // Home / the name, from the homepage itself
+        if (url.hash || window.scrollY < 3) return;
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: reduce.matches ? 'auto' : 'smooth' });
+        return;
+      }
+      if (reduce.matches || !geo) return;               // plain navigation
+      e.preventDefault(); leaving = true; handing = true;
+      var go = function () { location.href = url.href; };
+      if (anims.length) { anims.forEach(function (an) { an.finish(); }); }   // land any flight first
+      if (docked) swapText(false, go);                  // [sigil] Welcoming all of Life. → [sigil] Vinay Swaminathan
+      else handOff(false, go);                          // hero sigil rises; the name steps aside
+    });
+    // Land a hand-off in the state it animated to; if the visitor scrolled
+    // meanwhile, carry on with the normal (animated) flight from there.
+    var settleHandOff = function (endDocked) {
+      [sFly, tFly, tfA, tfB, brandName, brandTag].forEach(function (el) { if (el.getAnimations) el.getAnimations().forEach(function (an) { an.cancel(); }); });
+      brandName.style.transform = brandName.style.transition = brandTag.style.transition = '';
+      handing = false;
+      docked = typeof endDocked === 'boolean' ? endDocked : window.scrollY > 2;
+      rest(docked);
+      var want = window.scrollY > 2;
+      if (want !== docked) { docked = want; fly(want); }
+    };
+    window.addEventListener('pageshow', function (e) {   // back to a cached homepage: settle cleanly
+      if (!e.persisted) return;
+      leaving = false; token++; settleHandOff();
+    });
+    var cameFromPage = false;
+    try {
+      var ref = document.referrer ? new URL(document.referrer) : null;
+      cameFromPage = !!ref && ref.origin === location.origin && !isHome(ref.pathname);
+    } catch (err) { cameFromPage = false; }
     docked = window.scrollY > 2;
     rest(docked); measure();
+    if (cameFromPage && !reduce.matches) {
+      // Start exactly as the previous page ended: [sigil] Vinay Swaminathan.
+      handing = true;
+      heroSig.style.transition = 'none'; heroSig.style.opacity = '0';
+      brandImg.style.opacity = '1';
+      brandName.style.transition = 'none'; brandName.style.opacity = '1';
+      brandName.style.transform = 'translateX(' + SHIFT + 'px)';
+      sigWrap.style.transition = 'none'; sigWrap.style.opacity = '1'; sigWrap.style.transform = 'none';
+      var arrive = function () {
+        measure();
+        if (!geo) return settleHandOff();
+        brandName.style.transform = '';
+        if (window.scrollY > 2) {
+          docked = true;
+          var navType = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0] || {}).type;
+          if (location.hash || navType === 'back_forward' || navType === 'reload')
+            swapText(true, function () { settleHandOff(true); });     // landed part-way down: the name becomes the title
+          else
+            titleUp(function () { settleHandOff(true); });            // scrolled straight away: the title flies up
+        } else {                                         // at the top: the sigil settles into the hero
+          handOff(true, function () { settleHandOff(false); });
+        }
+      };
+      if (document.readyState === 'complete') setTimeout(arrive, 60);
+      else window.addEventListener('load', function () { setTimeout(arrive, 60); }, { once: true });
+    }
   }
 
 
