@@ -73,7 +73,7 @@
   --ease: cubic-bezier(.22,.61,.36,1);
   --motion-fast: 240ms;   /* hover, colour, small state changes */
   --motion-base: 360ms;   /* menus, accordions, chevrons, tab switches */
-  --motion-image: 555ms; /* photographs gradually appearing */
+  --motion-image: 777ms; /* photographs gradually appearing */
   --ease-image: cubic-bezier(.25,.46,.45,.94); /* soft ease-out, no overshoot */
   /* Reveal language: calm, unhurried, no overshoot. */
   --ease-calm: var(--ease-image);   /* one gentle curve for every reveal */
