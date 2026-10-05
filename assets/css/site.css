@@ -1497,40 +1497,37 @@ a { -webkit-tap-highlight-color: transparent; }
   .marker::after, .eyebrow::after, .marker--center::before, .marked > :is(.marker, .eyebrow)::after { width: 26px; }
 }
 
-/* Homepage metrics: stacked on phones with one rhythm (18px between, 22px after). */
-@media (max-width: 599px) {
-  .evidence { display: grid; }
-  .evidence > div { max-width: none; }
-}
+/* Homepage metrics: two centred columns in one row (stacked only below 340px). */
+.evidence { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.evidence > div { max-width: none; text-align: center; justify-items: center; }
+.evidence dd { line-height: 1.35; }
+@media (max-width: 339px) { .evidence { grid-template-columns: 1fr; } }
 
-/* Five areas: the Vinay Icon Kit artwork (already gold / blue). */
-.area-icon { object-fit: contain; }
-.areas { --node: 76px; --icon: 76px; }
+/* One icon system (home, 1:1, groups): a 58px box on phones, 76px from
+   769px, artwork contained and centred on its row. */
+:root { --icon-box: 58px; }
+@media (min-width: 769px) { :root { --icon-box: 76px; } }
+.icon-box.icon-box {
+  display: block; width: var(--icon-box); height: var(--icon-box); flex: none;
+  object-fit: contain; margin: 0 auto; align-self: center; justify-self: center; vertical-align: middle;
+  background: none; image-rendering: auto;
+}
+.areas { --node: var(--icon-box); --icon: var(--icon-box); }
 .areas__node { background: none; }
 .areas::before { display: none; }   /* the kit icons are transparent; a thread would run through them */
-@media (max-width: 599px) { .areas { --node: 54px; --icon: 54px; } }
-.doorway-list a { --icon: 54px; grid-template-columns: 54px 1fr; }
-@media (min-width: 860px) { .doorway-list a { --icon: 76px; grid-template-columns: 76px 9rem 1fr; } }
-.offering__name .area-icon { --icon: 54px; }
-@media (min-width: 860px) { .offering__name .area-icon { --icon: 72px; } }
+.doorway-list a { grid-template-columns: var(--icon-box) 1fr; align-items: center; }
+@media (min-width: 860px) { .doorway-list a { grid-template-columns: var(--icon-box) 9rem 1fr; } }
+.icon-row:has(> .icon-box), .summary-list li > a { grid-template-columns: var(--icon-box) 1fr; column-gap: 20px; align-items: center; }
+.icon-row > .icon-box, .summary-list .icon-box { grid-row: span 2; }
+.summary-list .icon-box { stroke-width: .9; }   /* line icons keep a fine stroke at the larger size */
 .icon--gold { color: var(--accent-brass); }
-.icon--kit { width: 54px; height: 54px; object-fit: contain; margin-top: -8px; }
-.icon-row:has(> .icon--kit) { grid-template-columns: 54px 1fr; }
-@media (min-width: 860px) {
-  .icon--kit { width: 76px; height: 76px; margin-top: -14px; }
-  .icon-row:has(> .icon--kit) { grid-template-columns: 76px 1fr; column-gap: 20px; }
-}
-/* Homepage group line icons: a little larger. */
-.summary-list .icon { width: 40px; height: 40px; }
-@media (min-width: 860px) { .summary-list .icon { width: 44px; height: 44px; } }
 /* Icon vibrancy: a restrained glow in each icon's own colour. */
 :is(img[src*="icon-mind"], img[src*="icon-breath"], img[src*="listening-temples"], .summary-list .icon:not(.icon--gold)) {
-  filter: drop-shadow(0 0 5px rgba(93,184,240,.28)) drop-shadow(0 0 9px rgba(93,184,240,.16));
+  filter: drop-shadow(0 0 5px rgba(93,184,240,.34)) drop-shadow(0 0 10px rgba(93,184,240,.18));
 }
 :is(img[src*="icon-body"], img[src*="icon-emotion"], img[src*="icon-action"], img[src*="conscious-dance"], .icon--gold) {
-  filter: drop-shadow(0 0 5px rgba(200,161,90,.28)) drop-shadow(0 0 9px rgba(200,161,90,.16));
+  filter: drop-shadow(0 0 5px rgba(200,161,90,.34)) drop-shadow(0 0 10px rgba(200,161,90,.18));
 }
-.area-icon, .icon--kit { background: none; image-rendering: auto; }
 
 /* Inline emphasis variants. */
 .blue-strong { color: var(--emphasis-blue); font-style: normal; font-weight: 600; }
@@ -1661,3 +1658,15 @@ a { -webkit-tap-highlight-color: transparent; }
 /* Approach: the bridge that concludes both principles. */
 .pair-conclusion { max-width: 720px; margin-top: 4px; color: var(--text); }   /* + the 24px stack gap = 28px */
 @media (max-width: 599px) { .pair-conclusion { margin-top: -2px; } }        /* = 22px */
+
+/* Mobile header: a little more air (62px, ~9px above and below the Menu
+   button) and a slightly tighter hamburger. */
+@media (max-width: 768px) { :root { --header-h: 62px; } }
+.nav-toggle__bars { gap: 2px; }
+.nav-toggle__bars i { width: 12px; }
+.nav-toggle[aria-expanded="true"] .nav-toggle__bars i:first-child { transform: translateY(1.75px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .nav-toggle__bars i:last-child { transform: translateY(-1.75px) rotate(-45deg); }
+/* FACE: the open panel spans the content area, centred under the letters. */
+.face.is-js .face__panels { margin-inline: auto; }
+@media (max-width: 768px) { .face.is-js .face__panels { width: 100%; max-width: none; } }
+.offering__name .icon-box.icon-box { margin: 0; }   /* sits inline before the name */

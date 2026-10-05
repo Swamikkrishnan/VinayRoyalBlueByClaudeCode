@@ -399,6 +399,7 @@
       current = i;
       btns.forEach(function (b, k) {
         b.setAttribute('aria-expanded', k === i ? 'true' : 'false');
+        b.classList.toggle('is-active', k === i);
         panels[k].hidden = k !== i;
       });
       face.classList.toggle('has-open', i >= 0);
@@ -415,8 +416,7 @@
     rail.hidden = false;
     if (hint) hint.hidden = false;
     face.classList.add('is-js');
-    // Desktop opens on F (horizontal row, panel below); phones start collapsed.
-    open(window.matchMedia('(min-width: 769px)').matches ? 0 : -1);
+    open(0);   // F is open on arrival, on every screen size
   }
 
   /* ---------------------------------------------------------------------
