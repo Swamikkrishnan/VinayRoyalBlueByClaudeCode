@@ -184,7 +184,7 @@
     });
     var msOf = function (el) {
       var v = getComputedStyle(el).getPropertyValue('--rv-dur').trim();
-      return v ? parseFloat(v) * (/ms$/.test(v) ? 1 : 1000) : 777;
+      return v ? parseFloat(v) * (/ms$/.test(v) ? 1 : 1000) : 555;
     };
     var reveal = function (el) {
       if (el.classList.contains('is-in')) return;
