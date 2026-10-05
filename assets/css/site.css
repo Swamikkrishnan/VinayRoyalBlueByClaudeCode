@@ -499,7 +499,7 @@ html:not(.js) .nav-toggle { display: none !important; }
 .home-hero__lead { color: #CDD4E6; font-size: var(--t-sub); line-height: 1.4; max-width: 34ch; text-wrap: balance; }
 .home-hero__trio {
   font-family: var(--sans); font-weight: 400; font-style: normal; font-size: calc(var(--t-sub) * .96); line-height: 1.35; letter-spacing: .01em;
-  color: var(--text); margin: .2rem 0; text-shadow: 0 0 18px rgba(93,184,240,.35);
+  color: var(--text); margin: .2rem 0; text-shadow: 0 0 14px rgba(93,184,240,.22);
 }
 
 .icon { width: 28px; height: 28px; flex: none; color: var(--accent); }
