@@ -380,8 +380,9 @@
   }
 
   /* ---------------------------------------------------------------------
-     3b. FACE (Approach) — a letter rail on the left, the chosen letter's
-         panel on the right. Real disclosure buttons (aria-expanded); nothing
+     3b. FACE (Approach) — desktop: a centred F A C E row with the chosen
+         letter's panel below; phones: a letter rail on the left, the panel
+         on the right. Real disclosure buttons (aria-expanded); nothing
          is open until the visitor chooses a letter, and choosing the open
          letter closes it again. Without JS the four panels stay stacked
          and fully readable, and the rail stays hidden.
@@ -414,7 +415,8 @@
     rail.hidden = false;
     if (hint) hint.hidden = false;
     face.classList.add('is-js');
-    open(-1);
+    // Desktop opens on F (horizontal row, panel below); phones start collapsed.
+    open(window.matchMedia('(min-width: 769px)').matches ? 0 : -1);
   }
 
   /* ---------------------------------------------------------------------
