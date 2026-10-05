@@ -1787,7 +1787,6 @@ main > .home-hero:first-child { padding-top: calc(clamp(2.5rem, 7vw, 4rem) + var
 /* Homepage: the header starts with the name only; site.js carries the hero
    sigil up into the brand position as the page scrolls. */
 html.js .page-home .brand img { opacity: 0; }
-.page-home .brand img, .page-home .brand span { transition: opacity 200ms ease; }
 .sigil-flight {
   position: fixed; left: 0; top: 0; z-index: 61; margin: 0; pointer-events: none;
   transform-origin: 0 0; will-change: transform; visibility: hidden;
@@ -1850,3 +1849,20 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
 .site-head__inner > .brand { margin-right: auto; text-align: left; }
 .sigil-flight { will-change: transform, opacity; }
 @media (max-width: 1099px) { .site-head__inner { padding-inline: 20px; } }
+
+/* Homepage header, docked state: [sigil] Welcoming all of Life. replaces the
+   name (site.js flies both in from the hero). */
+.page-home .brand__tagline {
+  position: absolute; left: 40px; top: 50%; transform: translateY(-50%);
+  white-space: nowrap; opacity: 0; pointer-events: none;
+}
+@media (max-width: 420px) { .page-home .brand__tagline { font-size: 1.05rem; } }
+.title-flight {
+  position: fixed; left: 0; top: 0; z-index: 61; margin: 0; pointer-events: none; visibility: hidden;
+  transform-origin: 0 0; will-change: transform, opacity; white-space: nowrap;
+}
+/* Homepage footer: just the copyright and Privacy & Scope. */
+.page-home .site-foot__brand { display: none; }
+.page-home .site-foot { grid-template-columns: 1fr 1fr; }
+.page-home .brand__name { transition: opacity 300ms ease; }
+.page-home .brand img, .page-home .brand__tagline { transition: opacity 150ms ease; }
