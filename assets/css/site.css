@@ -1726,3 +1726,27 @@ a { -webkit-tap-highlight-color: transparent; }
   .doorway-list a { grid-template-columns: var(--icon-box) 7.5rem minmax(0, 1fr); column-gap: 24px; }
   .doorway-list .doorway-list__name { justify-self: start; text-align: left; }
 }
+
+/* Wide screens, all icon rows: the label sits just after the icon and the
+   description follows close behind (no centred label column). */
+@media (min-width: 860px) {
+  .summary-list li > a, .icon-row:has(> .icon-box) { grid-template-columns: var(--icon-box) 13rem minmax(0, 1fr); column-gap: 24px; }
+  .summary-list li > a > h3:not(.icon), .icon-row > .accordion__title:not(.icon) { justify-self: start; text-align: left; }
+}
+
+/* Hover/focus highlight in each item's own accent: gold for gold icons
+   (Body, Emotion, Action, Conscious Dance, Experience Design), blue for
+   blue ones (Mind, Breath, Group Experiences, Collaboration, ...). */
+:is(.doorway-list a, .summary-list li > a, .areas a) { --hl: var(--emphasis-blue); --hl-rgb: 93,184,240; }
+:is(.doorway-list a, .summary-list li > a, .areas a):has(:is([src*="icon-body"], [src*="icon-emotion"], [src*="icon-action"], [src*="conscious-dance"], .icon--gold)) {
+  --hl: var(--accent-brass); --hl-rgb: 200,161,90;
+}
+:is(.doorway-list a, .summary-list li > a):is(:hover, :focus-visible) { background: linear-gradient(90deg, rgba(var(--hl-rgb), .12), rgba(var(--hl-rgb), .04) 55%, transparent 85%); }
+.doorway-list a:is(:hover, :focus-visible) .doorway-list__name,
+.summary-list li > a:is(:hover, :focus-visible) h3,
+.areas a:is(:hover, :focus-visible) .areas__label { color: var(--hl); }
+.doorway-list a:is(:hover, :focus-visible) .doorway-list__arrow,
+.summary-list li > a:is(:hover, :focus-visible) .summary-list__arrow { background-color: var(--hl); }
+.areas a:is(:hover, :focus-visible) .areas__node { border-color: var(--hl); box-shadow: 0 0 0 4px rgba(var(--hl-rgb), .08), 0 0 22px rgba(var(--hl-rgb), .26); }
+:is(.doorway-list a, .summary-list li > a, .areas a):focus-visible { outline-color: var(--hl); }
+:is(.doorway-list a, .summary-list li > a) { transition: background-color var(--motion-fast) var(--ease); }
