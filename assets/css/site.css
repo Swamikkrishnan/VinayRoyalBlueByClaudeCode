@@ -79,8 +79,8 @@
   --ease-calm: var(--ease-image);   /* one gentle curve for every reveal */
   --motion-text: 555ms;      /* headings, body copy, CTA blocks (fade up) */
   --motion-reflect: 555ms;  /* reflective / centred statements (soft fade) */
-  --stagger: 120ms;          /* between items in a list or grid */
-  --cascade: 160ms;          /* between blocks in a section, top to bottom */
+  --stagger: 100ms;          /* between items in a list or grid */
+  --cascade: 140ms;          /* between blocks in a section, top to bottom */
   --rv-dist: 10px;           /* fade-up distance */
   --rv-x: 20px;              /* editorial left / right distance */
   --t-fast: var(--motion-fast);
@@ -246,8 +246,8 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 .js.motion-ready [data-stagger="soft"] > * { transform: none; }
 .js.motion-ready .is-in [data-stagger] > * {
   opacity: 1; transform: none;
-  transition: opacity var(--motion-text) var(--ease-calm) calc(var(--cd, 0ms) + 160ms + var(--i, 0) * var(--stagger)),
-              transform var(--motion-text) var(--ease-calm) calc(var(--cd, 0ms) + 160ms + var(--i, 0) * var(--stagger));
+  transition: opacity var(--motion-text) var(--ease-calm) calc(var(--cd, 0ms) + 100ms + var(--i, 0) * var(--stagger)),
+              transform var(--motion-text) var(--ease-calm) calc(var(--cd, 0ms) + 100ms + var(--i, 0) * var(--stagger));
 }
 /* Page openings: title first, then each following line a beat later. */
 .js.motion-ready [data-seq] { opacity: 0; transform: translate3d(0, 10px, 0); }
@@ -267,7 +267,7 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 .js.motion-ready img[data-seq].is-in { transition-duration: var(--motion-image); transition-timing-function: var(--ease-image); }
 /* Phones: shorter distances and a slightly quicker stagger on long pages. */
 @media (max-width: 599px) {
-  :root { --t-display: clamp(2rem, 8vw, 2.55rem); --rv-dist: 10px; --rv-x: 12px; --stagger: 90ms; --cascade: 120ms; }
+  :root { --t-display: clamp(2rem, 8vw, 2.55rem); --rv-dist: 10px; --rv-x: 12px; --stagger: 80ms; --cascade: 110ms; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1457,3 +1457,5 @@ dd > .word-list { margin-top: 10px; color: var(--text); }
   .subnav a[aria-current="location"] { color: var(--text); }
   .subnav a[aria-current="location"]::before { background: var(--accent-brass); }
 }
+/* Homepage hero on phones: its own portrait artwork. */
+@media (max-width: 767px) { .home-hero.bg-1 { --img: url("../vinay-brand-assets/hero-home-mobile.webp"); } }

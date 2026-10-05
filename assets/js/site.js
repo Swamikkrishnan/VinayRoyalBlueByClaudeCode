@@ -160,24 +160,24 @@
       var cs = getComputedStyle(document.documentElement);
       var step = parseFloat(cs.getPropertyValue('--cascade')) || 160;
       var stag = parseFloat(cs.getPropertyValue('--stagger')) || 120;
-      var at = 0, CAP = 1200;   // long sections never keep their last block waiting
+      var at = 0, CAP = 900;   // long sections never keep their last block waiting
       items.forEach(function (it) {
         it.classList.add('rv-item');
         it.style.setProperty('--cd', Math.round(Math.min(at, CAP)) + 'ms');
         var list = it.matches('[data-stagger]') ? it : null;
-        at += step + (list ? 160 + Math.max(0, Math.min(list.children.length, 7) - 1) * stag : 0);
+        at += step + (list ? 100 + Math.max(0, Math.min(list.children.length, 7) - 1) * stag : 0);
       });
       box.dataset.span = Math.round(Math.min(at, CAP));
       box.classList.add('rv-ready');
     });
     // Page openings: each line a beat after the one before, in reading order.
-    var SEQ_STEP = 220, seqCount = 0;
+    var SEQ_STEP = 170, seqCount = 0;
     document.querySelectorAll('main section').forEach(function (sec) {
       var lines = sec.querySelectorAll('[data-seq]');
       if (lines.length && !seqCount) seqCount = lines.length;
       lines.forEach(function (el, i) { el.style.setProperty('--sd', (i * SEQ_STEP) + 'ms'); });
     });
-    var OPENING_PHOTO = 80 + SEQ_STEP * Math.max(0, Math.min(seqCount, 5) - 1) + 200;  // after the last line starts
+    var OPENING_PHOTO = SEQ_STEP * Math.max(0, Math.min(seqCount, 5) - 1) + 160;  // after the last line starts (from T0)
     // Stagger index for list / grid items (capped so long lists stay calm).
     document.querySelectorAll('[data-stagger]').forEach(function (list) {
       Array.prototype.forEach.call(list.children, function (item, i) { item.style.setProperty('--i', Math.min(i, 6)); });
@@ -228,15 +228,16 @@
         if (wait > 0) setTimeout(go, wait); else go();
       });
     };
-    var opening = true;                       // first second: the 80ms pass decides
-    setTimeout(function () {
+    var opening = true;                       // until the opening pass has run
+    var endOpening = function () {
+      if (!opening) return;
       opening = false;
       targets.forEach(function (el) {                    // anything scrolled to meanwhile
         if (el.hasAttribute('data-reveal-img') || el.classList.contains('is-in')) return;
         var b = el.getBoundingClientRect();
         if (b.top < window.innerHeight * 0.88 && b.bottom > 0) { if (el.hasAttribute('data-seq')) reveal(el); else revealSection(el); }
       });
-    }, OPENING_PHOTO + 300);
+    };
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
@@ -260,7 +261,21 @@
     // Anything already on screen arrives without waiting for a scroll: the
     // page opening (data-seq) first, then any section below it that is also
     // in view, after the opening has had its moment.
-    setTimeout(function () {
+    // The opening waits for the page to settle (web fonts and the first heavy
+    // frame of layout and image decoding), so its first fade is never lost in
+    // a dropped frame. T0 marks the moment it begins.
+    var afterSettle = function (fn) {
+      var go = function () { window.requestAnimationFrame(function () { window.requestAnimationFrame(fn); }); };
+      var done = false, once = function () { if (!done) { done = true; go(); } };
+      // The first heavy frame ends just before the load event; cap the wait
+      // so a slow image never holds the opening back.
+      if (document.readyState === 'complete') once();
+      else window.addEventListener('load', once, { once: true });
+      setTimeout(once, 900);
+    };
+    afterSettle(function () {
+      T0 = performance.now();
+      setTimeout(endOpening, OPENING_PHOTO + 150);
       var seqShown = false;
       targets.forEach(function (el) {
         if (el.hasAttribute('data-reveal-img')) return;   // photos have their own path
@@ -274,8 +289,8 @@
           var b = el.getBoundingClientRect();
           if (b.top < window.innerHeight && b.bottom > 0) revealSection(el);
         });
-      }, seqShown ? OPENING_PHOTO + 250 : 0);
-    }, 80);
+      }, seqShown ? SEQ_STEP * Math.max(0, Math.min(seqCount, 5) - 1) : 0);   // as the last opening line begins
+    });
     // Safety net: text already scrolled past (e.g. after a jump link) is never
     // left invisible. Content further down keeps its normal fade.
     setTimeout(function () {
