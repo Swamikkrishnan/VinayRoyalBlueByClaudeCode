@@ -1497,36 +1497,51 @@ a { -webkit-tap-highlight-color: transparent; }
   .marker::after, .eyebrow::after, .marker--center::before, .marked > :is(.marker, .eyebrow)::after { width: 26px; }
 }
 
-/* Homepage metrics: two centred columns in one row (stacked only below 340px). */
-.evidence { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.evidence > div { max-width: none; text-align: center; justify-items: center; }
-.evidence dd { line-height: 1.35; }
+/* Homepage metrics: two centred columns in one row (stacked only below
+   340px). Values share a top line, labels share a starting line; a rule
+   above and below each column. */
+.evidence { display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; row-gap: 18px; margin-bottom: calc(32px - var(--s-3)); }
+.evidence > div {
+  max-width: none; text-align: center; justify-items: center;
+  grid-template-rows: auto 1fr; align-content: start; gap: 0;
+  padding: 26px 0; border-top: 1px solid var(--warm-faint); border-bottom: 1px solid var(--warm-faint);
+}
+.evidence dt { margin: 0; }
+.evidence dd { margin: 8px 0 0; line-height: 1.35; align-self: start; }
 @media (max-width: 339px) { .evidence { grid-template-columns: 1fr; } }
 
 /* One icon system (home, 1:1, groups): a 58px box on phones, 76px from
    769px, artwork contained and centred on its row. */
-:root { --icon-box: 58px; }
-@media (min-width: 769px) { :root { --icon-box: 76px; } }
+:root { --icon-box: 70px; --icon-box-group: 76px; }
+@media (min-width: 769px) { :root { --icon-box: 84px; --icon-box-group: 92px; } }
 .icon-box.icon-box {
   display: block; width: var(--icon-box); height: var(--icon-box); flex: none;
   object-fit: contain; margin: 0 auto; align-self: center; justify-self: center; vertical-align: middle;
   background: none; image-rendering: auto;
 }
 .areas { --node: var(--icon-box); --icon: var(--icon-box); }
+@media (max-width: 599px) {   /* five across: as large as the column allows, up to 70px */
+  .areas { --node: min(var(--icon-box), calc((100vw - 2 * var(--gutter, 16px)) / 5 - 4px)); --icon: var(--node); }
+  .areas .icon-box.icon-box { width: var(--node); height: var(--node); }
+}
 .areas__node { background: none; }
 .areas::before { display: none; }   /* the kit icons are transparent; a thread would run through them */
 .doorway-list a { grid-template-columns: var(--icon-box) 1fr; align-items: center; }
 @media (min-width: 860px) { .doorway-list a { grid-template-columns: var(--icon-box) 9rem 1fr; } }
-.icon-row:has(> .icon-box), .summary-list li > a { grid-template-columns: var(--icon-box) 1fr; column-gap: 20px; align-items: center; }
-.icon-row > .icon-box, .summary-list .icon-box { grid-row: span 2; }
+/* Group rows (homepage summary + Groups page): one shared layout; the
+   arrow is absolutely placed, so it never affects the centring. */
+.icon-row:has(> .icon-box), .summary-list li > a { grid-template-columns: var(--icon-box-group) minmax(0, 1fr); column-gap: 18px; align-items: center; }
+@media (min-width: 769px) { .icon-row:has(> .icon-box), .summary-list li > a { column-gap: 26px; } }
+.icon-row > .icon-box.icon-box, .summary-list .icon-box.icon-box { grid-row: span 2; width: var(--icon-box-group); height: var(--icon-box-group); }
+.summary-list li > a > :not(.icon) { grid-column: 2; }
 .summary-list .icon-box { stroke-width: .9; }   /* line icons keep a fine stroke at the larger size */
 .icon--gold { color: var(--accent-brass); }
 /* Icon vibrancy: a restrained glow in each icon's own colour. */
 :is(img[src*="icon-mind"], img[src*="icon-breath"], img[src*="listening-temples"], .summary-list .icon:not(.icon--gold)) {
-  filter: drop-shadow(0 0 5px rgba(93,184,240,.34)) drop-shadow(0 0 10px rgba(93,184,240,.18));
+  filter: drop-shadow(0 0 6px rgba(93,184,240,.44)) drop-shadow(0 0 12px rgba(93,184,240,.24));
 }
 :is(img[src*="icon-body"], img[src*="icon-emotion"], img[src*="icon-action"], img[src*="conscious-dance"], .icon--gold) {
-  filter: drop-shadow(0 0 5px rgba(200,161,90,.34)) drop-shadow(0 0 10px rgba(200,161,90,.18));
+  filter: drop-shadow(0 0 6px rgba(200,161,90,.44)) drop-shadow(0 0 12px rgba(200,161,90,.24));
 }
 
 /* Inline emphasis variants. */
@@ -1598,9 +1613,10 @@ a { -webkit-tap-highlight-color: transparent; }
 }
 @media (max-width: 768px) {   /* phones and small tablets: the left rail, panel to the right */
   .face__hint { text-align: left; }
-  .face.is-js .face__layout { grid-template-columns: 54px minmax(0, 1fr); gap: 14px; align-items: start; justify-items: stretch; }
+  .face.is-js .face__layout { grid-template-columns: 64px minmax(0, 1fr); gap: 16px; align-items: stretch; justify-items: stretch; }
+  .face.is-js .face__panels { align-self: center; }
   .face.is-js .face__panels { max-width: none; }
-  .face__rail { display: grid; justify-items: center; gap: 14px; padding-block: 4px; }
+  .face__rail { display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 14px; padding-block: 4px; }
   .face__rail::before { top: 10px; bottom: 10px; left: 50%; right: auto; width: 1px; height: auto; transform: translateX(-50%); background: linear-gradient(rgba(200,161,90,.45), rgba(93,184,240,.45)); }
   .face__btn { width: 48px; height: 48px; font-size: 1.45rem; }
   .face__tip { display: none; }
@@ -1670,3 +1686,15 @@ a { -webkit-tap-highlight-color: transparent; }
 .face.is-js .face__panels { margin-inline: auto; }
 @media (max-width: 768px) { .face.is-js .face__panels { width: 100%; max-width: none; } }
 .offering__name .icon-box.icon-box { margin: 0; }   /* sits inline before the name */
+
+/* Mobile fields: each family framed a little differently, and a veil that
+   is firmer down the reading column and lighter at the edges, so the
+   mineral texture shows around the copy. */
+@media (max-width: 768px) {
+  .bg-1, .bg-2, .bg-3, .bg-4 { background-size: 100% 100%, cover; }
+  .bg-1 { background-position: 0 0, center 42%; --veil: linear-gradient(90deg, rgba(10,16,32,.36), rgba(10,16,32,.66) 24%, rgba(10,16,32,.66) 76%, rgba(10,16,32,.36)); }
+  .bg-2 { background-position: 0 0, center 48%; --veil: linear-gradient(90deg, rgba(8,22,44,.42), rgba(8,22,44,.72) 24%, rgba(8,22,44,.72) 76%, rgba(8,22,44,.42)); }
+  .bg-3 { background-position: 0 0, center 36%; --veil: linear-gradient(90deg, rgba(10,16,32,.24), rgba(10,16,32,.52) 24%, rgba(10,16,32,.52) 76%, rgba(10,16,32,.24)); }
+  .bg-4 { background-position: 0 0, center 44%; --veil: linear-gradient(90deg, rgba(8,22,44,.26), rgba(8,22,44,.52) 24%, rgba(8,22,44,.52) 76%, rgba(8,22,44,.26)); }
+  .home-hero.bg-1 { background-position: 0 0, 50% 50%; --veil: linear-gradient(rgba(10,16,32,.64), rgba(10,16,32,.64)); }   /* the hero keeps its own framing */
+}
