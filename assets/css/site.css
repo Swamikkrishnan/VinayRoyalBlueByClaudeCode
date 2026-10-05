@@ -1036,12 +1036,12 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
 
 .bg-1 { --base: #06131F; --veil: linear-gradient(90deg, rgba(10,16,32,.06), rgba(10,16,32,.4) calc(50% - 620px), rgba(10,16,32,.4) calc(50% + 620px), rgba(10,16,32,.06)); --img: url("../vinay-brand-assets/bg-01-dark-primary-desktop.webp"); }
 .bg-2 { --base: #0B3A60; --veil: linear-gradient(90deg, rgba(8,22,44,.12), rgba(8,22,44,.62) calc(50% - 620px), rgba(8,22,44,.62) calc(50% + 620px), rgba(8,22,44,.12)); --img: url("../vinay-brand-assets/bg-light-primary-desktop.webp"); }
-.bg-3 { --base: #04101A; --veil: linear-gradient(90deg, rgba(10,16,32,.06), rgba(10,16,32,.36) calc(50% - 620px), rgba(10,16,32,.36) calc(50% + 620px), rgba(10,16,32,.06)); --img: url("../vinay-brand-assets/bg-03-dark-secondary-desktop-v2.webp"); }
+.bg-3 { --base: #04101A; --veil: linear-gradient(90deg, rgba(10,16,32,.06), rgba(10,16,32,.36) calc(50% - 620px), rgba(10,16,32,.36) calc(50% + 620px), rgba(10,16,32,.06)); --img: url("../vinay-brand-assets/bg-03-dark-secondary-desktop.webp"); }
 .bg-4 { --base: #04182F; --veil: linear-gradient(90deg, rgba(8,22,44,.08), rgba(8,22,44,.46) calc(50% - 620px), rgba(8,22,44,.46) calc(50% + 620px), rgba(8,22,44,.08)); --img: url("../vinay-brand-assets/bg-light-secondary-desktop.webp"); }
 @media (max-width: 767px) {
   .bg-1 { --img: url("../vinay-brand-assets/bg-01-dark-primary-mobile.webp"); }
   .bg-2 { --img: url("../vinay-brand-assets/bg-light-primary-mobile.webp"); }
-  .bg-3 { --img: url("../vinay-brand-assets/bg-03-dark-secondary-mobile-v2.webp"); }
+  .bg-3 { --img: url("../vinay-brand-assets/bg-03-dark-secondary-mobile.webp"); }
   .bg-4 { --img: url("../vinay-brand-assets/bg-light-secondary-mobile.webp"); }
 }
 /* Narrower screens: copy spans the full width, so the dark veils sit a
@@ -1706,7 +1706,7 @@ a { -webkit-tap-highlight-color: transparent; }
 .summary-list li > a { grid-template-columns: var(--icon-box) minmax(0, 1fr); }
 
 /* Homepage hero on wide screens: its own framed artwork. */
-@media (min-width: 768px) { .home-hero.bg-1 { --img: url("../vinay-brand-assets/hero-home-desktop.webp"); } }
+@media (min-width: 768px) { .home-hero.bg-1 { --img: url("../vinay-brand-assets/hero-home-desktop-v2.webp"); } }
 
 /* Icon rows on wide screens (Five Areas, homepage Group Offerings, Groups
    journeys): icon | label | description. The icon is two description lines
@@ -1842,3 +1842,11 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
 @media (prefers-reduced-motion: reduce) {
   :is(.bg-1, .bg-2, .bg-3, .bg-4) { transition-duration: 1ms; }
 }
+
+/* Homepage header: the name starts at the normal left edge (no gap kept for
+   the sigil, which sits over the same spot and only shows once docked). */
+.page-home .brand { position: relative; }
+.page-home .brand img { position: absolute; left: 0; top: 50%; margin-top: -15px; }
+.site-head__inner > .brand { margin-right: auto; text-align: left; }
+.sigil-flight { will-change: transform, opacity; }
+@media (max-width: 1099px) { .site-head__inner { padding-inline: 20px; } }

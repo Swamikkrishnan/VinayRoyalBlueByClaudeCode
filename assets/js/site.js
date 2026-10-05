@@ -69,7 +69,7 @@
   var siteHead = document.getElementById('site-head');
   if (siteHead) {
     var headTick = false;
-    var markScrolled = function () { headTick = false; siteHead.classList.toggle('is-scrolled', window.scrollY > 28); };
+    var markScrolled = function () { headTick = false; siteHead.classList.toggle('is-scrolled', window.scrollY > 12); };
     window.addEventListener('scroll', function () {
       if (!headTick) { headTick = true; window.requestAnimationFrame(markScrolled); }
     }, { passive: true });
@@ -77,10 +77,13 @@
     markScrolled();
   }
 
-  // Homepage: the hero sigil travels up into the header's brand position as
-  // the page scrolls, and the name gives way to it; scrolling back reverses
-  // it. A fixed-position clone does the travelling (transform + opacity
-  // only); geometry is measured on load/resize, never per frame.
+  // Homepage: the hero sigil travels up into the header's brand position
+  // from the first pixel of scroll, and the name gives way to it; scrolling
+  // back reverses it. Progress is continuous: the scroll sets a target and
+  // each frame eases the current value toward it, so uneven scroll events
+  // never make it jump. A fixed-position clone does the travelling
+  // (transform + opacity only); geometry is measured on load/resize, never
+  // per frame.
   var heroSig = document.querySelector('.page-home .home-hero__sigil');
   var brandImg = document.querySelector('.page-home .brand img');
   var brandName = document.querySelector('.page-home .brand span');
@@ -91,45 +94,48 @@
     flight.className = 'home-hero__sigil sigil-flight';
     flight.setAttribute('aria-hidden', 'true');
     document.body.appendChild(flight);
-    var geo = null, flightTick = false, lastP = -1;
-    var measure = function () {
-      var y = window.scrollY, sr = heroSig.getBoundingClientRect(), tr = brandImg.getBoundingClientRect();
-      if (!sr.width || !tr.width) return;
-      geo = { sx: sr.left, sy: sr.top + y, sw: sr.width, tx: tr.left, ty: tr.top, k: tr.width / sr.width,
-              end: Math.max(1, sr.top + y + sr.height / 2 - (tr.top + tr.height / 2)) };
-      flight.style.width = sr.width + 'px'; flight.style.height = sr.height + 'px';
-      lastP = -1; fly();
-    };
-    var ease = function (t) { return t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; };
-    var fly = function () {
-      flightTick = false;
-      if (!geo) return;
-      var y = window.scrollY, p = Math.min(1, Math.max(0, y / geo.end));
-      if (reduce.matches) p = p >= .5 ? 1 : 0;          // no travel: a simple swap
-      if (p === lastP && p !== 0 && p !== 1) return;
-      lastP = p;
+    var geo = null, cur = 0, target = 0, running = false;
+    var travel = function () { return Math.max(1, Math.min(window.innerHeight * 0.28, 240)); };
+    var clamp01 = function (v) { return v < 0 ? 0 : v > 1 ? 1 : v; };
+    var paint = function (p) {
       var moving = p > 0 && p < 1;
       flight.style.visibility = moving ? 'visible' : 'hidden';
       heroSig.style.visibility = p > 0 ? 'hidden' : '';
       sigWrap.style.setProperty('--glow-o', String(1 - p));
       brandImg.style.opacity = p >= 1 ? '1' : '0';
-      brandName.style.opacity = String(Math.max(0, 1 - p * 1.4));
-      if (moving) {
-        var e = ease(p);
-        var x = geo.sx + (geo.tx - geo.sx) * e;
-        var top = (geo.sy - y) + (geo.ty - (geo.sy - y)) * e;
-        var k = 1 + (geo.k - 1) * e;
-        flight.style.transform = 'translate3d(' + x + 'px,' + top + 'px,0) scale(' + k + ')';
+      brandName.style.opacity = String(1 - clamp01((p - 0.45) / 0.45));
+      if (moving && geo) {
+        var startY = geo.sy - window.scrollY;               // where the hero sigil would be now
+        var x = geo.sx + (geo.tx - geo.sx) * p;
+        var y = startY + (geo.ty - startY) * p;
+        var k = 1 + (geo.k - 1) * p;
+        flight.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0) scale(' + k + ')';
       }
     };
-    window.addEventListener('scroll', function () {
-      if (!flightTick) { flightTick = true; window.requestAnimationFrame(fly); }
-    }, { passive: true });
+    var step = function () {
+      if (reduce.matches) { cur = target >= .5 ? 1 : 0; paint(cur); running = false; return; }   // no travel: a simple swap
+      cur += (target - cur) * 0.16;
+      if (Math.abs(target - cur) < 0.001) cur = target;
+      paint(cur);
+      if (cur !== target) window.requestAnimationFrame(step); else running = false;
+    };
+    var onScroll = function () {
+      target = clamp01(window.scrollY / travel());
+      if (!running) { running = true; window.requestAnimationFrame(step); }
+    };
+    var measure = function () {
+      var y = window.scrollY, sr = heroSig.getBoundingClientRect(), tr = brandImg.getBoundingClientRect();
+      if (!sr.width || !tr.width) return;
+      geo = { sx: sr.left, sy: sr.top + y, tx: tr.left, ty: tr.top, k: tr.width / sr.width };
+      flight.style.width = sr.width + 'px'; flight.style.height = sr.height + 'px';   // size set once per measure
+      cur = target = clamp01(y / travel()); paint(cur);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', measure);
-    window.addEventListener('orientationchange', measure);
+    window.addEventListener('orientationchange', function () { setTimeout(measure, 120); });
     window.addEventListener('load', function () { measure(); setTimeout(measure, 1600); setTimeout(measure, 3200); });   // again once the opening has settled
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
-    measure();
+    if (heroSig.complete) measure(); else heroSig.addEventListener('load', measure, { once: true });
   }
 
   /* ---------------------------------------------------------------------
