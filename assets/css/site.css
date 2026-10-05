@@ -1866,3 +1866,9 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
 .page-home .site-foot { grid-template-columns: 1fr 1fr; }
 .page-home .brand__name { transition: opacity 300ms ease; }
 .page-home .brand img, .page-home .brand__tagline { transition: opacity 150ms ease; }
+/* The flight clones stay rendered (opacity 0) so their layers are already
+   rasterised when the flight starts: no first-frame hitch. */
+.sigil-flight, .title-flight { visibility: visible; opacity: 0; backface-visibility: hidden; }
+@media (max-width: 340px) { .page-home .brand__tagline { font-size: .9rem; } }
+.sigil-flight { filter: none; }   /* plain while flying: the glow filter cost a frame on Safari */
+.title-flight { text-shadow: none !important; }

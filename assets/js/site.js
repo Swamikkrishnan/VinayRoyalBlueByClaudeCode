@@ -121,8 +121,8 @@
                   : 'translate3d(' + g.tx + 'px,' + g.ty + 'px,0) scale(' + g.k + ')';
     };
     var rest = function (d) {                       // the settled state, no clones
-      sFly.style.visibility = tFly.style.visibility = 'hidden';
-      heroSig.style.visibility = heroTitle.style.visibility = d ? 'hidden' : '';
+      sFly.style.opacity = tFly.style.opacity = '0';
+      heroSig.style.opacity = heroTitle.style.opacity = d ? '0' : '';
       sigWrap.style.setProperty('--glow-o', d ? '0' : '1');
       brandImg.style.opacity = brandTag.style.opacity = d ? '1' : '0';
       brandName.style.opacity = d ? '0' : '1';
@@ -131,13 +131,14 @@
       if (!geo) measure();
       if (!geo || reduce.matches) return rest(toDock);   // reduced motion: a simple swap
       var my = ++token;
+      heroSig.style.transition = heroTitle.style.transition = 'none';   // the swap with the clones must be instant
       var froms = [sFly, tFly].map(function (el, i) {    // pick up mid-flight if reversing
         return anims.length ? window.getComputedStyle(el).transform : at(i ? geo.t : geo.s, toDock);
       });
       anims.forEach(function (an) { an.cancel(); }); anims = [];
-      heroSig.style.visibility = heroTitle.style.visibility = 'hidden';
+      heroSig.style.opacity = heroTitle.style.opacity = '0';
       brandImg.style.opacity = brandTag.style.opacity = '0';
-      sFly.style.visibility = tFly.style.visibility = 'visible';
+      sFly.style.opacity = tFly.style.opacity = '1';
       sigWrap.style.setProperty('--glow-o', toDock ? '0' : '1');
       brandName.style.opacity = toDock ? '0' : '1';
       anims = [sFly, tFly].map(function (el, i) {
