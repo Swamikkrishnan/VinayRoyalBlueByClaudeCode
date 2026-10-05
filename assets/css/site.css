@@ -1469,3 +1469,10 @@ body { transition: opacity var(--motion-base) var(--ease); }
 /* Story, My Vision: the words sit higher over the sigil. */
 .vision__inner { align-content: start; padding-top: clamp(24px, 6vw, 72px); }
 .vision.section { padding-top: 36px; }   /* the whole vision block sits a little lower */
+
+/* Background hero photo: on phones crop from below so the head stays in
+   frame; on desktop a smaller photo pushed to the right edge. */
+.editorial--hero .editorial__media--person img { object-position: 50% 4%; }
+@container (min-width: 800px) {
+  .editorial--hero .editorial__media--person img { width: min(100%, 400px, calc(min(70vh, 560px) * .8)); margin-inline: auto 0; }
+}
