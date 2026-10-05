@@ -1698,3 +1698,14 @@ a { -webkit-tap-highlight-color: transparent; }
   .bg-4 { background-position: 0 0, center 44%; --veil: linear-gradient(90deg, rgba(8,22,44,.26), rgba(8,22,44,.52) 24%, rgba(8,22,44,.52) 76%, rgba(8,22,44,.26)); }
   .home-hero.bg-1 { background-position: 0 0, 50% 50%; --veil: linear-gradient(rgba(10,16,32,.64), rgba(10,16,32,.64)); }   /* the hero keeps its own framing */
 }
+
+/* Groups (journeys) and 1:1 (areas of focus): more vivid icons — a little
+   brighter and richer, with a firmer glow in each icon's own colour. */
+:is(.icon-row > .icon--kit, #where-we-begin .area-icon, .offering__name .area-icon):is([src*="icon-mind"], [src*="icon-breath"], [src*="listening-temples"]) {
+  filter: brightness(1.18) saturate(1.4) contrast(1.06)
+    drop-shadow(0 0 6px rgba(93,184,240,.58)) drop-shadow(0 0 14px rgba(93,184,240,.32));
+}
+:is(.icon-row > .icon--kit, #where-we-begin .area-icon, .offering__name .area-icon):is([src*="icon-body"], [src*="icon-emotion"], [src*="icon-action"], [src*="conscious-dance"]) {
+  filter: brightness(1.18) saturate(1.4) contrast(1.06)
+    drop-shadow(0 0 6px rgba(200,161,90,.58)) drop-shadow(0 0 14px rgba(200,161,90,.32));
+}
