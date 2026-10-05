@@ -547,7 +547,7 @@
 
   /* ---------------------------------------------------------------------
      4d. Get in touch — one persistent, understated contact entry. A small
-         pill (not on the destination form pages, body[data-contact="off"])
+         pill (on every page, the forms included)
          and any [data-contact-open] link open a short chooser: a modal
          <dialog> (popover on wide screens, bottom sheet on phones). Escape,
          the close button or the backdrop close it; focus returns to the
@@ -573,7 +573,8 @@
       opener = from || document.activeElement;
       root.classList.add('contact-open');
       sheet.showModal();
-      sheet.querySelector('.contact-sheet__choices a').focus();
+      // Focus the question (not a choice), so no option looks preselected.
+      var q = sheet.querySelector('#contact-q'); q.setAttribute('tabindex', '-1'); q.focus({ preventScroll: true });
       window.requestAnimationFrame(function () { window.requestAnimationFrame(function () { sheet.classList.add('is-shown'); }); });
     };
     var closeSheet = function () {
@@ -599,14 +600,25 @@
     sheet.querySelector('.contact-sheet__close').addEventListener('click', closeSheet);
     sheet.addEventListener('click', function (e) { if (e.target === sheet) closeSheet(); });   // backdrop
     // Leaving for a form, then coming back (bfcache): never return to an open sheet.
-    window.addEventListener('pageshow', function () { if (sheet.open) { sheet.classList.remove('is-shown'); sheet.close(); root.classList.remove('contact-open'); } });
+    window.addEventListener('pageshow', function () { root.classList.remove('is-leaving'); if (sheet.open) { sheet.classList.remove('is-shown'); sheet.close(); root.classList.remove('contact-open'); } });
+    // Choosing an option: the sheet and page fade out, then the form opens
+    // (and fades in with its own page opening).
+    sheet.querySelectorAll('.contact-sheet__choices a').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || reduce.matches) return;
+        e.preventDefault();
+        sheet.classList.remove('is-shown');
+        root.classList.add('is-leaving');
+        setTimeout(function () { window.location.href = a.href; }, 333);
+      });
+    });
     document.addEventListener('click', function (e) {
       var t = e.target.closest('[data-contact-open]');
       if (!t) return;
       e.preventDefault();
       openSheet(t.closest('.nav-mobile') ? toggle : t);
     });
-    if (document.body.getAttribute('data-contact') !== 'off') {
+    {
       var pill = document.createElement('button');
       pill.type = 'button';
       pill.className = 'contact-pill';

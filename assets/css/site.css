@@ -1462,3 +1462,9 @@ dd > .word-list { margin-top: 10px; color: var(--text); }
 /* Homepage hero on phones: its own portrait artwork. */
 @media (max-width: 767px) { .home-hero.bg-1 { --img: url("../vinay-brand-assets/hero-home-mobile.webp"); } }
 .ruled--values dt { color: var(--accent-brass); font-weight: 600; }
+/* Leaving for a contact form: the page fades out before the form fades in. */
+body { transition: opacity var(--motion-base) var(--ease); }
+.is-leaving body { opacity: 0; }
+.contact-sheet__q:focus { outline: none; }
+/* Story, My Vision: the words sit higher over the sigil. */
+.vision__inner { align-content: start; padding-top: clamp(24px, 6vw, 72px); }
