@@ -1403,3 +1403,5 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
   .marked > :is(.marker, .eyebrow) { min-width: 0; justify-self: stretch; }
   .marked > :is(.marker, .eyebrow)::after { width: auto; flex: 0 1 72px; min-width: 20px; }
 }
+/* A word list inside a definition row: a little room above, full text colour. */
+dd > .word-list { margin-top: 10px; color: var(--text); }
