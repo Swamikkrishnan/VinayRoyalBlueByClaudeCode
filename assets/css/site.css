@@ -390,8 +390,8 @@ html:not(.js) .nav-toggle { display: none !important; }
     position: fixed; top: calc(var(--header-h) + 48px); left: 24px; z-index: 40;
     width: 158px; border: 0; padding: 8px 8px 8px 0; border-radius: 12px;
     /* a soft navy backing keeps the index legible over light sections */
-    background: rgba(14,20,40,.72);
-    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    background: rgba(14,20,40,.16);   /* same glass as the header */
+    -webkit-backdrop-filter: blur(12px) saturate(120%); backdrop-filter: blur(12px) saturate(120%);
   }
   .subnav ul {
     height: auto; margin: 0; padding: 0; overflow: visible;
