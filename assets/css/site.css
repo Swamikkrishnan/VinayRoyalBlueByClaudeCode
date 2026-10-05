@@ -1396,3 +1396,10 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
    turning point and the real practice above it (measured). */
 .chapters__bridge.story-heading { margin-top: 43px; }
 @media (max-width: 768px) { .chapters__bridge.story-heading { margin-top: -12px; } }
+/* Side labels (homepage): the rule shortens to fit its column, never
+   running into the content beside it. */
+@media (min-width: 900px) {
+  .marked { grid-template-columns: 15rem minmax(0, 1fr); }
+  .marked > :is(.marker, .eyebrow) { min-width: 0; justify-self: stretch; }
+  .marked > :is(.marker, .eyebrow)::after { width: auto; flex: 0 1 72px; min-width: 20px; }
+}
