@@ -429,7 +429,7 @@ html:not(.js) .nav-toggle { display: none !important; }
 .btn--outline { background: transparent; border-color: var(--warm-soft); color: var(--text); }
 .btn--solid:hover, .btn--solid:focus-visible, .btn--outline:hover, .btn--outline:focus-visible { background: var(--ink-3); border-color: var(--accent); box-shadow: 0 0 0 3px rgba(93,184,240,.08), 0 0 18px rgba(93,184,240,.18); }
 .btn span[aria-hidden] { color: var(--accent); }
-.btn:active { transform: translateY(1px); transition-duration: 60ms; }
+.btn:active { transform: translateY(1px); transition-duration: 55ms; }
 .btn[disabled] { opacity: .6; cursor: progress; }
 
 /* --------------------------------------------------------------------------
