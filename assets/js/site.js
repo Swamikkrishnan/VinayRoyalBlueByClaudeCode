@@ -78,6 +78,10 @@
          height; nothing is left with a fixed height afterwards, so resizing
          an open accordion is safe. Reduced motion: native instant toggle.
      --------------------------------------------------------------------- */
+  // Some disclosures start open on wider screens only (1:1 Availability, Scope).
+  if (window.matchMedia('(min-width: 769px)').matches) {
+    document.querySelectorAll('details[data-open-desktop]').forEach(function (d) { d.open = true; });
+  }
   var ACC_MS = 480, ACC_EASE = 'cubic-bezier(.3,.7,.3,1)';   // calm, same speed open and close
   document.querySelectorAll('details.accordion').forEach(function (d) {
     var summary = d.querySelector(':scope > summary');
