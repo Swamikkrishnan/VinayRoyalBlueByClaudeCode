@@ -1386,3 +1386,6 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 .story-chapters.section:has(+ .vision) { padding-bottom: 12px !important; }
 .vision.section { padding-top: 8px; padding-bottom: 96px; }
 @media (max-width: 768px) { .vision.section { padding-bottom: 72px; } }
+.chapters__bridge.story-heading { margin-top: -30px; }
+@media (max-width: 599px) { .chapters__bridge.story-heading { margin-top: -22px; } }
+.story-chapters.section:has(+ .vision) { padding-bottom: 40px !important; }
