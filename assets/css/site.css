@@ -1512,8 +1512,7 @@ a { -webkit-tap-highlight-color: transparent; }
 
 /* One icon system (home, 1:1, groups): a 58px box on phones, 76px from
    769px, artwork contained and centred on its row. */
-:root { --icon-box: 64px; --icon-box-group: var(--icon-box); }   /* one icon size across the site */
-@media (min-width: 769px) { :root { --icon-box: 84px; } }
+:root { --icon-box: calc(var(--t-body) * 1.6 * 2); --icon-box-group: var(--icon-box); }   /* one icon size across the site: the height of two lines of description */
 .icon-box.icon-box {
   display: block; width: var(--icon-box); height: var(--icon-box); flex: none;
   object-fit: contain; margin: 0 auto; align-self: center; justify-self: center; vertical-align: middle;
@@ -1706,3 +1705,18 @@ a { -webkit-tap-highlight-color: transparent; }
 
 /* Homepage hero on wide screens: its own framed artwork. */
 @media (min-width: 768px) { .home-hero.bg-1 { --img: url("../vinay-brand-assets/hero-home-desktop.webp"); } }
+
+/* Icon rows on wide screens (Five Areas, homepage Group Offerings, Groups
+   journeys): icon | label | description. The icon is two description lines
+   tall, and the label is centred in its own column with equal gaps either
+   side, so it sits at the midpoint between icon and description. */
+@media (min-width: 860px) {
+  .doorway-list a,
+  .summary-list li > a,
+  .icon-row:has(> .icon-box) {
+    grid-template-columns: var(--icon-box) 12rem minmax(0, 1fr); column-gap: 28px; align-items: center;
+  }
+  .doorway-list a > .area-icon, .summary-list .icon-box.icon-box, .icon-row > .icon-box.icon-box { grid-row: 1; grid-column: 1; }
+  .doorway-list__name, .summary-list li > a > h3:not(.icon), .icon-row > .accordion__title:not(.icon) { grid-row: 1; grid-column: 2; justify-self: center; text-align: center; }
+  .doorway-list__desc, .summary-list li > a > p:not(.icon), .icon-row > .accordion__desc:not(.icon) { grid-row: 1; grid-column: 3; }
+}
