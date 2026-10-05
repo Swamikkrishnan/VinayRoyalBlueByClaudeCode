@@ -1405,3 +1405,9 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 }
 /* A word list inside a definition row: a little room above, full text colour. */
 dd > .word-list { margin-top: 10px; color: var(--text); }
+/* 1:1 Scope & Suitability: centred content on wider screens. */
+@media (min-width: 769px) {
+  #scope .accordion > .accordion__body { margin-inline: auto; text-align: center; justify-items: center; }
+  #scope .accordion__body .prose { margin-inline: auto; }
+  #scope .accordion__body .note { margin-inline: auto; border-left: 0; border-top: 2px solid var(--accent); }
+}
