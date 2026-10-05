@@ -97,6 +97,8 @@
     var geo = null, cur = 0, target = 0, running = false;
     var travel = function () { return Math.max(1, Math.min(window.innerHeight * 0.28, 240)); };
     var clamp01 = function (v) { return v < 0 ? 0 : v > 1 ? 1 : v; };
+    // Scroll → progress; with reduced motion it is only ever 0 or 1 (a swap, no travel).
+    var goal = function () { var p = clamp01(window.scrollY / travel()); return reduce.matches ? (p >= .5 ? 1 : 0) : p; };
     var paint = function (p) {
       var moving = p > 0 && p < 1;
       flight.style.visibility = moving ? 'visible' : 'hidden';
@@ -113,14 +115,14 @@
       }
     };
     var step = function () {
-      if (reduce.matches) { cur = target >= .5 ? 1 : 0; paint(cur); running = false; return; }   // no travel: a simple swap
+      if (reduce.matches) { cur = target; paint(cur); running = false; return; }   // no travel: a simple swap
       cur += (target - cur) * 0.16;
       if (Math.abs(target - cur) < 0.001) cur = target;
       paint(cur);
       if (cur !== target) window.requestAnimationFrame(step); else running = false;
     };
     var onScroll = function () {
-      target = clamp01(window.scrollY / travel());
+      target = goal();
       if (!running) { running = true; window.requestAnimationFrame(step); }
     };
     var measure = function () {
@@ -128,7 +130,7 @@
       if (!sr.width || !tr.width) return;
       geo = { sx: sr.left, sy: sr.top + y, tx: tr.left, ty: tr.top, k: tr.width / sr.width };
       flight.style.width = sr.width + 'px'; flight.style.height = sr.height + 'px';   // size set once per measure
-      cur = target = clamp01(y / travel()); paint(cur);
+      cur = target = goal(); paint(cur);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', measure);
