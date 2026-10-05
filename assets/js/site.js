@@ -82,7 +82,7 @@
   if (window.matchMedia('(min-width: 769px)').matches) {
     document.querySelectorAll('details[data-open-desktop]').forEach(function (d) { d.open = true; });
   }
-  var ACC_MS = 480, ACC_EASE = 'cubic-bezier(.3,.7,.3,1)';   // calm, same speed open and close
+  var ACC_MS = 444, ACC_EASE = 'cubic-bezier(.3,.7,.3,1)';   // calm, same speed open and close
   document.querySelectorAll('details.accordion').forEach(function (d) {
     var summary = d.querySelector(':scope > summary');
     var body = d.querySelector(':scope > .accordion__body');
@@ -569,7 +569,7 @@
         root.classList.remove('contact-open');
         if (opener && document.contains(opener) && opener.focus) opener.focus();
       };
-      closeTimer = setTimeout(done, reduce.matches ? 0 : 360);
+      closeTimer = setTimeout(done, reduce.matches ? 0 : 333);
     };
     sheet.addEventListener('cancel', function (e) { e.preventDefault(); closeSheet(); });   // Escape
     // Keep Tab inside the sheet in every browser (Safari's Tab skips links

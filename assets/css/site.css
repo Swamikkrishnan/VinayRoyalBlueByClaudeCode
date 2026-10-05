@@ -71,8 +71,8 @@
   --subnav-h: 0px;
   /* One shared motion system: a single ease-out curve, three durations. */
   --ease: cubic-bezier(.22,.61,.36,1);
-  --motion-fast: 240ms;   /* hover, colour, small state changes */
-  --motion-base: 360ms;   /* menus, accordions, chevrons, tab switches */
+  --motion-fast: 222ms;   /* hover, colour, small state changes */
+  --motion-base: 333ms;   /* menus, accordions, chevrons, tab switches */
   --motion-image: 777ms; /* photographs gradually appearing */
   --ease-image: cubic-bezier(.25,.46,.45,.94); /* soft ease-out, no overshoot */
   /* Reveal language: calm, unhurried, no overshoot. */
