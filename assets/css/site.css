@@ -1392,3 +1392,7 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 .vision__inner { min-height: clamp(380px, 46vw, 560px); align-content: center; }
 /* Combined sections: a clear but compact step between the two parts. */
 .merged-block { margin-top: clamp(28px, 4vw, 44px); }
+/* Bridge line: the same gap below "The real practice" as between the
+   turning point and the real practice above it (measured). */
+.chapters__bridge.story-heading { margin-top: 43px; }
+@media (max-width: 768px) { .chapters__bridge.story-heading { margin-top: -12px; } }
