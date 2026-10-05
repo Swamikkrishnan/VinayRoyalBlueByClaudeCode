@@ -177,7 +177,7 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 .watermark { position: relative; overflow: hidden; }
 .watermark > :first-child::before {
   content: ""; position: absolute; left: 50%; top: 50%; z-index: -1;
-  height: min(600px, calc(100% + 140px)); width: auto; max-width: calc(100vw - 32px);
+  height: min(560px, 100%); width: auto; max-width: calc(100vw - 32px);   /* never larger than its block, so never cut */
   aspect-ratio: 1100 / 1132;
   transform: translate(-50%, -50%);
   background: url("../images/sigil.png") center / contain no-repeat;
@@ -1011,7 +1011,6 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
   .contact-sheet { inset: auto 0 0 0; width: 100%; transform: translate3d(0, 24px, 0); }
   .contact-sheet__panel { border-radius: 20px 20px 0 0; border-bottom: 0; padding: 22px var(--gutter) calc(14px + env(safe-area-inset-bottom, 0px)); }
 }
-.merged-block { margin-top: var(--s-4); }
 
 
 
@@ -1389,3 +1388,7 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 .chapters__bridge.story-heading { margin-top: -30px; }
 @media (max-width: 599px) { .chapters__bridge.story-heading { margin-top: -22px; } }
 .story-chapters.section:has(+ .vision) { padding-bottom: 40px !important; }
+/* My Vision: a block tall enough to hold the whole sigil behind it. */
+.vision__inner { min-height: clamp(380px, 46vw, 560px); align-content: center; }
+/* Combined sections: a clear but compact step between the two parts. */
+.merged-block { margin-top: clamp(28px, 4vw, 44px); }
