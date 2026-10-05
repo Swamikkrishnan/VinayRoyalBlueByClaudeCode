@@ -1720,3 +1720,9 @@ a { -webkit-tap-highlight-color: transparent; }
   .doorway-list__name, .summary-list li > a > h3:not(.icon), .icon-row > .accordion__title:not(.icon) { grid-row: 1; grid-column: 2; justify-self: center; text-align: center; }
   .doorway-list__desc, .summary-list li > a > p:not(.icon), .icon-row > .accordion__desc:not(.icon) { grid-row: 1; grid-column: 3; }
 }
+/* Five Areas (desktop): the label sits just after the icon, and the
+   description follows closer behind it. */
+@media (min-width: 860px) {
+  .doorway-list a { grid-template-columns: var(--icon-box) 7.5rem minmax(0, 1fr); column-gap: 24px; }
+  .doorway-list .doorway-list__name { justify-self: start; text-align: left; }
+}
