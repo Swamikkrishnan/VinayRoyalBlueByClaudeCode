@@ -1468,3 +1468,4 @@ body { transition: opacity var(--motion-base) var(--ease); }
 .contact-sheet__q:focus { outline: none; }
 /* Story, My Vision: the words sit higher over the sigil. */
 .vision__inner { align-content: start; padding-top: clamp(24px, 6vw, 72px); }
+.vision.section { padding-top: 36px; }   /* the whole vision block sits a little lower */
