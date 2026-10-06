@@ -1998,7 +1998,6 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 /* Display and section-opening lines keep blue: Approach section intros,
    serif section intros (e.g. "alignment"), Story's distilled line. */
 .distilled .inline-accent, .inline-accent--roman,
-.page-approach .lede .inline-accent,
 :is(.section-intro, .statement, .insight) .inline-accent { color: var(--emphasis-blue); }
 .flow-list li > span:first-child { color: var(--text); }
 
@@ -2032,3 +2031,10 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 @media (max-width: 768px) { :root { --section-y: 56px; } }
 :is(.statement-lead, .display-statement, .section-intro, .lede, .prose) + :is(.doorway-list, .summary-list, .offering-list, .accordion-group, .pair, .quad, .areas, figure, .face),
 .stack > :is(.statement-lead, .lede) + .stack { margin-top: var(--s-3); }
+
+/* Approach section intros: their key phrase in gold. */
+.page-approach .lede .inline-accent { color: var(--accent-brass); }
+/* A running-text highlight explicitly kept blue (Groups: wholeness, Sharing). */
+.inline-accent.is-blue { color: #5DB8F0; }
+/* A Read more that holds a list of rows: no double rule at the top. */
+.accordion__body > .accordion-group:first-child { border-top: 0; }
