@@ -78,109 +78,83 @@
   }
 
   // Homepage: the moment the visitor scrolls down from the top, the hero
-  // sigil and "Welcoming all of Life." fly up into the header (replacing the
-  // name) as one fixed-length animation, so the motion is identical however
-  // fast or slow the scroll. Back at the very top, they fly home again.
-  // Fixed-position clones do the flying (transform + opacity only); geometry
-  // is measured on load/resize, never per frame.
+  // sigil flies up into the header and "Vinay Swaminathan" slides right to
+  // make room, so the docked header matches every other page:
+  // [sigil] Vinay Swaminathan. Back at the very top it flies home and the
+  // name slides back. One fixed-length animation, identical however fast the
+  // scroll. A fixed-position clone does the flying (transform + opacity
+  // only); geometry is measured on load/resize, never per frame.
   var heroSig = document.querySelector('.page-home .home-hero__sigil');
-  var heroTitle = document.querySelector('.page-home .home-hero .display-title');
   var brandImg = document.querySelector('.page-home .brand img');
   var brandName = document.querySelector('.page-home .brand__name');
-  var brandTag = document.querySelector('.page-home .brand__tagline');
-  if (heroSig && heroTitle && brandImg && brandName && brandTag) {
-    var DUR = 650, EASE = 'cubic-bezier(.45, 0, .2, 1)';
+  if (heroSig && brandImg && brandName) {
+    var DUR = 650, EASE = 'cubic-bezier(.45, 0, .2, 1)', SHIFT = 40;
     var sigWrap = heroSig.parentNode;
     var sFly = heroSig.cloneNode(false);
     sFly.removeAttribute('fetchpriority');
     sFly.className = 'home-hero__sigil sigil-flight';
     sFly.setAttribute('aria-hidden', 'true');
-    var tFly = document.createElement('div');
-    tFly.className = 'title-flight';
-    tFly.setAttribute('aria-hidden', 'true');
-    // Two layers: the hero's styling fades into the header's plain white as it docks.
-    tFly.innerHTML = '<span class="tf-a">' + heroTitle.innerHTML + '</span><span class="tf-b">' + heroTitle.innerHTML + '</span>';
-    var tfA = tFly.firstChild, tfB = tFly.lastChild;
-    // Docked as soon as the page leaves the very top; back home at the top.
+    document.body.appendChild(sFly);
+    var geo = null, docked = false, anims = [], token = 0, tick = false, handing = false, leaving = false, pendingFly = null;
     var past = function () { return window.scrollY > 2; };
-    document.body.appendChild(sFly); document.body.appendChild(tFly);
-    var geo = null, docked = false, anims = [], token = 0, tick = false, handing = false, pendingFly = null;
-    var textRect = function (el) { var r = document.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect(); };
+    var X = function (on) { return on ? 'translateX(' + SHIFT + 'px)' : 'translateX(0px)'; };
     var measure = function () {
       if (anims.length) return;                       // never re-measure mid-flight
       var y = window.scrollY, sr = heroSig.getBoundingClientRect(), tr = brandImg.getBoundingClientRect();
-      var hr = textRect(heroTitle), gr = textRect(brandTag);
-      if (!sr.width || !tr.width || !hr.width || !gr.width) return;
-      var cs = window.getComputedStyle(heroTitle);
-      ['fontFamily', 'fontSize', 'fontWeight', 'letterSpacing', 'lineHeight', 'color', 'textShadow'].forEach(function (k) { tFly.style[k] = cs[k]; });
-      var kt = gr.width / hr.width;
-      geo = {
-        s: { x: sr.left, y: sr.top + y, k: tr.width / sr.width, tx: tr.left, ty: tr.top },
-        t: { x: hr.left, y: hr.top + y, k: kt, tx: gr.left, ty: gr.top + gr.height / 2 - hr.height * kt / 2 }
-      };
+      if (!sr.width || !tr.width) return;
+      geo = { x: sr.left, y: sr.top + y, k: tr.width / sr.width, tx: tr.left, ty: tr.top };
       sFly.style.width = sr.width + 'px'; sFly.style.height = sr.height + 'px';
-      if (pendingFly !== null) { var d = pendingFly; pendingFly = null; fly(d); }   // a scroll that came before we could measure
+      if (pendingFly !== null) { var d = pendingFly; pendingFly = null; fly(d); }
     };
-    var at = function (g, home) {
-      return home ? 'translate3d(' + g.x + 'px,' + (g.y - window.scrollY) + 'px,0) scale(1)'
-                  : 'translate3d(' + g.tx + 'px,' + g.ty + 'px,0) scale(' + g.k + ')';
+    var at = function (home) {
+      return home ? 'translate3d(' + geo.x + 'px,' + (geo.y - window.scrollY) + 'px,0) scale(1)'
+                  : 'translate3d(' + geo.tx + 'px,' + geo.ty + 'px,0) scale(' + geo.k + ')';
     };
-    var rest = function (d) {                       // the settled state, no clones
-      sFly.style.opacity = tFly.style.opacity = '0';
-      heroSig.style.opacity = heroTitle.style.opacity = d ? '0' : '';
-      sigWrap.style.setProperty('--glow-o', d ? '0' : '1');
-      brandImg.style.opacity = brandTag.style.opacity = d ? '1' : '0';
-      brandName.style.opacity = d ? '0' : '1';
-    };
-    var fly = function (toDock) {
-      if (!geo) measure();
-      if (reduce.matches) return rest(toDock);           // reduced motion: a simple swap
-      if (!geo) { pendingFly = toDock; return; }         // not measurable yet: fly as soon as it is
-      var my = ++token;
-      // Scrolled during the opening: the copies start at however far the hero
-      // sigil and title have faded in, and the hero's opening is completed
-      // underneath so nothing replays or pops later.
-      var sO = +window.getComputedStyle(sigWrap).opacity, tO = +window.getComputedStyle(heroTitle).opacity;
-      [sigWrap, heroTitle].forEach(function (el) { el.style.transition = 'none'; el.classList.add('is-in'); });
-      heroSig.style.transition = heroTitle.style.transition = 'none';   // the swap with the clones must be instant
-      var froms = [sFly, tFly].map(function (el, i) {    // pick up mid-flight if reversing
-        return anims.length ? window.getComputedStyle(el).transform : at(i ? geo.t : geo.s, toDock);
-      });
-      froms.mid = anims.length > 0;
-      if (froms.mid) { sO = tO = 1; }
-      var aFrom = +(anims.length ? window.getComputedStyle(tfA).opacity : (toDock ? 1 : 0));
+    var cancelAll = function () {
       anims.forEach(function (an) { an.cancel(); }); anims = [];
-      heroSig.style.opacity = heroTitle.style.opacity = '0';
-      brandImg.style.opacity = brandTag.style.opacity = '0';
-      var fadeUp = toDock && !froms.mid && (sO < .99 || tO < .99);
-      sFly.style.opacity = fadeUp ? String(sO) : '1';     // first frame already at the hero's own opacity
-      tFly.style.opacity = fadeUp ? String(tO) : '1';
+      [sFly, brandName].forEach(function (el) { if (el.getAnimations) el.getAnimations().forEach(function (an) { an.cancel(); }); });
+    };
+    var rest = function (d) {                       // the settled state, no clone
+      sFly.style.opacity = '0';
+      heroSig.style.opacity = d ? '0' : '';
+      sigWrap.style.setProperty('--glow-o', d ? '0' : '1');
+      brandImg.style.opacity = d ? '1' : '0';
+      brandName.style.opacity = '1';
+      brandName.style.transform = d ? X(true) : '';
+    };
+    var fly = function (toDock, onDone) {
+      if (!geo) measure();
+      if (reduce.matches) { cancelAll(); rest(toDock); if (onDone) onDone(); return; }
+      if (!geo) { pendingFly = toDock; return; }
+      var my = ++token;
+      var mid = anims.length > 0;
+      // Scrolled during the opening: the copy starts at however far the hero
+      // sigil has faded in, and the hero's opening completes underneath.
+      var sO = mid ? 1 : +window.getComputedStyle(sigWrap).opacity;
+      sigWrap.style.transition = 'none'; sigWrap.classList.add('is-in');
+      heroSig.style.transition = 'none';
+      var fromT = mid ? window.getComputedStyle(sFly).transform : at(toDock);
+      var fromN = window.getComputedStyle(brandName).transform;
+      if (!fromN || fromN === 'none') fromN = X(false);
+      cancelAll();
+      heroSig.style.opacity = '0'; brandImg.style.opacity = '0';
       sigWrap.style.setProperty('--glow-o', toDock ? '0' : '1');
-      var nFrom = +window.getComputedStyle(brandName).opacity;
-      anims = [sFly, tFly].map(function (el, i) {
-        el.style.transform = froms[i];
-        return el.animate([{ transform: froms[i] }, { transform: at(i ? geo.t : geo.s, !toDock) }],
-                          { duration: DUR, easing: EASE, fill: 'forwards' });
-      });
-      if (fadeUp) {          // fade the copies up while they fly
-        anims.push(sFly.animate([{ opacity: sO }, { opacity: 1, offset: .45 }, { opacity: 1 }], { duration: DUR, fill: 'forwards' }));
-        anims.push(tFly.animate([{ opacity: tO }, { opacity: 1, offset: .45 }, { opacity: 1 }], { duration: DUR, fill: 'forwards' }));
-      }
-      anims.push(tfA.animate([{ opacity: aFrom }, { opacity: toDock ? 0 : 1 }], { duration: DUR, fill: 'forwards' }));
-      anims.push(tfB.animate([{ opacity: 1 - aFrom }, { opacity: toDock ? 1 : 0 }], { duration: DUR, fill: 'forwards' }));
-      // The name gives way in the first half of a dock and returns in the second half of an undock.
-      anims.push(brandName.animate([{ opacity: nFrom }, { opacity: toDock ? 0 : 1 }],
-                                   { duration: DUR * .5, delay: toDock ? (fadeUp ? DUR * .4 : 0) : DUR * .45, fill: 'both' }));   // if the title is still fading up, the name waits for it
+      sFly.style.transform = fromT;
+      sFly.style.opacity = toDock && sO < .99 ? String(sO) : '1';
+      anims.push(sFly.animate([{ transform: fromT }, { transform: at(!toDock) }], { duration: DUR, easing: EASE, fill: 'forwards' }));
+      if (toDock && sO < .99) anims.push(sFly.animate([{ opacity: sO }, { opacity: 1, offset: .45 }, { opacity: 1 }], { duration: DUR, fill: 'forwards' }));
+      anims.push(brandName.animate([{ transform: fromN }, { transform: X(toDock) }], { duration: DUR, easing: EASE, fill: 'forwards' }));
       anims[0].onfinish = function () {
         if (my !== token) return;
-        anims.forEach(function (an) { an.cancel(); }); anims = [];
-        rest(toDock);
+        cancelAll();
+        rest(toDock);                                  // same frame as the clone leaves: no flash
+        if (onDone) onDone();
       };
     };
     var check = function () {
       tick = false;
       if (handing) return;                           // a page hand-off is running; it settles itself
-      var want = past(docked);
+      var want = past();
       if (want !== docked) { docked = want; fly(want); }
     };
     window.addEventListener('scroll', function () {
@@ -191,52 +165,10 @@
     window.addEventListener('orientationchange', function () { setTimeout(remeasure, 120); });
     window.addEventListener('load', function () { remeasure(); setTimeout(remeasure, 1600); setTimeout(remeasure, 3200); });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
-    // Leaving the homepage from the top: the sigil rises into the header and
-    // the name steps aside to make room (as every other page shows it), then
-    // the next page opens. Arriving from another page: the reverse.
-    var SHIFT = 40, HAND = DUR, leaving = false;   // hand-offs glide at the same pace as the scroll flight
-    var handOff = function (down, done) {               // down: header -> hero
-      var my = ++token;
-      heroSig.style.transition = 'none';
-      heroSig.style.opacity = '0'; brandImg.style.opacity = '0';
-      sFly.style.opacity = '1';
-      sigWrap.style.setProperty('--glow-o', '0');
-      var a = at(geo.s, true), b = at(geo.s, false);
-      var an = sFly.animate([{ transform: down ? b : a }, { transform: down ? a : b }], { duration: HAND, easing: EASE, fill: 'forwards' });
-      brandName.animate([{ transform: 'translateX(' + (down ? SHIFT : 0) + 'px)' }, { transform: 'translateX(' + (down ? 0 : SHIFT) + 'px)' }], { duration: HAND, easing: EASE, fill: 'forwards' });
-      an.onfinish = function () { if (my === token) done(); };
-    };
-    // Header text hand-off while the sigil stays docked:
-    // toTag  — "Vinay Swaminathan" (shifted, as on other pages) → "Welcoming all of Life."
-    // !toTag — the reverse, before leaving for another page.
-    var swapText = function (toTag, done) {
-      var my = ++token, opt = { duration: 420, easing: EASE, fill: 'forwards' };
-      sFly.style.opacity = tFly.style.opacity = '0';
-      brandImg.style.opacity = '1';
-      brandTag.style.transition = brandName.style.transition = 'none';
-      brandTag.style.opacity = brandName.style.opacity = '';
-      // Overlapped crossfade: the incoming line is fully there before the
-      // outgoing one leaves, so the header never dims.
-      var inK = [{ opacity: 0, offset: 0 }, { opacity: 1, offset: .55 }, { opacity: 1, offset: 1 }];
-      var outK = [{ opacity: 1, offset: 0 }, { opacity: 1, offset: .45 }, { opacity: 0, offset: 1 }];
-      var X = 'translateX(' + SHIFT + 'px)';
-      brandTag.animate(toTag ? inK : outK, opt);
-      var an = brandName.animate((toTag ? outK : inK).map(function (k) { return { opacity: k.opacity, offset: k.offset, transform: X }; }), opt);
-      an.onfinish = function () { if (my === token) done(); };
-    };
-    // Arrived at the top but scrolled before the hand-off began: the sigil is
-    // already in the header, so only the title flies up beside it.
-    var titleUp = function (done) {
-      var my = ++token, opt = { duration: DUR, easing: EASE, fill: 'forwards' };
-      heroTitle.style.transition = 'none'; heroTitle.style.opacity = '0';
-      sFly.style.opacity = '0'; tFly.style.opacity = '1'; brandImg.style.opacity = '1';
-      var an = tFly.animate([{ transform: at(geo.t, true) }, { transform: at(geo.t, false) }], opt);
-      tfA.animate([{ opacity: 1 }, { opacity: 0 }], { duration: DUR, fill: 'forwards' });
-      tfB.animate([{ opacity: 0 }, { opacity: 1 }], { duration: DUR, fill: 'forwards' });
-      var X = 'translateX(' + SHIFT + 'px)';
-      brandName.animate([{ opacity: 1, transform: X }, { opacity: 0, transform: X }], { duration: DUR * .55, fill: 'forwards' });
-      an.onfinish = function () { if (my === token) done(); };
-    };
+
+    // Page switches. The docked header already matches other pages, so only
+    // leaving from the top needs a hand-off (the sigil rises, the name steps
+    // aside); arriving at the top plays it in reverse.
     var isHome = function (path) { return /(^|\/)(index\.html)?$/.test(path); };
     document.addEventListener('click', function (e) {
       var link = e.target.closest && e.target.closest('a[href]');
@@ -250,60 +182,40 @@
         window.scrollTo({ top: 0, behavior: reduce.matches ? 'auto' : 'smooth' });
         return;
       }
+      if (docked && !anims.length) return;              // header already matches the next page
       if (reduce.matches || !geo) return;               // plain navigation
       e.preventDefault(); leaving = true; handing = true;
-      var go = function () { location.href = url.href; };
-      if (anims.length) { anims.forEach(function (an) { an.finish(); }); }   // land any flight first
-      if (docked) swapText(false, go);                  // [sigil] Welcoming all of Life. → [sigil] Vinay Swaminathan
-      else handOff(false, go);                          // hero sigil rises; the name steps aside
+      fly(true, function () { location.href = url.href; });
     });
-    // Land a hand-off in the state it animated to; if the visitor scrolled
-    // meanwhile, carry on with the normal (animated) flight from there.
-    var settleHandOff = function (endDocked) {
-      [sFly, tFly, tfA, tfB, brandName, brandTag].forEach(function (el) { if (el.getAnimations) el.getAnimations().forEach(function (an) { an.cancel(); }); });
-      brandName.style.transform = brandName.style.transition = brandTag.style.transition = '';
+    var settle = function () {
+      cancelAll();
       handing = false;
-      docked = typeof endDocked === 'boolean' ? endDocked : past(false);
+      docked = past();
       rest(docked);
-      var want = past(docked);
-      if (want !== docked) { docked = want; fly(want); }
     };
     window.addEventListener('pageshow', function (e) {   // back to a cached homepage: settle cleanly
       if (!e.persisted) return;
-      leaving = false; token++; settleHandOff();
+      leaving = false; token++; settle();
     });
     var cameFromPage = false;
     try {
       var ref = document.referrer ? new URL(document.referrer) : null;
       cameFromPage = !!ref && ref.origin === location.origin && !isHome(ref.pathname);
     } catch (err) { cameFromPage = false; }
-    docked = past(false);
+    docked = past();
     rest(docked); measure();
-    if (cameFromPage && !reduce.matches) {
-      // Start exactly as the previous page ended: [sigil] Vinay Swaminathan.
+    if (cameFromPage && !reduce.matches && !docked && !location.hash) {
+      // Start as the previous page ended — [sigil] Vinay Swaminathan — then,
+      // once the page has settled, the sigil drops into the hero.
       handing = true;
-      heroSig.style.transition = 'none'; heroSig.style.opacity = '0';
-      brandImg.style.opacity = '1';
-      brandName.style.transition = 'none'; brandName.style.opacity = '1';
-      brandName.style.transform = 'translateX(' + SHIFT + 'px)';
+      rest(true);
       sigWrap.style.transition = 'none'; sigWrap.style.opacity = '1'; sigWrap.style.transform = 'none';
       var arrive = function () {
         measure();
-        if (!geo) return settleHandOff();
-        brandName.style.transform = '';
-        if (past(false)) {
-          docked = true;
-          var navType = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0] || {}).type;
-          if (location.hash || navType === 'back_forward' || navType === 'reload')
-            swapText(true, function () { settleHandOff(true); });     // landed part-way down: the name becomes the title
-          else
-            titleUp(function () { settleHandOff(true); });            // scrolled straight away: the title flies up
-        } else {                                         // at the top: the sigil settles into the hero
-          handOff(true, function () { settleHandOff(false); });
-        }
+        if (!geo || past()) return settle();
+        docked = true;
+        fly(false, function () { handing = false; docked = past(); if (docked) fly(true); });
       };
-      // Start only once the page has settled (backgrounds in, two quiet frames),
-      // so the hand-off never shares a frame with the page's own loading work.
       var whenSettled = function () {
         (typeof assetsReady !== 'undefined' ? assetsReady : Promise.resolve()).then(function () {
           window.requestAnimationFrame(function () { window.requestAnimationFrame(arrive); });

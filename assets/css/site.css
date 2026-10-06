@@ -1852,25 +1852,15 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
 
 /* Homepage header, docked state: [sigil] Welcoming all of Life. replaces the
    name (site.js flies both in from the hero). */
-.page-home .brand__tagline {
-  position: absolute; left: 40px; top: 50%; transform: translateY(-50%);
-  white-space: nowrap; opacity: 0; pointer-events: none;
-}
-.title-flight {
-  position: fixed; left: 0; top: 0; z-index: 61; margin: 0; pointer-events: none; visibility: hidden;
-  transform-origin: 0 0; will-change: transform, opacity; white-space: nowrap;
-}
 /* Homepage footer: just the copyright and Privacy & Scope. */
 .page-home .site-foot__brand { display: none; }
 .page-home .site-foot { grid-template-columns: 1fr 1fr; }
 /* Header pieces swap with the flying copies in the same frame: no CSS fades
    (a fade here showed as a flash at the end of every flight). */
-.page-home .brand img, .page-home .brand__name, .page-home .brand__tagline { transition: none; }
-/* The flight clones stay rendered (opacity 0) so their layers are already
+.page-home .brand img, .page-home .brand__name, /* The flight clones stay rendered (opacity 0) so their layers are already
    rasterised when the flight starts: no first-frame hitch. */
-.sigil-flight, .title-flight { visibility: visible; opacity: 0; backface-visibility: hidden; }
+.sigil-flight { visibility: visible; opacity: 0; backface-visibility: hidden; }
 .sigil-flight { filter: none; }   /* plain while flying: the glow filter cost a frame on Safari */
-.title-flight { text-shadow: none !important; }
 
 /* Header: the same translucent glass from the very top (no fully clear start). */
 .site-head, .site-head.is-scrolled {
@@ -1878,11 +1868,6 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
   -webkit-backdrop-filter: blur(22px) saturate(120%); backdrop-filter: blur(22px) saturate(120%);
 }
 /* Homepage docked header: "Welcoming all of Life." plain, all white. */
-.brand__tagline .hero-strong { font-weight: 400; }
-.brand__tagline .hero-gold { color: var(--text); }
-.title-flight .tf-b { position: absolute; left: 0; top: 0; opacity: 0; color: var(--text); }
-.title-flight .tf-b .hero-strong { font-weight: 400; }
-.title-flight .tf-b .hero-gold { color: var(--text); }
 
 /* Hover / focus on every CTA, button and menu item: a gold hue. */
 .btn:is(:hover, :focus-visible), .btn--solid:is(:hover, :focus-visible), .btn--outline:is(:hover, :focus-visible) {
@@ -1911,8 +1896,7 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
 .brand, .brand__name { white-space: nowrap; }
 @media (max-width: 420px) {
   .brand { font-size: clamp(.8rem, 5.2vw, 1.3rem); }
-  .page-home .brand__tagline { font-size: clamp(.74rem, 4.4vw, 1.05rem); }
-}
+  }
 /* Very narrow screens: the Menu button keeps just its icon (the label stays
    available to screen readers) so the name and title have room. */
 @media (max-width: 340px) {
@@ -2047,3 +2031,19 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 #scope .accordion > .accordion__body { margin-inline: auto; text-align: center; justify-items: center; }
 #scope .accordion__body .note { margin-inline: auto; border-left: 0; border-top: 2px solid rgba(200,161,90,.7); border-radius: 0 0 12px 12px; text-align: left; }
 #scope .accordion__body .muted { text-align: center; }
+
+/* Hero capacity line in gold. */
+.home-hero__trio .trio-word--gold { color: var(--accent-brass); }
+/* Approach principle titles: the gold word keeps the title's regular weight. */
+.page-approach main h3.pair__title .gold-accent { font-weight: 400; }
+/* Approach "Where change begins": no fill, a quiet outline like the FACE box. */
+.quad { background: transparent; gap: 0; border: 1px solid rgba(242,240,234,.18); border-radius: 16px; overflow: hidden; }
+.quad > div { background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.quad > div:nth-child(odd) { border-right: 1px solid rgba(242,240,234,.18); }
+.quad > div:nth-child(-n+2) { border-bottom: 1px solid rgba(242,240,234,.18); }
+/* "A challenge may need attention through" and the "Sometimes…" lines in full white. */
+.begin__intro, .begin__close { color: var(--text); }
+/* 1:1 Scope & Suitability label at the same size as Availability. */
+#scope .scope > .marker { font-size: clamp(.88rem, 3.8vw, 1rem); letter-spacing: .14em; }
+/* FACE behind its Read more: the component keeps its own centring. */
+.face-more > .accordion__body { max-width: none; }
