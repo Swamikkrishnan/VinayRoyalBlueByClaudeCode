@@ -2064,3 +2064,11 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 /* "We discover that together on an Alignment Call.": same size as the line
    above it, in the body typeface. */
 .statement-lead--sans { font-family: var(--sans); line-height: 1.35; }
+
+/* 1:1 Availability: the label and sessions always visible; the rest in a
+   standard disclosure. Label sized like Scope & Suitability. */
+#availability > .marker { font-size: clamp(.88rem, 3.8vw, 1rem); letter-spacing: .14em; }
+#availability .ruled { border-top: 1px solid var(--line); }
+#availability > .accordion { border-top: 0; }
+#scope .scope > .accordion { text-align: left; }
+#scope .scope > .accordion > summary { justify-items: start; }
