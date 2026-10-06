@@ -2363,11 +2363,10 @@ html.js .watermark:not(.bg-on) > :first-child::before { background-image: none; 
 #path .story-heading.story-heading { font-size: clamp(1.6rem, 2.2vw, 2.15rem); line-height: 1.25; }
 /* Homepage: quiet links stacked (1:1, then the Alignment Call). */
 .quiet-links--stack { flex-direction: column; align-items: flex-start; gap: 10px; }
-/* A page's closing invitation: a line, then the button. */
-.closing { display: grid; gap: var(--s-3); justify-items: start; margin-top: var(--s-4); padding-top: var(--s-4); border-top: 1px solid var(--warm-faint); }
-.closing-invite { font-family: var(--serif); font-size: clamp(1.25rem, 1.9vw, 1.6rem); line-height: 1.35; color: var(--text); max-width: 34ch; text-wrap: pretty; }
-.vision .closing { justify-items: center; text-align: center; }
-.vision .closing-invite { margin-inline: auto; }
+/* A page's closing invitation (Story, Background): its own centred section,
+   as Approach ends: one EB Garamond statement, then the button. */
+.cta-end__statement { font-family: var(--serif); font-weight: 400; font-size: clamp(1.6rem, 2.6vw, 2.35rem); line-height: 1.22; max-width: 27ch; margin-inline: auto; text-wrap: balance; }
+.cta-end .cta-pair { margin-top: var(--s-2); }
 
 /* Section strip on narrow screens: the "more" arrow sits in its own lane at
    the right; the chips scroll (and softly fade) within the space before it. */
