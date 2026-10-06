@@ -1990,7 +1990,17 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 .inline-accent { color: var(--body-emph, inherit); }
 :is(#body, #emotion, #action).offering,
 .doorway-list a:is([href$="#body"], [href$="#emotion"], [href$="#action"]) { --body-emph: var(--accent-brass); }
+/* Mind and Breath keep their blue (the five areas' own colour). */
+:is(#mind, #breath).offering,
+.doorway-list a:is([href$="#mind"], [href$="#breath"]) { --body-emph: var(--emphasis-blue); }
 :is(#mind, #breath).offering .gold-accent,
-.doorway-list a:is([href$="#mind"], [href$="#breath"]) .gold-accent { color: inherit; }
-.distilled .inline-accent, .inline-accent--roman { color: var(--emphasis-blue); }
+.doorway-list a:is([href$="#mind"], [href$="#breath"]) .gold-accent { color: var(--emphasis-blue); }
+/* Display and section-opening lines keep blue: Approach section intros,
+   serif section intros (e.g. "alignment"), Story's distilled line. */
+.distilled .inline-accent, .inline-accent--roman,
+.page-approach .lede .inline-accent,
+:is(.section-intro, .statement, .insight) .inline-accent { color: var(--emphasis-blue); }
 .flow-list li > span:first-child { color: var(--text); }
+
+/* A small subheading inside an opened Read more (Approach: "What this looks like practically"). */
+.accordion__subhead { font-family: var(--serif); font-size: var(--t-sub); font-weight: 600; line-height: 1.25; margin-top: var(--s-3); color: var(--text); }
