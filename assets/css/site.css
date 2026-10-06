@@ -2310,15 +2310,32 @@ html.js.motion-ready [data-reveal-img]:is(.editorial__media, .story__portrait) i
    Calm arrivals pass
    ========================================================================== */
 @media (max-width: 767px) {
-  /* Story and Background open with the words alone: on phones the opening
-     text holds the first screen, centred (a little above centre), and the
-     photograph begins just below it, arriving whole as the page is scrolled
-     rather than cut by the edge of the screen. */
-  .story__present,
-  #matters .editorial--hero > .stack {
-    min-height: calc(100svh - var(--section-y) - var(--hdr-offset));
-    align-content: center; padding-bottom: 6svh;
+  /* Story and Background on phones: the opening words and the photograph
+     share the first screen, whole. The opening is a column exactly as tall
+     as the visible screen below the header and section strip; the words
+     keep their natural size and the photograph takes the height that is
+     left (a calm landscape crop, never smaller than 150px or taller than
+     380px), so nothing is cut by the edge of the screen on any phone. */
+  main > :is(#path, #matters).page-hero:first-child { padding-top: calc(var(--hdr-offset) + 22px); }
+  #path .story__grid,
+  #matters .editorial--hero {
+    display: flex; flex-direction: column; justify-content: center; gap: 20px;
+    height: calc(100svh - var(--hdr-offset) - 22px - 62px); min-height: 0;   /* 62px: clear of the Get in touch button */
   }
+  @media (max-height: 600px) {
+    #path .story__grid, #matters .editorial--hero { height: calc(100svh - var(--hdr-offset) - 22px - 18px); }
+  }
+  #path .story__present, #matters .editorial--hero > .stack { flex: none; }
+  #path .story__portrait,
+  #matters .editorial--hero .editorial__media--person {
+    flex: 1 1 auto; min-height: 150px; max-height: 380px; width: 100%; margin: 0;
+  }
+  #path .story__portrait img,
+  #matters .editorial--hero .editorial__media--person img {
+    width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover;
+  }
+  #path .story__portrait img { object-position: 78% 62%; }
+  #matters .editorial--hero .editorial__media--person img { object-position: 50% 22%; }
 }
 @media (max-width: 599px) {
   /* "My name is Vinay Swaminathan." on one line on any phone. */
