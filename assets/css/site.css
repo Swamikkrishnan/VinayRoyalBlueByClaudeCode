@@ -2099,3 +2099,103 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 #scope .scope > .accordion { width: 100%; max-width: var(--measure); }
 #scope .accordion > .accordion__body, #scope .accordion__body .muted { margin-inline: 0; text-align: left; justify-items: start; }
 #scope .accordion__body .note { margin-inline: 0; border-top: 0; border-left: 2px solid rgba(200,161,90,.7); border-radius: 0 12px 12px 0; }
+
+/* ==========================================================================
+   Phones: transitions and field curation
+   Dark fields carry one of three textures (01 dark primary, 02 / 03 dark
+   secondary): .bg-1 is 01 and .bg-3 is 03 unless a section names another
+   with .m-d1 / .m-d2 / .m-d3. Every boundary uses the transition made for
+   exactly that pair, from the Compact set (a ~60px window) or, where the
+   incoming section carries .t-v2, the V2 set (a ~104px window). Each window
+   is the centre band of its image, straddling the seam as on desktop.
+   Desktop is unchanged.
+   ========================================================================== */
+@media (max-width: 767px) {
+  .m-d1 { --img: url("../vinay-brand-assets/bg-01-dark-primary-mobile.webp"); --veil: linear-gradient(rgba(10,16,32,.64), rgba(10,16,32,.64)); }
+  .m-d2 { --img: url("../vinay-brand-assets/bg-02-dark-secondary-mobile.webp"); --veil: linear-gradient(rgba(10,16,32,.5), rgba(10,16,32,.5)); }
+  .m-d3 { --img: url("../vinay-brand-assets/bg-03-dark-secondary-mobile.webp"); --veil: linear-gradient(rgba(10,16,32,.5), rgba(10,16,32,.5)); }
+  /* A field whose texture sits low (calm above, texture toward the foot). */
+  .bg-pos-lower { background-position: 0 0, 50% 88%; }
+  :is(.bg-1, .bg-2, .bg-3, .bg-4)::after,
+  :is(.bg-1, .bg-2, .bg-3, .bg-4) + :is(.bg-1, .bg-2, .bg-3, .bg-4)::before { --tar: .5926; --th2: 30px; }   /* compact: 640 / 1080 */
+  :is(.bg-1, .bg-2, .bg-3, .bg-4):has(+ .t-v2)::after, :is(.bg-1, .bg-2, .bg-3, .bg-4) + .t-v2::before { --tar: .8889; --th2: 52px; }        /* V2: 960 / 1080 */
+  /* Each half eases in across its whole height, so the field's own texture
+     dissolves into the transition rather than meeting it at an edge. */
+  .bg-1:has(+ .bg-2)::after, .bg-2:has(+ .bg-3)::after, .bg-3:has(+ .bg-4)::after, .bg-4:has(+ .bg-1)::after {
+    -webkit-mask: linear-gradient(to bottom, transparent, rgba(0,0,0,.55) 45%, #000); mask: linear-gradient(to bottom, transparent, rgba(0,0,0,.55) 45%, #000);
+  }
+  .bg-1 + .bg-2::before, .bg-2 + .bg-3::before, .bg-3 + .bg-4::before, .bg-4 + .bg-1::before {
+    -webkit-mask: linear-gradient(to bottom, #000, rgba(0,0,0,.55) 55%, transparent); mask: linear-gradient(to bottom, #000, rgba(0,0,0,.55) 55%, transparent);
+  }
+  :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1):has(+ .bg-2) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-01-dark-primary-to-light-primary-mobile-compact.webp"); }
+  :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1) + .bg-2 { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-01-dark-primary-to-light-primary-mobile-compact.webp"); }
+  :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1):has(+ .bg-2.t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-01-dark-primary-to-light-primary-mobile-tall.webp"); }
+  :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1) + .bg-2.t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-01-dark-primary-to-light-primary-mobile-tall.webp"); }
+  .bg-2:has(+ :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1)) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-primary-to-01-dark-primary-mobile-compact.webp"); }
+  .bg-2 + :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1) { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-primary-to-01-dark-primary-mobile-compact.webp"); }
+  .bg-2:has(+ :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1).t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-light-primary-to-01-dark-primary-mobile-tall.webp"); }
+  .bg-2 + :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1).t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-light-primary-to-01-dark-primary-mobile-tall.webp"); }
+  :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1):has(+ .bg-4) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-01-dark-primary-to-light-secondary-mobile-compact.webp"); }
+  :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1) + .bg-4 { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-01-dark-primary-to-light-secondary-mobile-compact.webp"); }
+  :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1):has(+ .bg-4.t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-01-dark-primary-to-light-secondary-mobile-tall.webp"); }
+  :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1) + .bg-4.t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-01-dark-primary-to-light-secondary-mobile-tall.webp"); }
+  .bg-4:has(+ :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1)) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-secondary-to-01-dark-primary-mobile-compact.webp"); }
+  .bg-4 + :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1) { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-secondary-to-01-dark-primary-mobile-compact.webp"); }
+  .bg-4:has(+ :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1).t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-light-secondary-to-01-dark-primary-mobile-tall.webp"); }
+  .bg-4 + :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1).t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-light-secondary-to-01-dark-primary-mobile-tall.webp"); }
+  .m-d2:has(+ .bg-2) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-02-dark-secondary-to-light-primary-mobile-compact.webp"); }
+  .m-d2 + .bg-2 { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-02-dark-secondary-to-light-primary-mobile-compact.webp"); }
+  .m-d2:has(+ .bg-2.t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-02-dark-secondary-to-light-primary-mobile-tall.webp"); }
+  .m-d2 + .bg-2.t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-02-dark-secondary-to-light-primary-mobile-tall.webp"); }
+  .bg-2:has(+ .m-d2) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-primary-to-02-dark-secondary-mobile-compact.webp"); }
+  .bg-2 + .m-d2 { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-primary-to-02-dark-secondary-mobile-compact.webp"); }
+  .bg-2:has(+ .m-d2.t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-light-primary-to-02-dark-secondary-mobile-tall.webp"); }
+  .bg-2 + .m-d2.t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-light-primary-to-02-dark-secondary-mobile-tall.webp"); }
+  .m-d2:has(+ .bg-4) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-02-dark-secondary-to-light-secondary-mobile-compact.webp"); }
+  .m-d2 + .bg-4 { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-02-dark-secondary-to-light-secondary-mobile-compact.webp"); }
+  .m-d2:has(+ .bg-4.t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-02-dark-secondary-to-light-secondary-mobile-tall.webp"); }
+  .m-d2 + .bg-4.t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-02-dark-secondary-to-light-secondary-mobile-tall.webp"); }
+  .bg-4:has(+ .m-d2) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-secondary-to-02-dark-secondary-mobile-compact.webp"); }
+  .bg-4 + .m-d2 { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-secondary-to-02-dark-secondary-mobile-compact.webp"); }
+  .bg-4:has(+ .m-d2.t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-light-secondary-to-02-dark-secondary-mobile-tall.webp"); }
+  .bg-4 + .m-d2.t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-light-secondary-to-02-dark-secondary-mobile-tall.webp"); }
+  :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3):has(+ .bg-2) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-03-dark-secondary-to-light-primary-mobile-compact.webp"); }
+  :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3) + .bg-2 { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-03-dark-secondary-to-light-primary-mobile-compact.webp"); }
+  :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3):has(+ .bg-2.t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-03-dark-secondary-to-light-primary-mobile-tall.webp"); }
+  :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3) + .bg-2.t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-03-dark-secondary-to-light-primary-mobile-tall.webp"); }
+  .bg-2:has(+ :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3)) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-primary-to-03-dark-secondary-mobile-compact.webp"); }
+  .bg-2 + :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3) { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-primary-to-03-dark-secondary-mobile-compact.webp"); }
+  .bg-2:has(+ :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3).t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-light-primary-to-03-dark-secondary-mobile-tall.webp"); }
+  .bg-2 + :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3).t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-light-primary-to-03-dark-secondary-mobile-tall.webp"); }
+  :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3):has(+ .bg-4) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-03-dark-secondary-to-light-secondary-mobile-compact.webp"); }
+  :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3) + .bg-4 { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-03-dark-secondary-to-light-secondary-mobile-compact.webp"); }
+  :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3):has(+ .bg-4.t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-03-dark-secondary-to-light-secondary-mobile-tall.webp"); }
+  :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3) + .bg-4.t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-03-dark-secondary-to-light-secondary-mobile-tall.webp"); }
+  .bg-4:has(+ :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3)) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-secondary-to-03-dark-secondary-mobile-compact.webp"); }
+  .bg-4 + :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3) { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-secondary-to-03-dark-secondary-mobile-compact.webp"); }
+  .bg-4:has(+ :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3).t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-light-secondary-to-03-dark-secondary-mobile-tall.webp"); }
+  .bg-4 + :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3).t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-light-secondary-to-03-dark-secondary-mobile-tall.webp"); }
+  .bg-1.home-hero:not(.m-d2, .m-d3):has(+ .bg-2) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-hero-home-mobile-v2-to-light-primary-mobile-compact.webp"); }
+  .bg-1.home-hero:not(.m-d2, .m-d3) + .bg-2 { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-hero-home-mobile-v2-to-light-primary-mobile-compact.webp"); }
+  .bg-1.home-hero:not(.m-d2, .m-d3):has(+ .bg-2.t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-hero-home-mobile-v2-to-light-primary-mobile-tall.webp"); }
+  .bg-1.home-hero:not(.m-d2, .m-d3) + .bg-2.t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-hero-home-mobile-v2-to-light-primary-mobile-tall.webp"); }
+  /* The privacy notice's #scope keeps the standard top space (the 1:1
+     page's tighter #scope rule is for its Scope & Suitability close). */
+  #scope.section:not(:has(> .scope)) { padding-top: max(var(--section-y), calc(var(--th2) + 6px)); }
+  /* Into the footer (01 dark primary). */
+  main > .bg-2:last-child { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-primary-to-01-dark-primary-mobile-compact.webp"); }
+  main > .bg-4:last-child { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-secondary-to-01-dark-primary-mobile-compact.webp"); }
+  main > :is(.bg-2, .bg-4):last-child::after { --tar: .5926; }
+  /* Content settles in a little sooner on phones. */
+  :root { --motion-text: 480ms; --motion-reflect: 480ms; }
+}
+/* A field whose texture is still loading stays covered, then fades in. */
+html.js :is(.bg-1, .bg-2, .bg-3, .bg-4).bg-pending { --cover: 1; }
+html.js .bg-pending .areas::before, html.js .bgt-pending::before, html.js .bgt-pending::after { opacity: 0; }
+/* Transition art is only requested once the textures on screen are in. */
+html.js:not(.assets-ready) :is(.bg-1, .bg-2, .bg-3, .bg-4)::before,
+html.js:not(.assets-ready) :is(.bg-1, .bg-2, .bg-3, .bg-4)::after { background-image: none; }
+html.js:not(.assets-ready) main > :is(.bg-1, .bg-2, .bg-3, .bg-4):not(:first-child) { background-image: var(--veil); }
+/* A photograph inside a figure that fades as a whole fades once, with it. */
+html.js.motion-ready [data-reveal-img] :is(.editorial__media, .story__portrait) img,
+html.js.motion-ready [data-reveal-img]:is(.editorial__media, .story__portrait) img { opacity: 1; transition: none; }

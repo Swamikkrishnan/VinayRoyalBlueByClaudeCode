@@ -342,30 +342,67 @@
   });
 
   /* ---------------------------------------------------------------------
-     1b. Background assets — preload only the textures this page uses (each
-         field, its transition art, the five-area connector), then add
-         .assets-ready so the CSS fades them in. A 1.3s cap means a slow or
-         failed request never leaves the page bare.
+     1b. Background assets — this page's textures only (each field, its
+         transition art, the five-area connector). The fields on screen load
+         first; .assets-ready follows them (capped at 1.3s so a slow network
+         never holds the page), then the transition art and the rest load in
+         page order. A field whose texture is still on its way stays covered
+         (.bg-pending), and transition art stays hidden (.bgt-pending), until
+         it lands and fades in, so nothing ever appears abruptly.
      --------------------------------------------------------------------- */
   var assetsReady = new Promise(function (resolve) {
-    var finish = function () { root.classList.add('assets-ready'); resolve(); };
-    setTimeout(finish, 1300);
-    var urls = {};
-    var collect = function (el, pseudo) {
-      var bi = window.getComputedStyle(el, pseudo).backgroundImage || '';
-      bi.replace(/url\(["']?([^"')]+)["']?\)/g, function (m, u) { urls[u] = true; return m; });
+    var done = false;
+    var finish = function () { if (done) return; done = true; root.classList.add('assets-ready'); resolve(); };
+    var cache = {};
+    var get = function (u) {
+      if (!cache[u]) cache[u] = new Promise(function (ok) { var im = new Image(); im.onload = im.onerror = ok; im.src = u; });
+      return cache[u];
     };
-    Array.prototype.forEach.call(document.querySelectorAll('.bg-1, .bg-2, .bg-3, .bg-4'), function (el) {
-      collect(el, null); collect(el, '::before'); collect(el, '::after');
-    });
-    Array.prototype.forEach.call(document.querySelectorAll('.areas'), function (el) { collect(el, '::before'); });
-    var list = Object.keys(urls), left = list.length;
-    if (!left) return finish();
-    list.forEach(function (u) {
-      var im = new Image();
-      im.onload = im.onerror = function () { if (--left === 0) finish(); };
-      im.src = u;
-    });
+    var URL_RE = /url\(["']?([^"')]+)["']?\)/g;
+    var urls = function (text, base, into) {
+      (text || '').replace(URL_RE, function (m, u) { u = new URL(u, base).href; if (into.indexOf(u) < 0) into.push(u); return m; });
+      return into;
+    };
+    var sheet = document.querySelector('link[rel="stylesheet"][href*="site.css"]');
+    var cssBase = sheet ? sheet.href : location.href;
+    // A field's own texture (and its five-area connector)...
+    var ownOf = function (el) {
+      var list = urls(getComputedStyle(el).getPropertyValue('--img'), cssBase, []);
+      Array.prototype.forEach.call(el.querySelectorAll('.areas'), function (n) { urls(getComputedStyle(n, '::before').backgroundImage, location.href, list); });
+      return list;
+    };
+    // ...and its transition art. CSS only requests the art, and the textures
+    // below the first field, from .assets-ready on, so the opening texture has
+    // the connection to itself (custom properties keep stylesheet-relative URLs).
+    var artOf = function (el) {
+      var list = [];
+      [['::before', '--t-in'], ['::after', '--t-out']].forEach(function (pv) {
+        var cs = getComputedStyle(el, pv[0]);
+        if (cs.content !== 'none') urls(cs.getPropertyValue(pv[1]), cssBase, list);
+      });
+      return list;
+    };
+    var fields = Array.prototype.slice.call(document.querySelectorAll('.bg-1, .bg-2, .bg-3, .bg-4'));
+    var onScreen = function (el) { var r = el.getBoundingClientRect(); return r.top < window.innerHeight && r.bottom > 0; };
+    var first = fields.filter(onScreen);
+    var track = function (el, list, cls) {
+      return Promise.all(list.map(get)).then(function () { el.classList.remove(cls); el['_' + cls] = true; });
+    };
+    var started = false;
+    var later = function () {
+      if (started) return; started = true;
+      fields.forEach(function (el) {
+        if (!el['_bg-pending']) el.classList.add('bg-pending');
+        el.classList.add('bgt-pending');
+      });
+      // on screen first, then the rest of the page in order
+      first.concat(fields.filter(function (el) { return first.indexOf(el) < 0; })).forEach(function (el) {
+        track(el, ownOf(el), 'bg-pending');
+        track(el, artOf(el), 'bgt-pending');
+      });
+    };
+    setTimeout(function () { finish(); later(); }, 1300);
+    Promise.all(first.map(function (el) { return track(el, ownOf(el), 'bg-pending'); })).then(function () { finish(); later(); });
   });
 
   // Photographs keep their space and fade in once decoded (CSS holds them at 0).
@@ -477,24 +514,16 @@
         if (wait > 0) setTimeout(go, wait); else go();
       });
     };
-    var opening = true;                       // until the opening pass has run
-    var endOpening = function () {
-      if (!opening) return;
-      opening = false;
-      targets.forEach(function (el) {                    // anything scrolled to meanwhile
-        if (el.hasAttribute('data-reveal-img') || el.classList.contains('is-in')) return;
-        var b = el.getBoundingClientRect();
-        if (b.top < window.innerHeight * 0.88 && b.bottom > 0) { if (el.hasAttribute('data-seq')) reveal(el); else revealSection(el); }
-      });
-    };
+    // One observer, started only once the opening pass has run, so its first
+    // report is the page as it actually stands (including a scroll position
+    // the browser restored on refresh). Each target is revealed once.
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
-        if (opening && !entry.target.hasAttribute('data-seq')) return;  // handled by the opening pass
         if (entry.target.hasAttribute('data-seq')) reveal(entry.target); else revealSection(entry.target);
         io.unobserve(entry.target);
       });
-    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.05 });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
     // Photos start a little earlier.
     var photoIO = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
@@ -503,47 +532,37 @@
         photoIO.unobserve(entry.target);
       });
     }, { rootMargin: '0px 0px 4% 0px', threshold: 0 });
-    targets.forEach(function (el) {
-      if (!el.hasAttribute('data-reveal-img')) io.observe(el);
-      else photoIO.observe(el);
-    });
-    // Anything already on screen arrives without waiting for a scroll: the
-    // page opening (data-seq) first, then any section below it that is also
-    // in view, after the opening has had its moment.
-    // The opening waits for the page to settle (web fonts and the first heavy
-    // frame of layout and image decoding), so its first fade is never lost in
-    // a dropped frame. T0 marks the moment it begins.
+    var observe = function () {
+      targets.forEach(function (el) {
+        if (el.hasAttribute('data-reveal-img')) { photoIO.observe(el); return; }
+        if (el.classList.contains('is-in')) return;
+        // Already scrolled past (a restored position or a jump link): shown
+        // as it is, off screen, so scrolling back never finds it waiting.
+        if (el.getBoundingClientRect().bottom <= 0) { reveal(el); return; }
+        io.observe(el);
+      });
+    };
+    // The opening starts from one state: .assets-ready (this page's textures
+    // loaded, capped at 1.3s), then two frames so its first fade is never lost
+    // in a heavy frame. Texture first, then the words: the homepage hero lets
+    // its background fade most of the way in before the sigil appears.
     var afterSettle = function (fn) {
-      var go = function () { window.requestAnimationFrame(function () { window.requestAnimationFrame(fn); }); };
-      var done = false, once = function () {
-        if (done) return; done = true;
-        // Texture first, then the words. The homepage hero lets its background
-        // fade most of the way in before the sigil appears.
-        assetsReady.then(function () { setTimeout(go, document.querySelector('.page-home') ? 420 : 180); });
-      };
-      // The first heavy frame ends just before the load event; cap the wait
-      // so a slow image never holds the opening back.
-      if (document.readyState === 'complete') once();
-      else window.addEventListener('load', once, { once: true });
-      setTimeout(once, 900);
+      assetsReady.then(function () {
+        setTimeout(function () {
+          window.requestAnimationFrame(function () { window.requestAnimationFrame(fn); });
+        }, document.querySelector('.page-home') ? 420 : 180);
+      });
     };
     afterSettle(function () {
       T0 = performance.now();
-      setTimeout(endOpening, OPENING_PHOTO + 150);
       var seqShown = false;
       targets.forEach(function (el) {
-        if (el.hasAttribute('data-reveal-img')) return;   // photos have their own path
+        if (el.hasAttribute('data-reveal-img') || !el.hasAttribute('data-seq')) return;   // photos have their own path
         var b = el.getBoundingClientRect();
-        if (!(b.top < window.innerHeight && b.bottom > 0)) return;
-        if (el.hasAttribute('data-seq')) { reveal(el); seqShown = true; }
+        if (b.top < window.innerHeight && b.bottom > 0) { reveal(el); seqShown = true; }
       });
-      setTimeout(function () {
-        targets.forEach(function (el) {
-          if (el.hasAttribute('data-reveal-img') || el.hasAttribute('data-seq')) return;
-          var b = el.getBoundingClientRect();
-          if (b.top < window.innerHeight && b.bottom > 0) revealSection(el);
-        });
-      }, seqShown ? SEQ_STEP * Math.max(0, Math.min(seqCount, 5) - 1) : 0);   // as the last opening line begins
+      // Then everything else in view, top to bottom, as the last opening line begins.
+      setTimeout(observe, seqShown ? SEQ_STEP * Math.max(0, Math.min(seqCount, 5) - 1) : 0);
     });
     // Safety net: text already scrolled past (e.g. after a jump link) is never
     // left invisible. Content further down keeps its normal fade.
