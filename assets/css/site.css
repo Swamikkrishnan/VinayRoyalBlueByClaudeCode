@@ -1925,3 +1925,5 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
 .page-home .site-foot__copy, .page-home .site-foot__privacy { max-width: none; }
 @media (max-width: 300px) { .site-foot__privacy { white-space: normal; } }
 @media (max-width: 300px) { .accordion--label > summary .marker { white-space: normal; } }   /* "Scope & Suitability" may wrap only on the very narrowest screens */
+/* Hero subtitle lines: the same size as the next section's opening line. */
+.home-hero__lead, .home-hero__trio { font-size: var(--t-lede); line-height: 1.5; }
