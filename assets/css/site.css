@@ -1985,9 +1985,6 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 :is(.section-intro, .statement, .insight) .inline-accent { color: var(--emphasis-blue); }
 .flow-list li > span:first-child { color: var(--text); }
 
-/* A small subheading inside an opened Read more (Approach: "What this looks like practically"). */
-.accordion__subhead { font-family: var(--serif); font-size: var(--t-sub); font-weight: 600; line-height: 1.25; margin-top: var(--s-3); color: var(--text); }
-
 /* Homepage Five Areas (mock-up): the description leads; the area name becomes
    a small label in the area's own colour above it. */
 .page-home .doorway-list .doorway-list__name {
