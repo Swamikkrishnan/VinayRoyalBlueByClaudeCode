@@ -201,6 +201,10 @@
     try {
       var ref = document.referrer ? new URL(document.referrer) : null;
       cameFromPage = !!ref && ref.origin === location.origin && !isHome(ref.pathname);
+      // Only a real link click from another page counts: a refresh or Back /
+      // Forward keeps the old referrer, but should open like a fresh visit.
+      var nav = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || {};
+      if (nav.type && nav.type !== 'navigate') cameFromPage = false;
     } catch (err) { cameFromPage = false; }
     docked = past();
     rest(docked); measure();
