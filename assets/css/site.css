@@ -2038,3 +2038,12 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 .inline-accent.is-blue { color: #5DB8F0; }
 /* A Read more that holds a list of rows: no double rule at the top. */
 .accordion__body > .accordion-group:first-child { border-top: 0; }
+
+/* 1:1 Scope & Suitability: the section label and its first line always
+   visible; the limits sit in a "What it is not" disclosure. */
+#scope .scope { justify-items: center; text-align: center; }
+#scope .scope__lead { max-width: var(--measure); margin-inline: auto; color: var(--text); text-wrap: balance; }
+#scope .scope > .accordion { width: 100%; max-width: var(--measure); }
+#scope .accordion > .accordion__body { margin-inline: auto; text-align: center; justify-items: center; }
+#scope .accordion__body .note { margin-inline: auto; border-left: 0; border-top: 2px solid rgba(200,161,90,.7); border-radius: 0 0 12px 12px; text-align: left; }
+#scope .accordion__body .muted { text-align: center; }
