@@ -1933,3 +1933,25 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
 /* Homepage hero opening: background, then sigil, then title, then subtitle;
    each hero element takes 777ms (order set by data-seq-at in index.html). */
 .js.motion-ready .home-hero [data-seq].is-in { transition-duration: 777ms; }
+
+/* ==========================================================================
+   Negative-space pass (phones). Same hierarchy and focal points, less slack:
+   display ≈29px and headings ≈25px (body stays 17px / 1.5), the standard
+   gap 24→20px, a shorter transition seam, and tighter accordion rows.
+   ========================================================================== */
+@media (max-width: 599px) {
+  :root {
+    --t-display: clamp(1.75rem, 7.4vw, 2.1rem);
+    --t-heading: clamp(1.45rem, 6.3vw, 1.65rem);
+    --s-3: 1.25rem;
+  }
+  .accordion > summary { min-height: 48px; padding: 12px 0; }
+  .doorway-list, .summary-list { --tile-arrow-inset: 24px; }
+}
+@media (max-width: 767px) {
+  .bg-1, .bg-2, .bg-3, .bg-4 { --th: 60px; }
+}
+@media (max-width: 599px) { .areas { margin-top: calc(40px - var(--s-3)); margin-bottom: calc(30px - var(--s-3)); } }
+/* Phones: intro paragraphs use the full text width (their desktop line-length
+   caps only left an empty band on the right and added lines). */
+@media (max-width: 599px) { .lede, .why .lede, .lede--wide { max-width: none; } }
