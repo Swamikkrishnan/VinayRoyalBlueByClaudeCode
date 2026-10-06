@@ -101,6 +101,14 @@
     // Two layers: the hero's styling fades into the header's plain white as it docks.
     tFly.innerHTML = '<span class="tf-a">' + heroTitle.innerHTML + '</span><span class="tf-b">' + heroTitle.innerHTML + '</span>';
     var tfA = tFly.firstChild, tfB = tFly.lastChild;
+    // Dock once most of the hero has scrolled away (past its midpoint); come
+    // back once the visitor has scrolled up to ~40% of it. The gap between
+    // the two keeps it from flickering near the middle.
+    var heroEl = document.querySelector('.page-home .home-hero');
+    var past = function (current) {
+      var h = heroEl ? heroEl.offsetHeight : window.innerHeight;
+      return window.scrollY > h * (current ? .4 : .5);
+    };
     document.body.appendChild(sFly); document.body.appendChild(tFly);
     var geo = null, docked = false, anims = [], token = 0, tick = false, handing = false, pendingFly = null;
     var textRect = function (el) { var r = document.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect(); };
@@ -168,7 +176,7 @@
       anims.push(tfB.animate([{ opacity: 1 - aFrom }, { opacity: toDock ? 1 : 0 }], { duration: DUR, fill: 'forwards' }));
       // The name gives way in the first half of a dock and returns in the second half of an undock.
       anims.push(brandName.animate([{ opacity: nFrom }, { opacity: toDock ? 0 : 1 }],
-                                   { duration: DUR * .55, delay: toDock ? 0 : DUR * .45, fill: 'both' }));
+                                   { duration: DUR * .5, delay: toDock ? (fadeUp ? DUR * .4 : 0) : DUR * .45, fill: 'both' }));   // if the title is still fading up, the name waits for it
       anims[0].onfinish = function () {
         if (my !== token) return;
         anims.forEach(function (an) { an.cancel(); }); anims = [];
@@ -178,7 +186,7 @@
     var check = function () {
       tick = false;
       if (handing) return;                           // a page hand-off is running; it settles itself
-      var want = window.scrollY > 2;
+      var want = past(docked);
       if (want !== docked) { docked = want; fly(want); }
     };
     window.addEventListener('scroll', function () {
@@ -261,9 +269,9 @@
       [sFly, tFly, tfA, tfB, brandName, brandTag].forEach(function (el) { if (el.getAnimations) el.getAnimations().forEach(function (an) { an.cancel(); }); });
       brandName.style.transform = brandName.style.transition = brandTag.style.transition = '';
       handing = false;
-      docked = typeof endDocked === 'boolean' ? endDocked : window.scrollY > 2;
+      docked = typeof endDocked === 'boolean' ? endDocked : past(false);
       rest(docked);
-      var want = window.scrollY > 2;
+      var want = past(docked);
       if (want !== docked) { docked = want; fly(want); }
     };
     window.addEventListener('pageshow', function (e) {   // back to a cached homepage: settle cleanly
@@ -275,7 +283,7 @@
       var ref = document.referrer ? new URL(document.referrer) : null;
       cameFromPage = !!ref && ref.origin === location.origin && !isHome(ref.pathname);
     } catch (err) { cameFromPage = false; }
-    docked = window.scrollY > 2;
+    docked = past(false);
     rest(docked); measure();
     if (cameFromPage && !reduce.matches) {
       // Start exactly as the previous page ended: [sigil] Vinay Swaminathan.
@@ -289,7 +297,7 @@
         measure();
         if (!geo) return settleHandOff();
         brandName.style.transform = '';
-        if (window.scrollY > 2) {
+        if (past(false)) {
           docked = true;
           var navType = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0] || {}).type;
           if (location.hash || navType === 'back_forward' || navType === 'reload')
