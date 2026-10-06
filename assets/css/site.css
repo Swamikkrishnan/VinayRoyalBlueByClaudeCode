@@ -1927,3 +1927,6 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
 @media (max-width: 300px) { .accordion--label > summary .marker { white-space: normal; } }   /* "Scope & Suitability" may wrap only on the very narrowest screens */
 /* Hero subtitle lines: the same size as the next section's opening line. */
 .home-hero__lead, .home-hero__trio { font-size: var(--t-lede); line-height: 1.5; }
+/* Small gold section labels (WHY WELCOME?, WHAT IS THE WORK?, …): no rule after them. */
+.marker::after, .eyebrow::after, .marker--center::before,
+.marked > :is(.marker, .eyebrow)::after { content: none; display: none; }
