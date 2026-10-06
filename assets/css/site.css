@@ -2292,41 +2292,36 @@ html.js.motion-ready [data-reveal-img]:is(.editorial__media, .story__portrait) i
    ========================================================================== */
 @media (max-width: 767px) {
   /* Story and Background on phones: the opening words and the photograph
-     share the first screen, whole. The opening is a column exactly as tall
-     as the visible screen below the header and section strip; the words
-     keep their natural size and the photograph takes the height that is
-     left (a calm landscape crop, never smaller than 150px or taller than
-     380px), so nothing is cut by the edge of the screen on any phone. */
-  main > :is(#path, #matters).page-hero:first-child { padding-top: calc(var(--hdr-offset) + 14px); }   /* the opening starts just under the nav */
+     share the first screen, whole, below a heading that starts where every
+     page's does (Group Experiences' line). The opening is two rows exactly
+     as tall as the rest of the screen: the words at their natural size, the
+     photograph in the height that is left (150-380px). Photographs are
+     cropped from the bottom only: the top of each picture always shows. */
   #path .story__grid,
   #matters .editorial--hero {
-    display: flex; flex-direction: column; justify-content: flex-start; gap: 20px;   /* the words start high; any spare room falls below */
-    height: calc(100svh - var(--hdr-offset) - 14px - 18px); min-height: 0;
-    gap: 28px;   /* a little more air between the words and the photograph */
+    display: grid; grid-template-rows: auto minmax(110px, 1fr); align-content: start; gap: 28px;   /* 110px: still whole on the shortest phones */
+    height: calc(100svh - var(--section-y) - var(--hdr-offset) - 18px); min-height: 0;
   }
-  #path .story__present, #matters .editorial--hero > .stack { flex: none; }
   #path .story__portrait,
-  #matters .editorial--hero .editorial__media--person {
-    flex: 1 1 auto; min-height: 150px; max-height: 380px; width: 100%; margin: 0;
-  }
+  #matters .editorial--hero .editorial__media--person { height: 100%; max-height: 380px; min-height: 0; margin: 0; }
   #path .story__portrait img,
-  #matters .editorial--hero .editorial__media--person img {
-    width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover;
-  }
-  /* Story: a landscape window over the valley, the ledge and the figure,
-     kept below the tree canopy (the top ~38% of the photograph). */
-  /* The window always begins 39% down the photograph, wherever its foot
-     falls (the image is width-fitted, 1280/778 tall), so it can grow with
-     the screen and never reach the canopy; the figure stays in frame. */
-  #path .story__portrait { max-height: calc((100vw - 2 * var(--gutter)) * .85); }   /* to ~91%: not all rock on tall screens */
-  #path .story__portrait img { object-position: 78% calc((100vw - 2 * var(--gutter)) * 1280 / 778 * -.39); }
-  /* Tighter opening lines, so the photograph has more room. */
+  #matters .editorial--hero .editorial__media--person img { width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; object-position: 50% 0%; }
+  /* Story: from the top of the picture down past the seated figure (about
+     62% of its height), so the frame is nearly square and only the rock
+     below is cropped; its width follows the height the screen allows. */
+  #path .story__portrait { aspect-ratio: 778 / 794; width: auto; max-width: 100%; justify-self: start; }
+  /* Background: full width. */
+  #matters .editorial--hero .editorial__media--person { width: 100%; }
+  /* Tighter opening lines, so the photographs have more room. */
   #path .story__present { gap: 12px; }
   #matters .editorial--hero > .stack { gap: 12px; }
   #matters .editorial--hero .prose { gap: 10px; }
   #matters .editorial--hero .prose > * + * { margin-top: 0; }
   #matters .editorial--hero .prose > .eyebrow + * { margin-top: 6px; }
-  #matters .editorial--hero .editorial__media--person img { object-position: 50% 0%; }   /* top-anchored: the head is never cropped */
+}
+@media (max-width: 1099px) {
+  /* Pages without a section strip open on the same line as those with one. */
+  body:not(.has-subnav) main > .page-hero:first-child { padding-top: calc(var(--section-y) + var(--header-h) + 51px); }
 }
 @media (max-width: 599px) {
   /* "My name is Vinay Swaminathan." on one line on any phone. */
@@ -2345,7 +2340,35 @@ html.js .watermark:not(.bg-on) > :first-child::before { background-image: none; 
 .nav__link--contact { display: inline-flex; align-items: center; gap: 8px; margin-left: 6px; color: var(--accent-brass); }
 .nav__link--contact::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--accent-brass); box-shadow: 0 0 8px rgba(200,161,90,.5); }
 .nav__link--contact:hover, .nav__link--contact:focus-visible { color: var(--text); }
-.quiet-invite { margin-top: var(--s-3); }
-.vision .quiet-invite { text-align: center; }
 /* Homepage: a little more air between "My name is…" and the portrait. */
 @media (max-width: 767px) { #meet-vinay .editorial__head { margin-bottom: 13px; } }
+
+/* Photographs are cropped from the bottom only: the top always shows. */
+.editorial__media--person img, .editorial--hero .editorial__media--person img { object-position: 50% 0%; }
+.story__portrait img { object-position: 80% 0%; }
+@media (min-width: 768px) {
+  #path .story__grid { align-items: start; }   /* the heading starts on every page's line */
+}
+@container (min-width: 800px) {
+  /* Background, wide: the words start on every page's line; the photograph
+     is tall enough to keep the hands, cropped from the bottom only. */
+  #matters .editorial--hero { align-items: start; }
+  #matters .editorial--hero .editorial__media--person { min-height: 440px; }
+}
+/* Story: the opening lines at the size of Group Experiences' opening line. */
+#path .story-heading.story-heading { font-size: clamp(1.6rem, 2.2vw, 2.15rem); line-height: 1.25; }
+/* Homepage: quiet links stacked (1:1, then the Alignment Call). */
+.quiet-links--stack { flex-direction: column; align-items: flex-start; gap: 10px; }
+/* A page's closing invitation: a line, then the button. */
+.closing { display: grid; gap: var(--s-3); justify-items: start; margin-top: var(--s-4); padding-top: var(--s-4); border-top: 1px solid var(--warm-faint); }
+.closing-invite { font-family: var(--serif); font-size: clamp(1.25rem, 1.9vw, 1.6rem); line-height: 1.35; color: var(--text); max-width: 34ch; text-wrap: pretty; }
+.vision .closing { justify-items: center; text-align: center; }
+.vision .closing-invite { margin-inline: auto; }
+
+/* Section strip on narrow screens: the "more" arrow sits in its own lane at
+   the right; the chips scroll (and softly fade) within the space before it. */
+@media (max-width: 1099px) {
+  .subnav.has-lane ul { margin-right: 44px; padding-right: 12px; scroll-padding-inline: 20px 12px; }
+  .subnav.has-lane.has-more ul { -webkit-mask: linear-gradient(90deg, #000 calc(100% - 22px), transparent); mask: linear-gradient(90deg, #000 calc(100% - 22px), transparent); }
+  .subnav.has-lane.has-more.is-scrolled ul { -webkit-mask: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 22px), transparent); mask: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 22px), transparent); }
+}

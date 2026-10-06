@@ -709,6 +709,12 @@
     subnav.appendChild(more);
     var markBar = function () {
       var max = bar.scrollWidth - bar.clientWidth;
+      // When the chips overflow, the arrow gets its own lane (CSS): the
+      // strip ends before it, so no chip ever slides underneath. The lane
+      // stays while the strip overflows, so nothing shifts at the end.
+      var lane = subnav.classList.contains('has-lane') ? 44 : 0;
+      subnav.classList.toggle('has-lane', max + lane > 4);
+      max = bar.scrollWidth - bar.clientWidth;
       subnav.classList.toggle('has-more', max > 4 && bar.scrollLeft < max - 4);
       subnav.classList.toggle('is-scrolled', bar.scrollLeft > 4);
     };
