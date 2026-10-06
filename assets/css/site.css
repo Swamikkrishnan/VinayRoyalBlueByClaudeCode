@@ -2072,3 +2072,7 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 #availability > .accordion { border-top: 0; }
 #scope .scope > .accordion { text-align: left; }
 #scope .scope > .accordion > summary { justify-items: start; }
+
+/* The Work: "Where life is stuck," in the body face on its own line, then
+   "we create movement." in the display face with the verb in bold. */
+.begin__statements .begin__lead { display: block; font-family: var(--sans); font-size: .62em; line-height: 1.35; margin-bottom: .1em; color: var(--text); }
