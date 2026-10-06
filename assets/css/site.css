@@ -1982,3 +1982,15 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 @media (max-width: 768px) { :root { --section-y: 46px; } }
 :is(.statement-lead, .display-statement, .section-intro, .lede, .prose) + :is(.doorway-list, .summary-list, .offering-list, .accordion-group, .pair, .quad, .areas, figure, .face),
 .stack > :is(.statement-lead, .lede) + .stack { margin-top: var(--s-2); }
+
+/* Running text never uses blue (blue italic in a paragraph reads as a link):
+   its highlights are plain italic, or gold where the area is gold. Blue stays
+   for headlines and display lines (display-accent, the hero trio, Story's
+   distilled line) and for icons and controls. */
+.inline-accent { color: var(--body-emph, inherit); }
+:is(#body, #emotion, #action).offering,
+.doorway-list a:is([href$="#body"], [href$="#emotion"], [href$="#action"]) { --body-emph: var(--accent-brass); }
+:is(#mind, #breath).offering .gold-accent,
+.doorway-list a:is([href$="#mind"], [href$="#breath"]) .gold-accent { color: inherit; }
+.distilled .inline-accent, .inline-accent--roman { color: var(--emphasis-blue); }
+.flow-list li > span:first-child { color: var(--text); }
