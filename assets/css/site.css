@@ -1930,3 +1930,6 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
 /* Small gold section labels (WHY WELCOME?, WHAT IS THE WORK?, …): no rule after them. */
 .marker::after, .eyebrow::after, .marker--center::before,
 .marked > :is(.marker, .eyebrow)::after { content: none; display: none; }
+/* Homepage hero opening: background, then sigil, then title, then subtitle;
+   each hero element takes 777ms (order set by data-seq-at in index.html). */
+.js.motion-ready .home-hero [data-seq].is-in { transition-duration: 777ms; }

@@ -102,7 +102,7 @@
     tFly.innerHTML = '<span class="tf-a">' + heroTitle.innerHTML + '</span><span class="tf-b">' + heroTitle.innerHTML + '</span>';
     var tfA = tFly.firstChild, tfB = tFly.lastChild;
     document.body.appendChild(sFly); document.body.appendChild(tFly);
-    var geo = null, docked = false, anims = [], token = 0, tick = false, handing = false;
+    var geo = null, docked = false, anims = [], token = 0, tick = false, handing = false, pendingFly = null;
     var textRect = function (el) { var r = document.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect(); };
     var measure = function () {
       if (anims.length) return;                       // never re-measure mid-flight
@@ -117,6 +117,7 @@
         t: { x: hr.left, y: hr.top + y, k: kt, tx: gr.left, ty: gr.top + gr.height / 2 - hr.height * kt / 2 }
       };
       sFly.style.width = sr.width + 'px'; sFly.style.height = sr.height + 'px';
+      if (pendingFly !== null) { var d = pendingFly; pendingFly = null; fly(d); }   // a scroll that came before we could measure
     };
     var at = function (g, home) {
       return home ? 'translate3d(' + g.x + 'px,' + (g.y - window.scrollY) + 'px,0) scale(1)'
@@ -131,17 +132,27 @@
     };
     var fly = function (toDock) {
       if (!geo) measure();
-      if (!geo || reduce.matches) return rest(toDock);   // reduced motion: a simple swap
+      if (reduce.matches) return rest(toDock);           // reduced motion: a simple swap
+      if (!geo) { pendingFly = toDock; return; }         // not measurable yet: fly as soon as it is
       var my = ++token;
+      // Scrolled during the opening: the copies start at however far the hero
+      // sigil and title have faded in, and the hero's opening is completed
+      // underneath so nothing replays or pops later.
+      var sO = +window.getComputedStyle(sigWrap).opacity, tO = +window.getComputedStyle(heroTitle).opacity;
+      [sigWrap, heroTitle].forEach(function (el) { el.style.transition = 'none'; el.classList.add('is-in'); });
       heroSig.style.transition = heroTitle.style.transition = 'none';   // the swap with the clones must be instant
       var froms = [sFly, tFly].map(function (el, i) {    // pick up mid-flight if reversing
         return anims.length ? window.getComputedStyle(el).transform : at(i ? geo.t : geo.s, toDock);
       });
+      froms.mid = anims.length > 0;
+      if (froms.mid) { sO = tO = 1; }
       var aFrom = +(anims.length ? window.getComputedStyle(tfA).opacity : (toDock ? 1 : 0));
       anims.forEach(function (an) { an.cancel(); }); anims = [];
       heroSig.style.opacity = heroTitle.style.opacity = '0';
       brandImg.style.opacity = brandTag.style.opacity = '0';
-      sFly.style.opacity = tFly.style.opacity = '1';
+      var fadeUp = toDock && !froms.mid && (sO < .99 || tO < .99);
+      sFly.style.opacity = fadeUp ? String(sO) : '1';     // first frame already at the hero's own opacity
+      tFly.style.opacity = fadeUp ? String(tO) : '1';
       sigWrap.style.setProperty('--glow-o', toDock ? '0' : '1');
       var nFrom = +window.getComputedStyle(brandName).opacity;
       anims = [sFly, tFly].map(function (el, i) {
@@ -149,6 +160,10 @@
         return el.animate([{ transform: froms[i] }, { transform: at(i ? geo.t : geo.s, !toDock) }],
                           { duration: DUR, easing: EASE, fill: 'forwards' });
       });
+      if (fadeUp) {          // fade the copies up while they fly
+        anims.push(sFly.animate([{ opacity: sO }, { opacity: 1, offset: .45 }, { opacity: 1 }], { duration: DUR, fill: 'forwards' }));
+        anims.push(tFly.animate([{ opacity: tO }, { opacity: 1, offset: .45 }, { opacity: 1 }], { duration: DUR, fill: 'forwards' }));
+      }
       anims.push(tfA.animate([{ opacity: aFrom }, { opacity: toDock ? 0 : 1 }], { duration: DUR, fill: 'forwards' }));
       anims.push(tfB.animate([{ opacity: 1 - aFrom }, { opacity: toDock ? 1 : 0 }], { duration: DUR, fill: 'forwards' }));
       // The name gives way in the first half of a dock and returns in the second half of an undock.
@@ -426,7 +441,9 @@
     document.querySelectorAll('main section').forEach(function (sec) {
       var lines = sec.querySelectorAll('[data-seq]');
       if (lines.length && !seqCount) seqCount = lines.length;
-      lines.forEach(function (el, i) { el.style.setProperty('--sd', (i * SEQ_STEP) + 'ms'); });
+      // A line may name its own moment (data-seq-at, ms): the homepage hero runs
+      // sigil, then title, then subtitle, whatever the DOM order.
+      lines.forEach(function (el, i) { el.style.setProperty('--sd', (el.hasAttribute('data-seq-at') ? +el.getAttribute('data-seq-at') : i * SEQ_STEP) + 'ms'); });
     });
     var OPENING_PHOTO = SEQ_STEP * Math.max(0, Math.min(seqCount, 5) - 1) + 160;  // after the last line starts (from T0)
     // Stagger index for list / grid items (capped so long lists stay calm).
@@ -519,7 +536,9 @@
       var go = function () { window.requestAnimationFrame(function () { window.requestAnimationFrame(fn); }); };
       var done = false, once = function () {
         if (done) return; done = true;
-        assetsReady.then(function () { setTimeout(go, 180); });   // texture first, then the words
+        // Texture first, then the words. The homepage hero lets its background
+        // fade most of the way in before the sigil appears.
+        assetsReady.then(function () { setTimeout(go, document.querySelector('.page-home') ? 420 : 180); });
       };
       // The first heavy frame ends just before the load event; cap the wait
       // so a slow image never holds the opening back.
