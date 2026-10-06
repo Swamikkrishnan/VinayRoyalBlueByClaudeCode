@@ -2087,7 +2087,15 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
    as Availability has. */
 #availability { gap: var(--s-2); }
 #availability .availability__line { color: var(--text); text-align: center; }
-#availability > .accordion { border-top: 0; margin-top: calc(5px - var(--s-2)); }
+#availability > .accordion { border-top: 1px solid var(--line); margin-top: 0; }
 #alignment.section { padding-bottom: 0; }
 #scope.section { padding-top: 30px; }
 @media (min-width: 769px) { #scope.section { padding-top: calc(var(--section-y) - 10px); } }
+
+/* 1:1 Availability and Scope & Suitability: left-aligned, like the rest of the page. */
+#availability .availability__line { text-align: left; }
+#scope .scope { justify-items: start; text-align: left; }
+#scope .scope__lead { margin-inline: 0; text-wrap: pretty; }
+#scope .scope > .accordion { width: 100%; max-width: var(--measure); }
+#scope .accordion > .accordion__body, #scope .accordion__body .muted { margin-inline: 0; text-align: left; justify-items: start; }
+#scope .accordion__body .note { margin-inline: 0; border-top: 0; border-left: 2px solid rgba(200,161,90,.7); border-radius: 0 12px 12px 0; }
