@@ -2080,4 +2080,4 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 .begin__statements p:has(.begin__lead) { max-width: none; }
 .begin__statements .begin__lead { white-space: nowrap; }
 /* Five Areas intro lines: the same size as the homepage intro ("I'm a healer and facilitator…"). */
-.statement-lead--sans { font-size: var(--t-lede); line-height: 1.55; max-width: none; }
+#focus .statement-lead--sans, .statement-lead--sans { font-size: var(--t-lede); line-height: 1.55; max-width: none; }
