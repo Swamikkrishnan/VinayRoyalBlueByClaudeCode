@@ -178,7 +178,7 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
   height: min(560px, 100%); width: auto; max-width: calc(100vw - 32px);   /* never larger than its block, so never cut */
   aspect-ratio: 1100 / 1132;
   transform: translate(-50%, -50%);
-  background: url("../images/sigil.png") center / contain no-repeat;
+  background: url("../images/sigil-720.png") center / contain no-repeat;
   opacity: .07; pointer-events: none;
 }
 .watermark > * { position: relative; }
@@ -214,37 +214,38 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
    Reveal-on-scroll — content is visible by default; JS only adds motion
    -------------------------------------------------------------------------- */
 /* One system (site.js, section 2): a section container carries data-reveal
-   (its readable blocks cascade in reading order), page openings carry
+   (its readable blocks reveal one by one), page openings carry
    data-seq, lists and grids data-stagger, photos data-reveal-img. Each
-   reveals once, through .is-in, after .assets-ready. Every copy reveal is
-   the same 500ms fade with a 6px rise (data-stagger="soft": fade only). */
+   reveals once, through .is-in (a block as its own top enters the view),
+   after .assets-ready. Every copy reveal is
+   the same 650ms soft fade with an 8px rise (data-stagger="soft": fade only). */
 [data-reveal], [data-seq] { opacity: 1; }
 /* site.js marks the readable blocks inside each section (.rv-item, numbered
    --ci in reading order); they cascade top to bottom, each with the same
    duration and curve, moving in the section's direction. */
 /* One motion for all copy: a 500ms fade with a 6px rise. */
-:root { --rv-time: 500ms; --rv-rise: 6px; }
+:root { --rv-time: 650ms; --rv-rise: 8px; --rv-ease: cubic-bezier(.22, .61, .36, 1); }
 .js.motion-ready [data-reveal] { --rv-dur: var(--rv-time); }
 /* Until site.js has marked a section's blocks, keep the whole section hidden
    (no flash of visible text before the cascade takes over). */
 .js.motion-ready [data-reveal]:not(.rv-ready) { opacity: 0; }
 .js.motion-ready [data-reveal] .rv-item { opacity: 0; transform: translate3d(0, var(--rv-rise), 0); }
-.js.motion-ready [data-reveal].is-in .rv-item {
+.js.motion-ready [data-reveal] .rv-item.is-in {
   opacity: 1; transform: none;
-  transition: opacity var(--rv-dur) ease var(--cd, 0ms),
-              transform var(--rv-dur) ease var(--cd, 0ms);
+  transition: opacity var(--rv-dur) var(--rv-ease) var(--cd, 0ms),
+              transform var(--rv-dur) var(--rv-ease) var(--cd, 0ms);
 }
 /* Staggered items: they wait for their section, then follow one by one. */
 .js.motion-ready [data-stagger] > * { opacity: 0; transform: translate3d(0, var(--rv-rise), 0); }
 .js.motion-ready [data-stagger="soft"] > * { transform: none; }
-.js.motion-ready .is-in [data-stagger] > * {
+.js.motion-ready :is(.is-in [data-stagger], [data-stagger].is-in) > * {
   opacity: 1; transform: none;
-  transition: opacity var(--rv-time) ease calc(var(--cd, 0ms) + 100ms + var(--i, 0) * var(--stagger)),
-              transform var(--rv-time) ease calc(var(--cd, 0ms) + 100ms + var(--i, 0) * var(--stagger));
+  transition: opacity var(--rv-time) var(--rv-ease) calc(var(--cd, 0ms) + 100ms + var(--i, 0) * var(--stagger)),
+              transform var(--rv-time) var(--rv-ease) calc(var(--cd, 0ms) + 100ms + var(--i, 0) * var(--stagger));
 }
 /* Page openings: title first, then each following line a beat later. */
 .js.motion-ready [data-seq] { opacity: 0; transform: translate3d(0, var(--rv-rise), 0); }
-.js.motion-ready [data-seq].is-in { opacity: 1; transform: none; transition: opacity var(--rv-time) ease var(--sd, 0ms), transform var(--rv-time) ease var(--sd, 0ms); }
+.js.motion-ready [data-seq].is-in { opacity: 1; transform: none; transition: opacity var(--rv-time) var(--rv-ease) var(--sd, 0ms), transform var(--rv-time) var(--rv-ease) var(--sd, 0ms); }
 /* The homepage hero keeps its own opening (unchanged). */
 .js.motion-ready .home-hero [data-seq] { transform: translate3d(0, 10px, 0); }
 .js.motion-ready .home-hero [data-seq]:not(img).is-in { transition-timing-function: var(--ease-calm); }
@@ -1802,11 +1803,13 @@ html.js .page-home .brand img { opacity: 0; }
 .areas::before {   /* the ethereal movement, through the icon centres */
   content: ""; display: block; position: absolute; z-index: -1; pointer-events: none;
   left: 0; right: 0; top: calc(var(--node) / 2); height: auto; aspect-ratio: 1920 / 320; transform: translateY(-50%);
-  background: url("../vinay-brand-assets/ethereal-movement-desktop.webp") center / 100% 100% no-repeat;
+  background: var(--areas-img) center / 100% 100% no-repeat;
   opacity: .76;
 }
+.areas { --areas-img: url("../vinay-brand-assets/ethereal-movement-desktop.webp"); }
 @media (max-width: 767px) {
-  .areas::before { aspect-ratio: 1080 / 220; background-image: url("../vinay-brand-assets/ethereal-movement-mobile.webp"); opacity: .66; }
+  .areas { --areas-img: url("../vinay-brand-assets/ethereal-movement-mobile.webp"); }
+  .areas::before { aspect-ratio: 1080 / 220; opacity: .66; }
 }
 @media (max-width: 599px) {
   .areas { --node: min(56px, calc((100vw - 2 * var(--gutter, 16px)) / 5 - 4px)); --icon: var(--node); }
@@ -1821,16 +1824,23 @@ html.js .page-home .brand img { opacity: 0; }
 .quad { background: rgba(93,184,240,.18); border-color: rgba(93,184,240,.18); box-shadow: none; }
 .quad > div { background: rgba(5,24,41,.38); box-shadow: none; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
 
-/* Asset reveal: each field's texture (and its transition art) fades in once
-   this page's backgrounds have loaded (site.js adds .assets-ready, or a
-   1.3s safety timeout does). Without JS nothing is hidden. */
+/* Field textures (site.js, 1b): a field's texture is requested, decoded and
+   only then shown (.bg-on); its transition art likewise (.bgt-on). Until
+   then the field rests in its own calm tone (the cover, close to its
+   textured average), which fades away to reveal the texture. Fields left
+   plain on Save-Data / 2G (.bg-lite) simply keep that tone. Without JS
+   nothing is hidden or deferred. */
 @property --cover { syntax: "<number>"; inherits: false; initial-value: 0; }
-:is(.bg-1, .bg-2, .bg-3, .bg-4) { box-shadow: inset 0 0 0 9999px rgba(6, 19, 31, var(--cover)); transition: --cover 600ms ease; }
-html.js:not(.assets-ready) :is(.bg-1, .bg-2, .bg-3, .bg-4) { --cover: 1; }
-:is(.bg-1, .bg-2, .bg-3, .bg-4)::before, :is(.bg-1, .bg-2, .bg-3, .bg-4)::after { transition: opacity 600ms ease; }
-html.js:not(.assets-ready) :is(.bg-1, .bg-2, .bg-3, .bg-4)::before,
-html.js:not(.assets-ready) :is(.bg-1, .bg-2, .bg-3, .bg-4)::after,
-html.js:not(.assets-ready) .areas::before { opacity: 0; }
+.bg-1 { --cover-rgb: 9, 17, 32; }
+.bg-2 { --cover-rgb: 10, 32, 65; }
+.bg-3 { --cover-rgb: 7, 16, 29; }
+.bg-4 { --cover-rgb: 6, 23, 45; }
+:is(.bg-1, .bg-2, .bg-3, .bg-4) { box-shadow: inset 0 0 0 9999px rgba(var(--cover-rgb), var(--cover)); transition: --cover 700ms ease; }
+html.js :is(.bg-1, .bg-2, .bg-3, .bg-4):not(.bg-on) { --cover: 1; background-image: var(--veil); }
+html.js :is(.bg-1, .bg-2, .bg-3, .bg-4):not(.bg-on) .areas::before { background-image: none; opacity: 0; }
+html.js :is(.bg-1, .bg-2, .bg-3, .bg-4):not(.bgt-on)::before,
+html.js :is(.bg-1, .bg-2, .bg-3, .bg-4):not(.bgt-on)::after { background-image: none; opacity: 0; }
+:is(.bg-1, .bg-2, .bg-3, .bg-4)::before, :is(.bg-1, .bg-2, .bg-3, .bg-4)::after { transition: opacity 700ms ease; }
 .areas::before { transition: opacity 700ms ease; }
 /* Photographs: hold their space, then fade in once decoded. */
 html.js :is(.editorial__media, .story__portrait) img { transition: opacity 400ms ease; }
@@ -2190,13 +2200,6 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 .js.rv-fallback :is([data-reveal], [data-reveal] .rv-item, [data-seq], [data-reveal-img], [data-stagger] > *) {
   opacity: 1 !important; transform: none !important; transition: opacity 500ms ease, transform 500ms ease;
 }
-/* A field whose texture is still loading stays covered, then fades in. */
-html.js :is(.bg-1, .bg-2, .bg-3, .bg-4).bg-pending { --cover: 1; }
-html.js .bg-pending .areas::before, html.js .bgt-pending::before, html.js .bgt-pending::after { opacity: 0; }
-/* Transition art is only requested once the textures on screen are in. */
-html.js:not(.assets-ready) :is(.bg-1, .bg-2, .bg-3, .bg-4)::before,
-html.js:not(.assets-ready) :is(.bg-1, .bg-2, .bg-3, .bg-4)::after { background-image: none; }
-html.js:not(.assets-ready) main > :is(.bg-1, .bg-2, .bg-3, .bg-4):not(:first-child) { background-image: var(--veil); }
 /* A photograph inside a figure that fades as a whole fades once, with it. */
 html.js.motion-ready [data-reveal-img] :is(.editorial__media, .story__portrait) img,
 html.js.motion-ready [data-reveal-img]:is(.editorial__media, .story__portrait) img { opacity: 1; transition: none; }
@@ -2210,7 +2213,7 @@ html.js.motion-ready [data-reveal-img]:is(.editorial__media, .story__portrait) i
 @media (max-width: 767px) {
   /* A light-secondary field that wears light primary on phones (.m-lp: Story's
      Vision). Its transitions are the light-primary ones for each neighbour. */
-  .bg-4.m-lp { --base: #0B3A60; --img: url("../vinay-brand-assets/bg-light-primary-mobile.webp");
+  .bg-4.m-lp { --cover-rgb: 10, 32, 65; --base: #0B3A60; --img: url("../vinay-brand-assets/bg-light-primary-mobile.webp");
     --veil: linear-gradient(90deg, rgba(8,22,44,.42), rgba(8,22,44,.72) 24%, rgba(8,22,44,.72) 76%, rgba(8,22,44,.42)); }
   :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1):has(+ .bg-4.m-lp) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-01-dark-primary-to-light-primary-mobile-compact.webp?v=2"); }
   :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1) + .bg-4.m-lp { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-01-dark-primary-to-light-primary-mobile-compact.webp?v=2"); }
@@ -2302,3 +2305,27 @@ html.js.motion-ready [data-reveal-img]:is(.editorial__media, .story__portrait) i
   .subnav__more:hover, .subnav__more:focus-visible { border-color: var(--accent-brass); color: var(--text); background: rgba(200,161,90,.16); }
   .subnav__more:active { background: rgba(200,161,90,.26); }
 }
+
+/* ==========================================================================
+   Calm arrivals pass
+   ========================================================================== */
+@media (max-width: 767px) {
+  /* Story and Background open with the words alone: on phones the opening
+     text holds the first screen, centred (a little above centre), and the
+     photograph begins just below it, arriving whole as the page is scrolled
+     rather than cut by the edge of the screen. */
+  .story__present,
+  #matters .editorial--hero > .stack {
+    min-height: calc(100svh - var(--section-y) - var(--hdr-offset));
+    align-content: center; padding-bottom: 6svh;
+  }
+}
+@media (max-width: 599px) {
+  /* "My name is Vinay Swaminathan." on one line on any phone. */
+  #meet-title { white-space: nowrap; font-size: min(2rem, calc((100vw - 2 * var(--gutter)) / 13)); }
+}
+/* Homepage metrics: tighter again against the gold rules. */
+.evidence > div { padding-block: 12px; }
+/* The watermark sigil belongs to its field: fetched only when that field's
+   texture is (it is far down the page and nearly transparent). */
+html.js .watermark:not(.bg-on) > :first-child::before { background-image: none; }

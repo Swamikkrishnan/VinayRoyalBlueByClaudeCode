@@ -355,69 +355,106 @@
   });
 
   /* ---------------------------------------------------------------------
-     1b. Background assets — this page's textures only (each field, its
-         transition art, the five-area connector). The fields on screen load
-         first; .assets-ready follows them and the web fonts (capped at 1.3s
-         so a slow network never holds the page), then the transition art and
-         the rest load in page order. A field whose texture is still on its way stays covered
-         (.bg-pending), and transition art stays hidden (.bgt-pending), until
-         it lands and fades in, so nothing ever appears abruptly.
+     1b. Background textures — this page's only, each loaded as its field
+         comes within about a screen of view (the fields on the first screen
+         at once), at most two at a time, nearest first, and fully decoded
+         before it is shown. Until then a field shows its own calm base tone
+         (the CSS cover), which fades to reveal the texture: nothing ever
+         appears abruptly and nothing is fetched that the visit never reaches.
+         .assets-ready follows the first screen's textures and the web fonts,
+         capped at 1.3s. On Save-Data or 2G, only the first screen gets its
+         textures; the rest stay plain (and light).
      --------------------------------------------------------------------- */
+  var conn = navigator.connection || {};
+  var lite = !!(conn.saveData || /(^|-)2g$/.test(conn.effectiveType || ''));
+  var sheetEl = document.querySelector('link[rel="stylesheet"][href*="site.css"]');
+  var cssBase = sheetEl ? sheetEl.href : location.href;
+  var urlsIn = function (text, into) {   // custom properties keep stylesheet-relative URLs
+    (text || '').replace(/url\(["']?([^"')]+)["']?\)/g, function (m, u) { u = new URL(u, cssBase).href; if (into.indexOf(u) < 0) into.push(u); return m; });
+    return into;
+  };
+  var decodedCache = {};
+  var decoded = function (u) {
+    if (!decodedCache[u]) decodedCache[u] = new Promise(function (ok) {
+      var im = new Image();
+      im.decoding = 'async';
+      im.onload = function () { if (im.decode) im.decode().then(ok, ok); else ok(); };
+      im.onerror = ok;
+      im.src = u;
+    });
+    return decodedCache[u];
+  };
+  var fields = Array.prototype.slice.call(document.querySelectorAll('.bg-1, .bg-2, .bg-3, .bg-4'));
+  var ownOf = function (el) {
+    var list = urlsIn(getComputedStyle(el).getPropertyValue('--img'), []);
+    Array.prototype.forEach.call(el.querySelectorAll('.areas'), function (n) { urlsIn(getComputedStyle(n).getPropertyValue('--areas-img'), list); });
+    return list;
+  };
+  var artOf = function (el) {
+    var list = [];
+    [['::before', '--t-in'], ['::after', '--t-out']].forEach(function (pv) {
+      var cs = getComputedStyle(el, pv[0]);
+      if (cs.content !== 'none') urlsIn(cs.getPropertyValue(pv[1]), list);
+    });
+    return list;
+  };
+  var jobs = [], active = 0;
+  var pump = function () {
+    while (active < 2 && jobs.length) {
+      var job = jobs.shift();
+      active++;
+      Promise.all(job.urls.map(decoded)).then((function (job) {
+        return function () {
+          active--;
+          window.requestAnimationFrame(job.done);   // shown on a fresh frame, decoded
+          pump();
+        };
+      })(job));
+    }
+  };
+  var want = function (urls, done, urgent) {
+    if (!urls.length) { done(); return; }
+    jobs[urgent ? 'unshift' : 'push']({ urls: urls, done: done });
+    pump();
+  };
+  var started = [];
+  var loadField = function (el, urgent) {
+    if (started.indexOf(el) > -1) return Promise.resolve();
+    started.push(el);
+    return new Promise(function (shown) {
+      want(ownOf(el), function () {
+        el.classList.add('bg-on'); shown();
+        if (!lite) want(artOf(el), function () { el.classList.add('bgt-on'); }, urgent);
+      }, urgent);
+    });
+  };
+  var onScreen = function (el) { var r = el.getBoundingClientRect(); return r.top < window.innerHeight && r.bottom > 0; };
+  var firstScreen = fields.filter(onScreen);
+  if (lite) fields.forEach(function (el) { if (firstScreen.indexOf(el) < 0) el.classList.add('bg-lite'); });
   var assetsReady = new Promise(function (resolve) {
     var done = false;
     var finish = function () { if (done) return; done = true; root.classList.add('assets-ready'); resolve(); };
-    var cache = {};
-    var get = function (u) {
-      if (!cache[u]) cache[u] = new Promise(function (ok) { var im = new Image(); im.onload = im.onerror = ok; im.src = u; });
-      return cache[u];
-    };
-    var URL_RE = /url\(["']?([^"')]+)["']?\)/g;
-    var urls = function (text, base, into) {
-      (text || '').replace(URL_RE, function (m, u) { u = new URL(u, base).href; if (into.indexOf(u) < 0) into.push(u); return m; });
-      return into;
-    };
-    var sheet = document.querySelector('link[rel="stylesheet"][href*="site.css"]');
-    var cssBase = sheet ? sheet.href : location.href;
-    // A field's own texture (and its five-area connector)...
-    var ownOf = function (el) {
-      var list = urls(getComputedStyle(el).getPropertyValue('--img'), cssBase, []);
-      Array.prototype.forEach.call(el.querySelectorAll('.areas'), function (n) { urls(getComputedStyle(n, '::before').backgroundImage, location.href, list); });
-      return list;
-    };
-    // ...and its transition art. CSS only requests the art, and the textures
-    // below the first field, from .assets-ready on, so the opening texture has
-    // the connection to itself (custom properties keep stylesheet-relative URLs).
-    var artOf = function (el) {
-      var list = [];
-      [['::before', '--t-in'], ['::after', '--t-out']].forEach(function (pv) {
-        var cs = getComputedStyle(el, pv[0]);
-        if (cs.content !== 'none') urls(cs.getPropertyValue(pv[1]), cssBase, list);
-      });
-      return list;
-    };
-    var fields = Array.prototype.slice.call(document.querySelectorAll('.bg-1, .bg-2, .bg-3, .bg-4'));
-    var onScreen = function (el) { var r = el.getBoundingClientRect(); return r.top < window.innerHeight && r.bottom > 0; };
-    var first = fields.filter(onScreen);
-    var track = function (el, list, cls) {
-      return Promise.all(list.map(get)).then(function () { el.classList.remove(cls); el['_' + cls] = true; });
-    };
-    var started = false;
-    var later = function () {
-      if (started) return; started = true;
-      fields.forEach(function (el) {
-        if (!el['_bg-pending']) el.classList.add('bg-pending');
-        el.classList.add('bgt-pending');
-      });
-      // on screen first, then the rest of the page in order
-      first.concat(fields.filter(function (el) { return first.indexOf(el) < 0; })).forEach(function (el) {
-        track(el, ownOf(el), 'bg-pending');
-        track(el, artOf(el), 'bgt-pending');
-      });
-    };
-    setTimeout(function () { finish(); later(); }, 1300);
+    setTimeout(finish, 1300);
     var fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
-    Promise.all(first.map(function (el) { return track(el, ownOf(el), 'bg-pending'); }).concat(fonts)).then(function () { finish(); later(); });
+    Promise.all(firstScreen.map(function (el) { return loadField(el, true); }).concat(fonts)).then(finish);
   });
+  // The rest as they approach: about a screen ahead or behind, half a
+  // screen on a slow (3G) connection so a short visit fetches less.
+  var ahead = /3g$/.test(conn.effectiveType || '') ? '50% 0px 50% 0px' : '100% 0px 100% 0px';
+  if (!lite) {
+    if ('IntersectionObserver' in window) {
+      var fio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          fio.unobserve(e.target);
+          assetsReady.then(function () { loadField(e.target, onScreen(e.target)); });
+        });
+      }, { rootMargin: ahead });
+      fields.forEach(function (el) { if (firstScreen.indexOf(el) < 0) fio.observe(el); });
+    } else {
+      assetsReady.then(function () { fields.forEach(function (el) { loadField(el, false); }); });
+    }
+  }
 
   // Photographs keep their space and fade in once decoded (CSS holds them at 0).
   Array.prototype.forEach.call(document.querySelectorAll('.editorial__media img, .story__portrait img'), function (img) {
@@ -442,23 +479,24 @@
   }
 
   /* ---------------------------------------------------------------------
-     2. Reveal engine — IntersectionObserver adds .is-in once; the CSS in
-        motion-ready mode uses that to transition from a JS-added start
-        state. Nothing is hidden until root carries .motion-ready.
+     2. Reveal engine — one mechanism for the whole site. The unit is the
+        readable block (a heading, a paragraph, a list, a row of buttons,
+        a dropdown), not the section: each block reveals as its own top
+        enters the view, so copy arrives with the scroll instead of after
+        it, and nothing waits on a section above it. Blocks arriving
+        together follow one another in reading order, a beat apart. Page
+        openings (data-seq) keep their composed sequence; photos
+        (data-reveal-img) fade once decoded. Each reveals once (.is-in).
+        Nothing is hidden until root carries .motion-ready.
      --------------------------------------------------------------------- */
-  // One photo rule for the whole site (figure[data-reveal-img]): a photo
-  // fades in only when it is near view,
-  // fully loaded and decoded, and after any section fade around it has
-  // finished. So every photo gets the identical fade on every device and
-  // connection, cached or not.
   var T0 = performance.now();
   if (!reduce.matches && 'IntersectionObserver' in window) {
     root.classList.add('motion-ready');
-    var targets = document.querySelectorAll('[data-reveal], [data-seq], [data-reveal-img]');
-    // Cascade: the readable blocks inside each section, in reading order.
-    // Layout wrappers are opened up; lists, figures, dropdowns, forms,
-    // and other composed pieces count as one block each.
+    // The blocks of each section, in reading order. Layout wrappers are
+    // opened up; lists, figures, dropdowns, forms and other composed pieces
+    // count as one block each.
     var KEEP = 'p,h1,h2,h3,h4,ul,ol,dl,figure,details,form,svg,a,button,.btn-row,[data-stagger],.face,.accordion-group,.metrics,.quad,.pair,.form-sent,.form-errors,.link-list,.sessions,.contact-form';
+    var units = [];
     document.querySelectorAll('[data-reveal]').forEach(function (box) {
       var items = [];
       var collect = function (el, depth) {
@@ -470,19 +508,7 @@
       };
       collect(box, 0);
       if (!items.length) items = [box];
-      // Start times in reading order: a block waits for the one above it, and
-      // for every item of a staggered list above it.
-      var cs = getComputedStyle(document.documentElement);
-      var step = parseFloat(cs.getPropertyValue('--cascade')) || 160;
-      var stag = parseFloat(cs.getPropertyValue('--stagger')) || 120;
-      var at = 0, CAP = 900;   // long sections never keep their last block waiting
-      items.forEach(function (it) {
-        it.classList.add('rv-item');
-        it.style.setProperty('--cd', Math.round(Math.min(at, CAP)) + 'ms');
-        var list = it.matches('[data-stagger]') ? it : null;
-        at += step + (list ? 100 + Math.max(0, Math.min(list.children.length, 7) - 1) * stag : 0);
-      });
-      box.dataset.span = Math.round(Math.min(at, CAP));
+      items.forEach(function (it) { it.classList.add('rv-item'); units.push(it); });
       box.classList.add('rv-ready');
     });
     // Page openings: each line a beat after the one before, in reading order.
@@ -492,36 +518,36 @@
       if (lines.length && !seqCount) seqCount = lines.length;
       // A line may name its own moment (data-seq-at, ms): the homepage hero runs
       // sigil, then title, then subtitle, whatever the DOM order.
-      lines.forEach(function (el, i) { el.style.setProperty('--sd', (el.hasAttribute('data-seq-at') ? +el.getAttribute('data-seq-at') : i * SEQ_STEP) + 'ms'); });
+      lines.forEach(function (el, i) { el.style.setProperty('--sd', (el.hasAttribute('data-seq-at') ? +el.getAttribute('data-seq-at') : i * SEQ_STEP) + 'ms'); units.push(el); });
     });
     var OPENING_PHOTO = SEQ_STEP * Math.max(0, Math.min(seqCount, 5) - 1) + 160;  // after the last line starts (from T0)
     // Stagger index for list / grid items (capped so long lists stay calm).
     document.querySelectorAll('[data-stagger]').forEach(function (list) {
       Array.prototype.forEach.call(list.children, function (item, i) { item.style.setProperty('--i', Math.min(i, 6)); });
     });
-    var msOf = function (el) {
-      var v = getComputedStyle(el).getPropertyValue('--rv-dur').trim();
-      return v ? parseFloat(v) * (/ms$/.test(v) ? 1 : 1000) : 555;
-    };
-    var reveal = function (el) {
+    var photos = Array.prototype.slice.call(document.querySelectorAll('[data-reveal-img]'));
+    var BEAT = 120, MAX_BEATS = 5;
+    var reveal = function (el, delay) {
       if (el.classList.contains('is-in')) return;
-      el.dataset.inAt = Date.now();
+      if (!el.hasAttribute('data-seq')) el.style.setProperty('--cd', (delay || 0) + 'ms');
+      el.dataset.inAt = Date.now() + (delay || 0);
       el.classList.add('is-in');
+      // its section has begun (photos inside it wait for this)
+      var box = el.parentElement && el.parentElement.closest('[data-reveal]');
+      if (box && !box.dataset.inAt) box.dataset.inAt = el.dataset.inAt;
     };
-    // Sections that start together go one after another (top to bottom), so
-    // their cascades never interleave. The wait is capped to stay responsive.
-    var nextSlot = 0;
-    var revealSection = function (el) {
-      if (el.classList.contains('is-in') || el.dataset.queued) return;
-      // ...but never more than 600ms behind: a fast fling never leaves text waiting.
-      var now = Date.now(), start = Math.max(now, Math.min(nextSlot, now + 600));
-      nextSlot = start + Math.min(1400, Number(el.dataset.span) || 160);
-      if (start - now < 20) return reveal(el);
-      el.dataset.queued = '1';
-      setTimeout(function () { reveal(el); }, start - now);
+    // Several blocks at once: top to bottom, a beat apart. One layout read.
+    var revealAll = function (els) {
+      els.map(function (el) { return [el.getBoundingClientRect().top, el]; })
+        .sort(function (a, b) { return a[0] - b[0]; })
+        .forEach(function (pair, i) { reveal(pair[1], Math.min(i, MAX_BEATS) * BEAT); });
     };
-    // A photo inside a revealing section waits for that section's own fade;
-    // a standalone photo (page openings) follows its text a beat later.
+    var msOf = function (el) {
+      var v = getComputedStyle(el).getPropertyValue('--rv-time').trim();
+      return v ? parseFloat(v) * (/ms$/.test(v) ? 1 : 1000) : 650;
+    };
+    // A photo inside a revealing section waits for that section's first
+    // words; a standalone photo (page openings) follows its text a beat later.
     var showPhoto = function (fig, extra) {
       if (fig.dataset.pending) return;
       fig.dataset.pending = '1';
@@ -532,31 +558,28 @@
         var wait = 200;
         var seqs = !host && fig.closest('section') ? fig.closest('section').querySelectorAll('[data-seq]') : [];
         if (seqs.length) {
-          // opening lines start 220ms apart from ~80ms after load; the photo follows the last
           wait = OPENING_PHOTO - (performance.now() - T0);
         } else if (host) {
-          // never start a section early on a photo's account: wait for its text
-          if (!host.classList.contains('is-in')) { setTimeout(function () { fig.dataset.pending = ''; showPhoto(fig, extra); }, 150); return; }
-          var first = host.querySelector('.rv-item');
-          var above = first && fig.getBoundingClientRect().top < first.getBoundingClientRect().top - 40;
-          wait = (above ? 0 : msOf(host) * 0.6) - (Date.now() - Number(host.dataset.inAt || 0));
+          if (!host.dataset.inAt) { setTimeout(function () { fig.dataset.pending = ''; showPhoto(fig, extra); }, 150); return; }
+          wait = msOf(host) * 0.5 - (Date.now() - Number(host.dataset.inAt));
         }
         wait = Math.max(0, wait) + (extra || 0);
         if (wait > 0) setTimeout(go, wait); else go();
       });
     };
-    // One observer for everything below the fold, started once the opening
-    // pass has run. Each target is revealed once and then unobserved.
+    // One observer: a block reveals as its top passes the lower edge of the
+    // view (a small margin, so it is seen to arrive, not caught mid-way).
     var pending = [];
     var done = function (el) { var i = pending.indexOf(el); if (i > -1) pending.splice(i, 1); };
     var io = new IntersectionObserver(function (entries) {
+      var arriving = [];
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
-        if (entry.target.hasAttribute('data-seq')) reveal(entry.target); else revealSection(entry.target);
         io.unobserve(entry.target); done(entry.target);
+        arriving.push(entry.target);
       });
-    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
-    // Photos start a little earlier.
+      if (arriving.length) revealAll(arriving);
+    }, { rootMargin: '0px 0px -6% 0px', threshold: 0 });
     var photoIO = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
@@ -564,31 +587,27 @@
         photoIO.unobserve(entry.target);
       });
     }, { rootMargin: '0px 0px 4% 0px', threshold: 0 });
-    // Where the page stands right now (including a scroll position the browser
-    // restored on refresh): anything above the viewport is shown as it is (off
-    // screen, so nothing is seen to change); anything within the viewport,
-    // even its last few pixels, reveals now, top to bottom; the rest waits for
-    // the observer.
-    var settle = function (el) {
-      var b = el.getBoundingClientRect();
-      if (b.bottom <= 0) { reveal(el); return true; }
-      if (b.top < window.innerHeight) { if (el.hasAttribute('data-seq')) reveal(el); else revealSection(el); return true; }
-      return false;
+    // Where the page stands now (including a scroll position the browser
+    // restored): blocks above the view are shown as they are (off screen,
+    // nothing is seen to change); blocks within it reveal top to bottom.
+    var settleAll = function (els) {
+      var inView = [];
+      els.forEach(function (el) {
+        if (el.classList.contains('is-in')) return;
+        var r = el.getBoundingClientRect();
+        if (r.bottom <= 0 && r.height) { reveal(el); io.unobserve(el); done(el); }
+        else if (r.top < window.innerHeight && r.bottom > 0) { inView.push(el); io.unobserve(el); done(el); }
+      });
+      revealAll(inView);
     };
     var observe = function () {
-      targets.forEach(function (el) {
-        if (el.hasAttribute('data-reveal-img')) { photoIO.observe(el); return; }
-        if (el.classList.contains('is-in') || settle(el)) return;
-        pending.push(el); io.observe(el);
-      });
-      // A jump (a scroll position the browser restores late, a jump link, a
-      // long fling) can carry content past the viewport without it ever
-      // intersecting, or leave it in view but inside the observer's lower
-      // margin: settle where the page now stands, as on arrival. Only the
-      // still-pending elements are read, and only when a scroll happened.
-      // Any scroll before the visitor has touched, wheeled, pressed a key or
-      // clicked is the browser placing the page (restoration can arrive late,
-      // and in steps), so it settles like a jump.
+      photos.forEach(function (el) { photoIO.observe(el); });
+      units.forEach(function (el) { if (!el.classList.contains('is-in')) { pending.push(el); io.observe(el); } });
+      settleAll(pending.slice());
+      // A jump (a position the browser restores late or in steps, a jump
+      // link, a long fling) settles the same way. Any scroll before the
+      // visitor has touched, wheeled, pressed a key or clicked is the
+      // browser placing the page. Only still-pending blocks are read.
       var queued = false, lastY = window.pageYOffset, touched = false;
       ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (ev) {
         window.addEventListener(ev, function () { touched = true; }, { once: true, passive: true });
@@ -600,34 +619,31 @@
           queued = false;
           var y = window.pageYOffset, jump = !touched || Math.abs(y - lastY) > window.innerHeight * 0.5;
           lastY = y;
-          pending.slice().forEach(function (el) {
-            if (jump ? settle(el) : el.getBoundingClientRect().bottom <= 0 && (reveal(el), true)) { io.unobserve(el); done(el); }
+          if (jump) settleAll(pending.slice());
+          else pending.slice().forEach(function (el) {
+            if (el.getBoundingClientRect().bottom <= 0) { reveal(el); io.unobserve(el); done(el); }
           });
         });
       }, { passive: true });
     };
-    // The opening starts from one state, .assets-ready: this page's on-screen
-    // textures and its web fonts are in (capped at 1.3s, so a slow or failed
-    // request never holds the page), then two frames so the first fade is
-    // never lost in a heavy frame. The homepage hero lets its texture fade
-    // most of the way in before the sigil appears.
-    var afterSettle = function (fn) {
-      assetsReady.then(function () {
-        setTimeout(function () {
-          window.requestAnimationFrame(function () { window.requestAnimationFrame(fn); });
-        }, document.querySelector('.page-home') ? 420 : 180);
-      });
-    };
-    afterSettle(function () {
-      T0 = performance.now();
-      var seqShown = false;
-      targets.forEach(function (el) {   // the page opening first
-        if (!el.hasAttribute('data-seq')) return;
-        var b = el.getBoundingClientRect();
-        if (b.top < window.innerHeight && b.bottom > 0) { reveal(el); seqShown = true; }
-      });
-      // then everything else, as the last opening line begins
-      setTimeout(observe, seqShown ? SEQ_STEP * Math.max(0, Math.min(seqCount, 5) - 1) : 0);
+    // The opening starts from one state, .assets-ready (the first screen's
+    // textures and the web fonts, capped at 1.3s), then two frames so the
+    // first fade is never lost in a heavy frame. The homepage hero lets its
+    // texture fade most of the way in before the sigil appears.
+    assetsReady.then(function () {
+      setTimeout(function () {
+        window.requestAnimationFrame(function () { window.requestAnimationFrame(function () {
+          T0 = performance.now();
+          var seqShown = false;
+          units.forEach(function (el) {   // the page opening first
+            if (!el.hasAttribute('data-seq')) return;
+            var r = el.getBoundingClientRect();
+            if (r.top < window.innerHeight && r.bottom > 0) { reveal(el); seqShown = true; }
+          });
+          // then everything else, as the last opening line begins
+          setTimeout(observe, seqShown ? SEQ_STEP * Math.max(0, Math.min(seqCount, 5) - 1) : 0);
+        }); });
+      }, document.querySelector('.page-home') ? 420 : 180);
     });
   } else {
     document.querySelectorAll('svg').forEach(function (svg) {
