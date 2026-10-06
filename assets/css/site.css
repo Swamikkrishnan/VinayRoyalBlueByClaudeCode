@@ -1428,7 +1428,7 @@ dd > .word-list { margin-top: 10px; color: var(--text); }
   .subnav a[aria-current="location"]::before { background: var(--accent-brass); }
 }
 /* Homepage hero on phones: its own portrait artwork. */
-@media (max-width: 767px) { .home-hero.bg-1 { --img: url("../vinay-brand-assets/hero-home-mobile.webp"); } }
+@media (max-width: 767px) { .home-hero.bg-1 { --img: url("../vinay-brand-assets/hero-home-mobile-v2.webp"); } }
 .ruled--values dt { color: var(--accent-brass); font-weight: 600; }
 /* Leaving for a contact form: the page fades out before the form fades in. */
 body { transition: opacity var(--motion-base) var(--ease); }
