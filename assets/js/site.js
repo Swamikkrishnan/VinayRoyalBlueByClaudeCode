@@ -257,15 +257,17 @@
   if (wide.matches) {
     document.querySelectorAll('details[data-open-desktop]').forEach(function (d) { d.open = true; });
   }
-  var staticSummaries = function () {
+  // Crossing the breakpoint (a resize, a rotation) switches state at once,
+  // without animating: open as content on wide screens, folded on phones.
+  var staticSummaries = function (e) {
     document.querySelectorAll('details[data-static-desktop]').forEach(function (d) {
       var sm = d.querySelector(':scope > summary');
-      if (wide.matches) { d.open = true; sm.setAttribute('tabindex', '-1'); sm.setAttribute('aria-disabled', 'true'); }
+      if (wide.matches) { sm.setAttribute('tabindex', '-1'); sm.setAttribute('aria-disabled', 'true'); }
       else { sm.removeAttribute('tabindex'); sm.removeAttribute('aria-disabled'); }
+      if (!e && !wide.matches) return;                   // first load on a phone: as authored (folded)
+      if (d._acc) d._acc(wide.matches, false); else d.open = wide.matches;
     });
   };
-  staticSummaries();
-  if (wide.addEventListener) wide.addEventListener('change', staticSummaries);
   var ACC_MS = 444, ACC_EASE = 'cubic-bezier(.3,.7,.3,1)';   // calm, same speed open and close
   // Lists of parallel options (marked data-one-open: the 1:1 sessions and
   // immersions, the Background qualification lists) and the whole Approach
@@ -346,6 +348,8 @@
       d._acc(opening, true);
     });
   });
+  staticSummaries();
+  if (wide.addEventListener) wide.addEventListener('change', staticSummaries);
   // A link to a session (#body … on the 1:1 page, from the homepage or from
   // within the page) opens that session's details and closes any other.
   var openForTarget = function (t, animate) {

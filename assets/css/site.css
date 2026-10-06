@@ -2413,7 +2413,11 @@ html.js .watermark:not(.bg-on) > :first-child::before { background-image: none; 
   #scope [data-static-desktop] > summary .accordion__label { color: var(--accent-brass); }
   #scope .accordion > .accordion__body, #scope .accordion__body .muted { margin-inline: auto; text-align: center; justify-items: center; }
   #scope .accordion__body .prose { margin-inline: auto; }
-  #scope .accordion__body .note { margin-inline: auto; text-align: center; border-left: 0; border-top: 2px solid rgba(200,161,90,.7); border-radius: 0 0 12px 12px; }
+  #scope .accordion__body .note { margin-inline: auto; text-align: left; border-top: 0; border-left: 2px solid rgba(200,161,90,.7); border-radius: 0 12px 12px 0; }   /* the gold rule on its left */
 }
 /* Story: "Peaceful. Grounded. Dynamic." on one line on every screen. */
 #path .story__qualities.story-heading { max-width: none; white-space: nowrap; font-size: min(clamp(1.6rem, 2.2vw, 2.15rem), calc((100vw - 2 * var(--gutter)) / 12)); }
+
+/* 1:1 Availability: three entries, always shown (no accordion), in the
+   Alignment Calls entry's style; a fine rule above the list. */
+#availability .availability__list { margin: 0; border-top: 1px solid var(--line); }
