@@ -2381,3 +2381,22 @@ html.js .watermark:not(.bg-on) > :first-child::before { background-image: none; 
   /* Background, wide: title to first line as Group Experiences. */
   #matters .editorial--hero .prose > .eyebrow + * { margin-top: calc(var(--s-2) - 8px); }
 }
+
+/* Next section: one quiet round glass button, lower right (site.js 4e). */
+.next-section {
+  position: fixed; z-index: 45; right: 24px; bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  width: 40px; height: 40px; padding: 0; display: grid; place-items: center; cursor: pointer;
+  border-radius: 50%; border: 1px solid rgba(200,161,90,.42); color: var(--accent-brass);
+  background: rgba(6,25,42,.5); -webkit-backdrop-filter: blur(12px) saturate(115%); backdrop-filter: blur(12px) saturate(115%);
+  opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(6px);
+  transition: opacity 300ms ease, transform 300ms ease, visibility 0s linear 300ms, border-color var(--motion-fast) var(--ease), background-color var(--motion-fast) var(--ease);
+}
+.next-section.is-shown { opacity: .82; visibility: visible; pointer-events: auto; transform: none; transition: opacity 300ms ease, transform 300ms ease, visibility 0s, border-color var(--motion-fast) var(--ease), background-color var(--motion-fast) var(--ease); }
+.next-section:hover { opacity: 1; border-color: rgba(200,161,90,.75); background: rgba(8,33,54,.62); }
+.next-section:focus-visible { opacity: 1; outline: 2px solid var(--accent-brass); outline-offset: 3px; }
+.nav-is-open .next-section, .contact-open .next-section { opacity: 0; visibility: hidden; pointer-events: none; }
+@media (max-width: 767px) {
+  .next-section { right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: 44px; height: 44px; }
+}
+/* Next-section destinations land just below the header (and section strip). */
+[data-scroll-section] { scroll-margin-top: var(--hdr-offset); }

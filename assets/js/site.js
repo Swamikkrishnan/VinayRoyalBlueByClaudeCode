@@ -970,6 +970,58 @@
   }
 
   /* ---------------------------------------------------------------------
+     4e. Next section — one quiet floating button (lower right) on the
+         longer pages, that takes the visitor to the next major section
+         ([data-scroll-section]) on a click: native scrollIntoView, smooth
+         (immediate with reduced motion); scrolling itself is never touched.
+         The destination follows the scroll. It hides once there is no
+         next section (the closing section or the footer is reached), and
+         while the menu or the contact chooser is open. Section positions
+         are measured on load and when the layout changes, never per frame.
+     --------------------------------------------------------------------- */
+  var marks = Array.prototype.slice.call(document.querySelectorAll('[data-scroll-section]'));
+  if (marks.length) {
+    var nextBtn = document.createElement('button');
+    nextBtn.type = 'button';
+    nextBtn.className = 'next-section';
+    nextBtn.setAttribute('aria-label', 'Go to next section');
+    nextBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    document.body.appendChild(nextBtn);
+    var tops = [], foot = document.querySelector('.site-foot'), footTop = Infinity, docH = 0, viewH = 0, line = 0, target = null, nsTick = false;
+    var measureMarks = function () {
+      var y = window.pageYOffset;
+      tops = marks.filter(function (el) { return el.getClientRects().length; })
+        .map(function (el) { return [el.getBoundingClientRect().top + y, el]; });
+      footTop = foot ? foot.getBoundingClientRect().top + y : Infinity;
+      docH = document.documentElement.scrollHeight;
+      viewH = window.innerHeight;
+      var head = document.getElementById('site-head');
+      line = (head ? head.offsetHeight : 0) + (parseFloat(getComputedStyle(document.body).getPropertyValue('--subnav-h')) || 0) + 12;
+      updateNext();
+    };
+    var updateNext = function () {
+      nsTick = false;
+      var y = window.pageYOffset, at = y + line;
+      target = null;
+      for (var i = 0; i < tops.length; i++) { if (tops[i][0] > at + 4) { target = tops[i][1]; break; } }
+      var nearEnd = y + viewH >= Math.min(footTop, docH) - 24 || y + viewH >= docH - 4;
+      nextBtn.classList.toggle('is-shown', !!target && !nearEnd);
+    };
+    nextBtn.addEventListener('click', function () {
+      if (!target) return;
+      target.scrollIntoView({ behavior: reduce.matches ? 'instant' : 'smooth', block: 'start' });
+    });
+    window.addEventListener('scroll', function () {
+      if (!nsTick) { nsTick = true; window.requestAnimationFrame(updateNext); }
+    }, { passive: true });
+    window.addEventListener('resize', measureMarks);
+    window.addEventListener('load', measureMarks);
+    document.addEventListener('toggle', function () { window.requestAnimationFrame(measureMarks); }, true);   // accordions change the page's length
+    if ('ResizeObserver' in window) new ResizeObserver(function () { window.requestAnimationFrame(measureMarks); }).observe(document.querySelector('main') || document.body);
+    measureMarks();
+  }
+
+  /* ---------------------------------------------------------------------
      5. Hash landing. The browser's own jump happens before web fonts and
         images have settled, so the target can drift. Re-land once now and
         again after fonts/load, unless the visitor has scrolled meanwhile.
