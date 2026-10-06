@@ -317,6 +317,31 @@
     document.querySelectorAll('details[data-open-desktop]').forEach(function (d) { d.open = true; });
   }
   var ACC_MS = 444, ACC_EASE = 'cubic-bezier(.3,.7,.3,1)';   // calm, same speed open and close
+  // Lists of parallel options (marked data-one-open: the 1:1 sessions and
+  // immersions, the Background qualification lists) keep one item open at a
+  // time. Narrative "Read more" sections (Approach, Story) and the reference
+  // panels stay independent on purpose.
+  var setAcc = function (d, open, animate) {
+    if (d._acc) d._acc(open, animate); else d.open = open;
+  };
+  var pinWhile = function (el, ms) {        // keep el still while something above it collapses
+    var top = el.getBoundingClientRect().top, end = performance.now() + ms + 60;
+    var step = function () {
+      var dy = el.getBoundingClientRect().top - top;
+      if (Math.abs(dy) > .5) window.scrollBy(0, dy);
+      if (performance.now() < end) window.requestAnimationFrame(step);
+    };
+    window.requestAnimationFrame(step);
+  };
+  var closeSiblings = function (d, animate) {
+    var group = d.parentElement && d.closest('[data-one-open]');
+    if (!group) return;
+    var closed = false;
+    group.querySelectorAll('details.accordion').forEach(function (o) {
+      if (o !== d && o.open && !o.classList.contains('is-closing') && o.closest('[data-one-open]') === group) { setAcc(o, false, animate); closed = true; }
+    });
+    if (closed && animate) pinWhile(d.querySelector(':scope > summary') || d, ACC_MS);
+  };
   document.querySelectorAll('details.accordion').forEach(function (d) {
     var summary = d.querySelector(':scope > summary');
     var body = d.querySelector(':scope > .accordion__body');
@@ -328,10 +353,15 @@
       d.classList.remove('is-animating', 'is-closing');
       body.style.height = body.style.opacity = body.style.transform = body.style.paddingBottom = '';
     };
-    summary.addEventListener('click', function (e) {
-      if (reduce.matches) return;           // native toggle, no motion
-      e.preventDefault();
-      var closing = d.open && !d.classList.contains('is-closing');
+    d._acc = function (open, animate) {
+      var isOpen = d.open && !d.classList.contains('is-closing');
+      if (open === isOpen) return;
+      if (!animate || reduce.matches) {
+        if (anim) anim.cancel();
+        finish(open);
+        return;
+      }
+      var closing = !open;
       // A closed <details> may still report its content's box (Chrome keeps
       // layout for hidden details content), so a closed one starts at 0.
       var from = d.open ? body.getBoundingClientRect().height : 0;
@@ -357,7 +387,33 @@
           { duration: ACC_MS, easing: ACC_EASE });
         anim.onfinish = function () { finish(true); };
       }
+    };
+    summary.addEventListener('click', function (e) {
+      e.preventDefault();
+      var opening = !(d.open && !d.classList.contains('is-closing'));
+      if (opening) closeSiblings(d, true);
+      d._acc(opening, true);
     });
+  });
+  // A link to a session (#body … on the 1:1 page, from the homepage or from
+  // within the page) opens that session's details and closes any other.
+  var openForTarget = function (t, animate) {
+    if (!t || !t.closest('[data-one-open]')) return;
+    var d = t.matches('details.accordion') ? t : t.querySelector('details.accordion');
+    if (!d || d.closest('[data-one-open]') !== t.closest('[data-one-open]')) return;
+    closeSiblings(d, animate);
+    setAcc(d, true, animate);
+  };
+  var hashEl = function () {
+    if (!location.hash) return null;
+    try { return document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (e) { return null; }
+  };
+  openForTarget(hashEl(), false);
+  window.addEventListener('pageshow', function (e) { if (e.persisted) openForTarget(hashEl(), false); });
+  window.addEventListener('hashchange', function () { openForTarget(hashEl(), true); });
+  document.addEventListener('click', function (e) {           // same hash clicked again: no hashchange fires
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (a && a.getAttribute('href') === location.hash) openForTarget(hashEl(), true);
   });
 
   /* ---------------------------------------------------------------------
