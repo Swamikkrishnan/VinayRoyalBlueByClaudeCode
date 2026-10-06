@@ -2075,6 +2075,7 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 
 /* The Work: "Where life is stuck," in the body face on its own line, then
    "we create movement." in the display face with the verb in bold. */
-.begin__statements .begin__lead { display: block; font-family: var(--sans); line-height: 1.2; margin-bottom: .08em; color: var(--text); }
+.begin__statements .begin__lead { display: block; font-family: var(--serif); line-height: 1.15; margin-bottom: .04em; color: var(--text); }
+.begin__statements .begin__lead em { font-style: italic; color: inherit; }
 .begin__statements p:has(.begin__lead) { max-width: none; }
 .begin__statements .begin__lead { white-space: nowrap; }
