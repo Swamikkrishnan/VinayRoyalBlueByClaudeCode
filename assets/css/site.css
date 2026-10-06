@@ -2306,18 +2306,22 @@ html.js.motion-ready [data-reveal-img]:is(.editorial__media, .story__portrait) i
   #matters .editorial--hero .editorial__media--person { height: 100%; max-height: 380px; min-height: 0; margin: 0; }
   #path .story__portrait img,
   #matters .editorial--hero .editorial__media--person img { width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; object-position: 50% 0%; }
-  /* Story: from the top of the picture down past the seated figure (about
-     62% of its height), so the frame is nearly square and only the rock
-     below is cropped; its width follows the height the screen allows. */
-  #path .story__portrait { aspect-ratio: 778 / 794; width: auto; max-width: 100%; justify-self: start; }
-  /* Background: full width. */
-  #matters .editorial--hero .editorial__media--person { width: 100%; }
+  /* Both photographs span the column, centred. Story: the frame's foot
+     sits just below the seated figure (62% down the picture, which is
+     width-fitted at 1280/778), so the rock is cropped and a little of the
+     top too; capped so some of the top is always trimmed. */
+  #path .story__portrait,
+  #matters .editorial--hero .editorial__media--person { width: 100%; justify-self: stretch; }
+  #path .story__portrait { max-height: calc((100vw - 2 * var(--gutter)) * 1280 / 778 * .52); align-self: start; }
+  #path .story__portrait img { object-position: 50% bottom calc((100vw - 2 * var(--gutter)) * 1280 / 778 * -.38); }
+  /* Title to first line: the same space as Group Experiences. */
+  #path .story__present > .marker + * { margin-top: 8px; }
   /* Tighter opening lines, so the photographs have more room. */
   #path .story__present { gap: 12px; }
   #matters .editorial--hero > .stack { gap: 12px; }
   #matters .editorial--hero .prose { gap: 10px; }
   #matters .editorial--hero .prose > * + * { margin-top: 0; }
-  #matters .editorial--hero .prose > .eyebrow + * { margin-top: 6px; }
+  #matters .editorial--hero .prose > .eyebrow + * { margin-top: 10px; }   /* title to first line: as Group Experiences */
 }
 @media (max-width: 1099px) {
   /* Pages without a section strip open on the same line as those with one. */
@@ -2371,4 +2375,10 @@ html.js .watermark:not(.bg-on) > :first-child::before { background-image: none; 
   .subnav.has-lane ul { margin-right: 44px; padding-right: 12px; scroll-padding-inline: 20px 12px; }
   .subnav.has-lane.has-more ul { -webkit-mask: linear-gradient(90deg, #000 calc(100% - 22px), transparent); mask: linear-gradient(90deg, #000 calc(100% - 22px), transparent); }
   .subnav.has-lane.has-more.is-scrolled ul { -webkit-mask: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 22px), transparent); mask: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 22px), transparent); }
+}
+
+@media (min-width: 768px) {
+  #path .story__present > .marker + * { margin-top: 0; }   /* Story, wide: as Group Experiences */
+  /* Background, wide: title to first line as Group Experiences. */
+  #matters .editorial--hero .prose > .eyebrow + * { margin-top: calc(var(--s-2) - 8px); }
 }
