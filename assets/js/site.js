@@ -59,6 +59,19 @@
     mobileNav.addEventListener('click', function (e) {
       if (e.target.closest('a')) closeNav(false);
     });
+    // A tap anywhere outside the open panel (and its toggle) closes it, and
+    // that tap stops there: it never also follows a link underneath. One
+    // listener for the life of the page; it does nothing while closed.
+    var swallowUntil = 0;
+    document.addEventListener('pointerdown', function (e) {
+      if (!mobileNav.classList.contains('is-open')) return;
+      if (mobileNav.contains(e.target) || toggle.contains(e.target)) return;
+      closeNav(false);
+      swallowUntil = Date.now() + 600;
+    }, true);
+    document.addEventListener('click', function (e) {
+      if (Date.now() < swallowUntil) { swallowUntil = 0; e.preventDefault(); e.stopPropagation(); }
+    }, true);
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) closeNav(true);
     });

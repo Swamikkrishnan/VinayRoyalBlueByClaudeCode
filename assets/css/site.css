@@ -2279,3 +2279,26 @@ html.js.motion-ready [data-reveal-img]:is(.editorial__media, .story__portrait) i
   .net__halo { animation: none !important; opacity: 0; }
   .mv__line--gold { animation: none !important; stroke-dasharray: none; opacity: .75; }
 }
+
+/* ==========================================================================
+   Search identity and mobile interaction pass
+   ========================================================================== */
+/* Homepage hero: the small-viewport height, fixed for the visit. A dynamic
+   (dvh) height grew the hero the moment Android Chrome retracted its address
+   bar on the first scroll, pushing the page down as the sigil docked. */
+.home-hero { min-height: 100vh; min-height: 100svh; }
+/* The facilitator portrait keeps its 4:5 frame on wide screens (the source
+   is square; phones already use a square crop). */
+@container (min-width: 800px) {
+  #meet-vinay .editorial__media--person img { aspect-ratio: 4 / 5; }
+}
+/* Floating section nav: the "more" arrow wears the strip's own glass. */
+@media (max-width: 1099px) {
+  .subnav__more {
+    background: rgba(14,20,40,.32); border-color: rgba(200,161,90,.45);
+    -webkit-backdrop-filter: blur(12px) saturate(120%); backdrop-filter: blur(12px) saturate(120%);
+    transition: opacity var(--motion-fast) var(--ease), border-color var(--motion-fast) var(--ease), background-color var(--motion-fast) var(--ease);
+  }
+  .subnav__more:hover, .subnav__more:focus-visible { border-color: var(--accent-brass); color: var(--text); background: rgba(200,161,90,.16); }
+  .subnav__more:active { background: rgba(200,161,90,.26); }
+}
