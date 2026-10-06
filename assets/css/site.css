@@ -1955,3 +1955,44 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
 /* Phones: intro paragraphs use the full text width (their desktop line-length
    caps only left an empty band on the right and added lines). */
 @media (max-width: 599px) { .lede, .why .lede, .lede--wide { max-width: none; } }
+
+
+/* ==========================================================================
+   Hierarchy & breathing pass
+   One highlight language: ochre italic for the key word, plain italic (in the
+   text colour) for secondary emphasis. Blue is kept for atmosphere and
+   controls (sigil glow, icons, FACE letters, hover/focus), never for text —
+   blue italic in prose reads as a link.
+   ========================================================================== */
+.inline-accent, .display-accent, .inline-accent--roman, .blue-strong { color: var(--emph-text, inherit); }
+.home-hero__trio .trio-word { color: var(--text); -webkit-text-stroke: 0; }
+.flow-list li > span:first-child { color: var(--text); }
+/* Five Areas: gold areas keep their ochre; Mind and Breath use plain italic. */
+:is(#body, #emotion, #action).offering,
+.doorway-list a:is([href$="#body"], [href$="#emotion"], [href$="#action"]) { --emph-text: var(--accent-brass); }
+:is(#mind, #breath).offering .gold-accent,
+.doorway-list a:is([href$="#mind"], [href$="#breath"]) .gold-accent { color: inherit; }
+
+/* Title ladder: subtitles sit clearly below titles; intros clearly above body. */
+:root {
+  --t-subtitle: clamp(1.45rem, 2.25vw, 2.1rem);     /* ≈34px desktop */
+  --t-lede: clamp(1.12rem, 1.45vw, 1.3rem);         /* ≈21px desktop */
+}
+@media (max-width: 599px) {
+  :root { --t-subtitle: clamp(1.3rem, 5.8vw, 1.45rem); --t-lede: clamp(1.08rem, 4.6vw, 1.15rem); }   /* ≈23 / 18px */
+}
+.statement-lead, #focus .statement-lead, .key-statement { font-size: var(--t-subtitle); line-height: 1.22; max-width: 30ch; }
+.lede { line-height: 1.55; color: var(--text); }
+/* Body: one muted tone everywhere, a little more air between lines. */
+:root, .bg-1, .bg-2, .bg-3, .bg-4 { --muted: #BAC3D8; }
+main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not([class]) { line-height: 1.65; }
+
+/* Breathing space: a little more between sections, and a deliberate pause
+   between a heading group and what follows it. */
+:root { --section-y: 88px; }
+@media (max-width: 768px) { :root { --section-y: 46px; } }
+:is(.statement-lead, .display-statement, .section-intro, .lede, .prose) + :is(.doorway-list, .summary-list, .offering-list, .accordion-group, .pair, .quad, .areas, figure, .face),
+.stack > :is(.statement-lead, .lede) + .stack { margin-top: var(--s-2); }
+/* Approach headings are upright; their secondary emphasis keeps its contrast
+   through italic now that it no longer uses blue. */
+.page-approach main :is(h1, h2, h3) .display-accent { font-style: italic; }
