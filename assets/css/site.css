@@ -2421,3 +2421,9 @@ html.js .watermark:not(.bg-on) > :first-child::before { background-image: none; 
 /* 1:1 Availability: three entries, always shown (no accordion), in the
    Alignment Calls entry's style; a fine rule above the list. */
 #availability .availability__list { margin: 0; border-top: 1px solid var(--line); }
+/* 1:1 Scope, wide screens: the "What it is not" label is not shown (kept for
+   screen readers; hidden rather than removed so the browser adds no default
+   "Details" label). */
+@media (min-width: 769px) {
+  #scope [data-static-desktop] > summary { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+}
