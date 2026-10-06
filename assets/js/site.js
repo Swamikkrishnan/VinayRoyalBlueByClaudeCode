@@ -887,9 +887,11 @@
   });
 
   /* ---------------------------------------------------------------------
-     4d. Get in touch — one persistent, understated contact entry. A small
-         pill (on every page, the forms included)
-         and any [data-contact-open] link open a short chooser: a modal
+     4d. Get in touch — no floating button. Contact lives where people
+         already look: the header (a quiet last item on wide screens, the
+         last line of the menu on phones) and one understated invitation
+         where a page naturally ends. Any [data-contact-open] link opens a
+         short chooser: a modal
          <dialog> (popover on wide screens, bottom sheet on phones). Escape,
          the close button or the backdrop close it; focus returns to the
          control that opened it. Without JS the links simply go to the
@@ -959,23 +961,6 @@
       e.preventDefault();
       openSheet(t.closest('.nav-mobile') ? toggle : t);
     });
-    {
-      var pill = document.createElement('button');
-      pill.type = 'button';
-      pill.className = 'contact-pill';
-      pill.setAttribute('data-contact-open', '');
-      pill.setAttribute('aria-haspopup', 'dialog');
-      pill.textContent = 'Get in touch';
-      document.body.appendChild(pill);
-      document.body.classList.add('has-contact-pill');
-      // The footer stays slim: the pill steps aside while it is on screen.
-      var foot = document.querySelector('.site-foot');
-      if (foot && 'IntersectionObserver' in window) {
-        new IntersectionObserver(function (entries) {
-          root.classList.toggle('foot-in-view', entries[0].isIntersecting);
-        }).observe(foot);
-      }
-    }
   }
 
   /* ---------------------------------------------------------------------
