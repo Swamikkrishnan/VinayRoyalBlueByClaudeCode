@@ -101,13 +101,16 @@
     // Two layers: the hero's styling fades into the header's plain white as it docks.
     tFly.innerHTML = '<span class="tf-a">' + heroTitle.innerHTML + '</span><span class="tf-b">' + heroTitle.innerHTML + '</span>';
     var tfA = tFly.firstChild, tfB = tFly.lastChild;
-    // Dock once most of the hero has scrolled away (past its midpoint); come
-    // back once the visitor has scrolled up to ~40% of it. The gap between
-    // the two keeps it from flickering near the middle.
+    // Dock once enough of the hero has scrolled away; come back once enough of
+    // it is in view again. The gap between the two keeps it from flickering.
     var heroEl = document.querySelector('.page-home .home-hero');
+    // Phones start earlier (a short, deliberate scroll) and return once the
+    // hero is ~90% back in view; wider screens wait for the hero's midpoint.
+    var narrow = window.matchMedia('(max-width: 768px)');
     var past = function (current) {
       var h = heroEl ? heroEl.offsetHeight : window.innerHeight;
-      return window.scrollY > h * (current ? .4 : .5);
+      var on = narrow.matches ? .15 : .5, off = narrow.matches ? .08 : .4;
+      return window.scrollY > h * (current ? off : on);
     };
     document.body.appendChild(sFly); document.body.appendChild(tFly);
     var geo = null, docked = false, anims = [], token = 0, tick = false, handing = false, pendingFly = null;
