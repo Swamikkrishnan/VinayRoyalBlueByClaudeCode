@@ -81,8 +81,6 @@
   --motion-reflect: 555ms;  /* reflective / centred statements (soft fade) */
   --stagger: 100ms;          /* between items in a list or grid */
   --cascade: 140ms;          /* between blocks in a section, top to bottom */
-  --rv-dist: 10px;           /* fade-up distance */
-  --rv-x: 20px;              /* editorial left / right distance */
   --t-fast: var(--motion-fast);
 }
 
@@ -215,43 +213,41 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 /* --------------------------------------------------------------------------
    Reveal-on-scroll — content is visible by default; JS only adds motion
    -------------------------------------------------------------------------- */
-/* A small vocabulary, one per section container (data-reveal):
-   ""        soft fade up      headings, body copy, CTA blocks
-   "soft"    soft fade in      reflective and centred copy (6px, slower)
-   "left" /  editorial reveal  one side of a two-sided composition, 20px
-   "right"
-   data-stagger on a list or grid lets its items follow the container one by
-   one (fade up, or "soft" for opacity only). Photos have their own path. */
+/* One system (site.js, section 2): a section container carries data-reveal
+   (its readable blocks cascade in reading order), page openings carry
+   data-seq, lists and grids data-stagger, photos data-reveal-img. Each
+   reveals once, through .is-in, after .assets-ready. Every copy reveal is
+   the same 500ms fade with a 6px rise (data-stagger="soft": fade only). */
 [data-reveal], [data-seq] { opacity: 1; }
 /* site.js marks the readable blocks inside each section (.rv-item, numbered
    --ci in reading order); they cascade top to bottom, each with the same
    duration and curve, moving in the section's direction. */
-.js.motion-ready [data-reveal] { --rv-dur: var(--motion-text); }
+/* One motion for all copy: a 500ms fade with a 6px rise. */
+:root { --rv-time: 500ms; --rv-rise: 6px; }
+.js.motion-ready [data-reveal] { --rv-dur: var(--rv-time); }
 /* Until site.js has marked a section's blocks, keep the whole section hidden
    (no flash of visible text before the cascade takes over). */
 .js.motion-ready [data-reveal]:not(.rv-ready) { opacity: 0; }
-.js.motion-ready [data-reveal] .rv-item {
-  opacity: 0; transform: translate3d(var(--rv-tx, 0px), var(--rv-ty, var(--rv-dist)), 0);
-}
-.js.motion-ready [data-reveal="soft"] { --rv-ty: 6px; --rv-dur: var(--motion-reflect); }
-.js.motion-ready [data-reveal="left"] { --rv-tx: calc(-1 * var(--rv-x)); --rv-ty: 0px; }
-.js.motion-ready [data-reveal="right"] { --rv-tx: var(--rv-x); --rv-ty: 0px; }
+.js.motion-ready [data-reveal] .rv-item { opacity: 0; transform: translate3d(0, var(--rv-rise), 0); }
 .js.motion-ready [data-reveal].is-in .rv-item {
   opacity: 1; transform: none;
-  transition: opacity var(--rv-dur) var(--ease-calm) var(--cd, 0ms),
-              transform var(--rv-dur) var(--ease-calm) var(--cd, 0ms);
+  transition: opacity var(--rv-dur) ease var(--cd, 0ms),
+              transform var(--rv-dur) ease var(--cd, 0ms);
 }
 /* Staggered items: they wait for their section, then follow one by one. */
-.js.motion-ready [data-stagger] > * { opacity: 0; transform: translate3d(0, 10px, 0); }
+.js.motion-ready [data-stagger] > * { opacity: 0; transform: translate3d(0, var(--rv-rise), 0); }
 .js.motion-ready [data-stagger="soft"] > * { transform: none; }
 .js.motion-ready .is-in [data-stagger] > * {
   opacity: 1; transform: none;
-  transition: opacity var(--motion-text) var(--ease-calm) calc(var(--cd, 0ms) + 100ms + var(--i, 0) * var(--stagger)),
-              transform var(--motion-text) var(--ease-calm) calc(var(--cd, 0ms) + 100ms + var(--i, 0) * var(--stagger));
+  transition: opacity var(--rv-time) ease calc(var(--cd, 0ms) + 100ms + var(--i, 0) * var(--stagger)),
+              transform var(--rv-time) ease calc(var(--cd, 0ms) + 100ms + var(--i, 0) * var(--stagger));
 }
 /* Page openings: title first, then each following line a beat later. */
-.js.motion-ready [data-seq] { opacity: 0; transform: translate3d(0, 10px, 0); }
-.js.motion-ready [data-seq].is-in { opacity: 1; transform: none; transition: opacity var(--motion-text) var(--ease-calm) var(--sd, 0ms), transform var(--motion-text) var(--ease-calm) var(--sd, 0ms); }
+.js.motion-ready [data-seq] { opacity: 0; transform: translate3d(0, var(--rv-rise), 0); }
+.js.motion-ready [data-seq].is-in { opacity: 1; transform: none; transition: opacity var(--rv-time) ease var(--sd, 0ms), transform var(--rv-time) ease var(--sd, 0ms); }
+/* The homepage hero keeps its own opening (unchanged). */
+.js.motion-ready .home-hero [data-seq] { transform: translate3d(0, 10px, 0); }
+.js.motion-ready .home-hero [data-seq]:not(img).is-in { transition-timing-function: var(--ease-calm); }
 /* Photographs: primarily a slow fade with a 5px settle; no blur, no zoom.
    site.js adds .is-in once the image is decoded (and after its section's
    own fade), so the fade never runs over an empty frame. Space is reserved
@@ -267,7 +263,7 @@ h3 { font-family: var(--sans); font-size: var(--t-sub); line-height: 1.3; }
 .js.motion-ready img[data-seq].is-in { transition-duration: var(--motion-image); transition-timing-function: var(--ease-image); }
 /* Phones: shorter distances and a slightly quicker stagger on long pages. */
 @media (max-width: 599px) {
-  :root { --t-display: clamp(2rem, 8vw, 2.55rem); --rv-dist: 10px; --rv-x: 12px; --stagger: 80ms; --cascade: 110ms; }
+  :root { --t-display: clamp(2rem, 8vw, 2.55rem); --stagger: 80ms; --cascade: 110ms; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1212,7 +1208,9 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 .text-cta:hover, .text-cta:focus-visible { color: var(--accent); }
 
 /* --- Eyebrow: label + the production rule / node -------------------------- */
-.marker, .eyebrow { font-size: .8rem; letter-spacing: .18em; }
+/* The one size for the small gold section labels (the Availability / Scope
+   & Suitability size), on every page and screen. */
+.marker, .eyebrow { font-size: clamp(.88rem, 3.8vw, 1rem); letter-spacing: .14em; line-height: 1.4; font-weight: 400; }
 .marker::after, .eyebrow::after {
   width: clamp(64px, 8vw, 120px); height: 14px; background: var(--warm);
   -webkit-mask: url("../vinay-brand-assets/section-rule-node.svg") left center / 100% 100% no-repeat; mask: url("../vinay-brand-assets/section-rule-node.svg") left center / 100% 100% no-repeat;
@@ -1221,7 +1219,6 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
   width: clamp(64px, 8vw, 120px); height: 14px; background: var(--warm); transform: scaleX(-1);
   -webkit-mask: url("../vinay-brand-assets/section-rule-node.svg") left center / 100% 100% no-repeat; mask: url("../vinay-brand-assets/section-rule-node.svg") left center / 100% 100% no-repeat;
 }
-@media (max-width: 599px) { .marker, .eyebrow { font-size: .74rem; } }
 
 /* --- Editorial display statements ------------------------------------------- */
 .display-statement { font-size: var(--t-display); line-height: 1.08; max-width: 22ch; color: var(--text); }
@@ -2039,7 +2036,6 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 /* "A challenge may need attention through" and the "Sometimes…" lines in full white. */
 .begin__intro, .begin__close { color: var(--text); }
 /* 1:1 Scope & Suitability label at the same size as Availability. */
-#scope .scope > .marker { font-size: clamp(.88rem, 3.8vw, 1rem); letter-spacing: .14em; }
 /* FACE behind its Read more: the component keeps its own centring. */
 .face-more > .accordion__body { max-width: none; }
 
@@ -2054,7 +2050,7 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 .home-hero__trio .trio-word { font-weight: 400; -webkit-text-stroke: 0; text-shadow: none; }
 
 /* Gillius draws "o" and "e" touching ("dœs"); a hair of space keeps them apart. */
-.oe { margin-left: .07em; }
+.oe { margin-left: .035em; }   /* Gillius o and e otherwise touch in "does" */
 /* More room between sections on every page. */
 :root { --section-y: 128px; }
 @media (max-width: 768px) { :root { --section-y: 70px; } }
@@ -2067,7 +2063,6 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 
 /* 1:1 Availability: the label and sessions always visible; the rest in a
    standard disclosure. Label sized like Scope & Suitability. */
-#availability > .marker { font-size: clamp(.88rem, 3.8vw, 1rem); letter-spacing: .14em; }
 #availability .ruled { border-top: 1px solid var(--line); }
 #availability > .accordion { border-top: 0; }
 #scope .scope > .accordion { text-align: left; }
@@ -2189,8 +2184,11 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
   main > .bg-2:last-child { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-primary-to-01-dark-primary-mobile-compact.webp?v=2"); }
   main > .bg-4:last-child { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-secondary-to-01-dark-primary-mobile-compact.webp?v=2"); }
   main > :is(.bg-2, .bg-4):last-child::after { --tar: .5926; }   /* full height: 640 / 1080 */
-  /* Content settles in a little sooner on phones. */
-  :root { --motion-text: 480ms; --motion-reflect: 480ms; }
+}
+/* If site.js never arrives, the head script lets everything fade in (it
+   never snaps). */
+.js.rv-fallback :is([data-reveal], [data-reveal] .rv-item, [data-seq], [data-reveal-img], [data-stagger] > *) {
+  opacity: 1 !important; transform: none !important; transition: opacity 500ms ease, transform 500ms ease;
 }
 /* A field whose texture is still loading stays covered, then fades in. */
 html.js :is(.bg-1, .bg-2, .bg-3, .bg-4).bg-pending { --cover: 1; }
@@ -2202,3 +2200,82 @@ html.js:not(.assets-ready) main > :is(.bg-1, .bg-2, .bg-3, .bg-4):not(:first-chi
 /* A photograph inside a figure that fades as a whole fades once, with it. */
 html.js.motion-ready [data-reveal-img] :is(.editorial__media, .story__portrait) img,
 html.js.motion-ready [data-reveal-img]:is(.editorial__media, .story__portrait) img { opacity: 1; transition: none; }
+
+/* ==========================================================================
+   Final refinement pass
+   ========================================================================== */
+/* Homepage metrics: a tighter, more intentional block (dividers 26px → 19px). */
+.evidence > div { padding-block: 19px; }
+
+@media (max-width: 767px) {
+  /* A light-secondary field that wears light primary on phones (.m-lp: Story's
+     Vision). Its transitions are the light-primary ones for each neighbour. */
+  .bg-4.m-lp { --base: #0B3A60; --img: url("../vinay-brand-assets/bg-light-primary-mobile.webp");
+    --veil: linear-gradient(90deg, rgba(8,22,44,.42), rgba(8,22,44,.72) 24%, rgba(8,22,44,.72) 76%, rgba(8,22,44,.42)); }
+  :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1):has(+ .bg-4.m-lp) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-01-dark-primary-to-light-primary-mobile-compact.webp?v=2"); }
+  :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1) + .bg-4.m-lp { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-01-dark-primary-to-light-primary-mobile-compact.webp?v=2"); }
+  :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1):has(+ .bg-4.m-lp.t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-01-dark-primary-to-light-primary-mobile-tall.webp?v=2"); }
+  :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1) + .bg-4.m-lp.t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-01-dark-primary-to-light-primary-mobile-tall.webp?v=2"); }
+  .bg-4.m-lp:has(+ :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1)) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-primary-to-01-dark-primary-mobile-compact.webp?v=2"); }
+  .bg-4.m-lp + :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1) { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-primary-to-01-dark-primary-mobile-compact.webp?v=2"); }
+  .bg-4.m-lp:has(+ :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1).t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-light-primary-to-01-dark-primary-mobile-tall.webp?v=2"); }
+  .bg-4.m-lp + :is(.bg-1:not(.m-d2, .m-d3), .bg-3.m-d1).t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-light-primary-to-01-dark-primary-mobile-tall.webp?v=2"); }
+  .m-d2:has(+ .bg-4.m-lp) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-02-dark-secondary-to-light-primary-mobile-compact.webp?v=2"); }
+  .m-d2 + .bg-4.m-lp { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-02-dark-secondary-to-light-primary-mobile-compact.webp?v=2"); }
+  .m-d2:has(+ .bg-4.m-lp.t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-02-dark-secondary-to-light-primary-mobile-tall.webp?v=2"); }
+  .m-d2 + .bg-4.m-lp.t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-02-dark-secondary-to-light-primary-mobile-tall.webp?v=2"); }
+  .bg-4.m-lp:has(+ .m-d2) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-primary-to-02-dark-secondary-mobile-compact.webp?v=2"); }
+  .bg-4.m-lp + .m-d2 { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-primary-to-02-dark-secondary-mobile-compact.webp?v=2"); }
+  .bg-4.m-lp:has(+ .m-d2.t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-light-primary-to-02-dark-secondary-mobile-tall.webp?v=2"); }
+  .bg-4.m-lp + .m-d2.t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-light-primary-to-02-dark-secondary-mobile-tall.webp?v=2"); }
+  :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3):has(+ .bg-4.m-lp) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-03-dark-secondary-to-light-primary-mobile-compact.webp?v=2"); }
+  :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3) + .bg-4.m-lp { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-03-dark-secondary-to-light-primary-mobile-compact.webp?v=2"); }
+  :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3):has(+ .bg-4.m-lp.t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-03-dark-secondary-to-light-primary-mobile-tall.webp?v=2"); }
+  :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3) + .bg-4.m-lp.t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-03-dark-secondary-to-light-primary-mobile-tall.webp?v=2"); }
+  .bg-4.m-lp:has(+ :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3)) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-primary-to-03-dark-secondary-mobile-compact.webp?v=2"); }
+  .bg-4.m-lp + :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3) { --t-in: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-primary-to-03-dark-secondary-mobile-compact.webp?v=2"); }
+  .bg-4.m-lp:has(+ :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3).t-v2) { --t-out: url("../vinay-brand-assets/mobile-transitions-v2/transition-light-primary-to-03-dark-secondary-mobile-tall.webp?v=2"); }
+  .bg-4.m-lp + :is(.bg-3:not(.m-d1, .m-d2), .bg-1.m-d3).t-v2 { --t-in: url("../vinay-brand-assets/mobile-transitions-v2/transition-light-primary-to-03-dark-secondary-mobile-tall.webp?v=2"); }
+  main > .bg-4.m-lp:last-child { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-primary-to-01-dark-primary-mobile-compact.webp?v=2"); }
+  /* Vision opens below a V2 transition: copy clears it. */
+  .vision.section.t-v2 { padding-top: max(var(--section-y), calc(52px + 6px)); }
+  /* A short field whose texture lives low (Story's The Real Practice): the
+     image is anchored at its foot, so opening Read more uncovers more of it
+     upward rather than re-centring the same crop. */
+  .bg-pos-bottom { background-position: 0 0, 50% 100%; }
+}
+
+/* --- Approach: the two principle graphics (inline SVG, no raster) --------
+   Interconnection: a loose web; every 7.5s one gold node activates and a
+   signal branches outward through it, each node it reaches answering with a
+   brief glow, then the web rests. Movement: a field of lines that gathers,
+   crosses and opens again as its point of convergence travels forward. */
+.motion-graphic { display: block; width: 100%; max-width: 540px; height: auto; overflow: visible; margin: var(--s-2) 0 var(--s-1); }
+.net__web { fill: none; stroke: #5DB8F0; stroke-opacity: .3; stroke-width: .8; }
+.net__route { fill: none; stroke: #C8A15A; stroke-opacity: .38; stroke-width: 1; }
+.net__dots circle { fill: #5DB8F0; fill-opacity: .6; }
+.net__ring { fill: #08182B; stroke: #5DB8F0; stroke-opacity: .75; stroke-width: 1; }
+.net__ring--gold { stroke: #C8A15A; stroke-opacity: 1; stroke-width: 1.2; }
+.net__halo, .net__sig { fill: none; opacity: 0; }
+.net__halo { stroke: #5DB8F0; stroke-width: 1; transform-box: fill-box; transform-origin: center; animation: net-halo 7.5s ease-out var(--d) infinite both; }
+.net__halo--gold { stroke: #C8A15A; }
+.net__sig { stroke: #7CC8F4; stroke-width: 1.7; stroke-linecap: round; stroke-dasharray: .26 1.2; stroke-dashoffset: .26; animation: net-sig 7.5s linear var(--d) infinite both; }
+.net__sig--gold { stroke: #C8A15A; }
+@keyframes net-sig { 0% { stroke-dashoffset: .26; opacity: 0; } 1.5% { opacity: 1; } 12% { stroke-dashoffset: -1; opacity: .9; } 13%, 100% { stroke-dashoffset: -1; opacity: 0; } }
+@keyframes net-halo { 0% { opacity: 0; transform: scale(.5); } 3% { opacity: .8; } 15%, 100% { opacity: 0; transform: scale(1.7); } }
+/* The field has no hard start or end: it fades in and out at the edges. */
+.mv { overflow: hidden; -webkit-mask: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); mask: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); }
+.mv__line { fill: none; stroke-width: 1; }
+.mv__line--bright { stroke-width: 1.35; }
+.mv__line--faint { stroke-opacity: .55; }
+.mv__line--gold { stroke: #C8A15A; stroke-width: 1.3; stroke-linecap: round; stroke-dasharray: .3 1.4; stroke-dashoffset: .3; animation: mv-gold 7.3s ease-in-out infinite; }
+@keyframes mv-gold { 0% { stroke-dashoffset: .3; opacity: 0; } 10% { opacity: .9; } 62% { opacity: .9; } 72%, 100% { stroke-dashoffset: -1; opacity: 0; } }
+.motion-graphic.is-paused, .motion-graphic.is-paused * { animation-play-state: paused; }
+@media (min-width: 860px) { .motion-graphic { margin-block: var(--s-3) var(--s-2); } }
+@media (prefers-reduced-motion: reduce) {
+  /* At rest: the relationships are drawn, nothing moves. */
+  .net__sig { animation: none !important; stroke-dasharray: none; opacity: .3; }
+  .net__sig--gold { opacity: .6; }
+  .net__halo { animation: none !important; opacity: 0; }
+  .mv__line--gold { animation: none !important; stroke-dasharray: none; opacity: .75; }
+}

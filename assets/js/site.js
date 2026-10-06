@@ -243,9 +243,9 @@
   }
   var ACC_MS = 444, ACC_EASE = 'cubic-bezier(.3,.7,.3,1)';   // calm, same speed open and close
   // Lists of parallel options (marked data-one-open: the 1:1 sessions and
-  // immersions, the Background qualification lists) keep one item open at a
-  // time. Narrative "Read more" sections (Approach, Story) and the reference
-  // panels stay independent on purpose.
+  // immersions, the Background qualification lists) and the whole Approach
+  // page keep one item open at a time. Story's "Read more" sections and the
+  // reference panels stay independent on purpose.
   var setAcc = function (d, open, animate) {
     if (d._acc) d._acc(open, animate); else d.open = open;
   };
@@ -253,7 +253,7 @@
     var top = el.getBoundingClientRect().top, end = performance.now() + ms + 60;
     var step = function () {
       var dy = el.getBoundingClientRect().top - top;
-      if (Math.abs(dy) > .5) window.scrollBy(0, dy);
+      if (Math.abs(dy) > .5) window.scrollBy({ top: dy, behavior: 'instant' });   // never smoothed (html is scroll-behavior: smooth)
       if (performance.now() < end) window.requestAnimationFrame(step);
     };
     window.requestAnimationFrame(step);
@@ -344,9 +344,9 @@
   /* ---------------------------------------------------------------------
      1b. Background assets — this page's textures only (each field, its
          transition art, the five-area connector). The fields on screen load
-         first; .assets-ready follows them (capped at 1.3s so a slow network
-         never holds the page), then the transition art and the rest load in
-         page order. A field whose texture is still on its way stays covered
+         first; .assets-ready follows them and the web fonts (capped at 1.3s
+         so a slow network never holds the page), then the transition art and
+         the rest load in page order. A field whose texture is still on its way stays covered
          (.bg-pending), and transition art stays hidden (.bgt-pending), until
          it lands and fades in, so nothing ever appears abruptly.
      --------------------------------------------------------------------- */
@@ -402,13 +402,31 @@
       });
     };
     setTimeout(function () { finish(); later(); }, 1300);
-    Promise.all(first.map(function (el) { return track(el, ownOf(el), 'bg-pending'); })).then(function () { finish(); later(); });
+    var fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+    Promise.all(first.map(function (el) { return track(el, ownOf(el), 'bg-pending'); }).concat(fonts)).then(function () { finish(); later(); });
   });
 
   // Photographs keep their space and fade in once decoded (CSS holds them at 0).
   Array.prototype.forEach.call(document.querySelectorAll('.editorial__media img, .story__portrait img'), function (img) {
     whenReady(img, function () { img.classList.add('is-loaded'); });
   });
+
+  // Approach graphics run only while on screen (CSS animations pause; the
+  // Movement field's SMIL morph pauses too). Reduced motion: they rest.
+  var graphics = document.querySelectorAll('.motion-graphic');
+  if (graphics.length) {
+    var setLive = function (svg, live) {
+      svg.classList.toggle('is-paused', !live);
+      if (svg.pauseAnimations) { if (live) svg.unpauseAnimations(); else svg.pauseAnimations(); }
+    };
+    graphics.forEach(function (svg) { setLive(svg, false); });
+    if (!reduce.matches && 'IntersectionObserver' in window) {
+      var gio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { setLive(e.target, e.isIntersecting); });
+      }, { rootMargin: '10% 0px' });
+      graphics.forEach(function (svg) { gio.observe(svg); });
+    }
+  }
 
   /* ---------------------------------------------------------------------
      2. Reveal engine — IntersectionObserver adds .is-in once; the CSS in
@@ -514,14 +532,15 @@
         if (wait > 0) setTimeout(go, wait); else go();
       });
     };
-    // One observer, started only once the opening pass has run, so its first
-    // report is the page as it actually stands (including a scroll position
-    // the browser restored on refresh). Each target is revealed once.
+    // One observer for everything below the fold, started once the opening
+    // pass has run. Each target is revealed once and then unobserved.
+    var pending = [];
+    var done = function (el) { var i = pending.indexOf(el); if (i > -1) pending.splice(i, 1); };
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
         if (entry.target.hasAttribute('data-seq')) reveal(entry.target); else revealSection(entry.target);
-        io.unobserve(entry.target);
+        io.unobserve(entry.target); done(entry.target);
       });
     }, { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
     // Photos start a little earlier.
@@ -532,20 +551,53 @@
         photoIO.unobserve(entry.target);
       });
     }, { rootMargin: '0px 0px 4% 0px', threshold: 0 });
+    // Where the page stands right now (including a scroll position the browser
+    // restored on refresh): anything above the viewport is shown as it is (off
+    // screen, so nothing is seen to change); anything within the viewport,
+    // even its last few pixels, reveals now, top to bottom; the rest waits for
+    // the observer.
+    var settle = function (el) {
+      var b = el.getBoundingClientRect();
+      if (b.bottom <= 0) { reveal(el); return true; }
+      if (b.top < window.innerHeight) { if (el.hasAttribute('data-seq')) reveal(el); else revealSection(el); return true; }
+      return false;
+    };
     var observe = function () {
       targets.forEach(function (el) {
         if (el.hasAttribute('data-reveal-img')) { photoIO.observe(el); return; }
-        if (el.classList.contains('is-in')) return;
-        // Already scrolled past (a restored position or a jump link): shown
-        // as it is, off screen, so scrolling back never finds it waiting.
-        if (el.getBoundingClientRect().bottom <= 0) { reveal(el); return; }
-        io.observe(el);
+        if (el.classList.contains('is-in') || settle(el)) return;
+        pending.push(el); io.observe(el);
       });
+      // A jump (a scroll position the browser restores late, a jump link, a
+      // long fling) can carry content past the viewport without it ever
+      // intersecting, or leave it in view but inside the observer's lower
+      // margin: settle where the page now stands, as on arrival. Only the
+      // still-pending elements are read, and only when a scroll happened.
+      // Any scroll before the visitor has touched, wheeled, pressed a key or
+      // clicked is the browser placing the page (restoration can arrive late,
+      // and in steps), so it settles like a jump.
+      var queued = false, lastY = window.pageYOffset, touched = false;
+      ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (ev) {
+        window.addEventListener(ev, function () { touched = true; }, { once: true, passive: true });
+      });
+      window.addEventListener('scroll', function () {
+        if (queued || !pending.length) return;
+        queued = true;
+        window.requestAnimationFrame(function () {
+          queued = false;
+          var y = window.pageYOffset, jump = !touched || Math.abs(y - lastY) > window.innerHeight * 0.5;
+          lastY = y;
+          pending.slice().forEach(function (el) {
+            if (jump ? settle(el) : el.getBoundingClientRect().bottom <= 0 && (reveal(el), true)) { io.unobserve(el); done(el); }
+          });
+        });
+      }, { passive: true });
     };
-    // The opening starts from one state: .assets-ready (this page's textures
-    // loaded, capped at 1.3s), then two frames so its first fade is never lost
-    // in a heavy frame. Texture first, then the words: the homepage hero lets
-    // its background fade most of the way in before the sigil appears.
+    // The opening starts from one state, .assets-ready: this page's on-screen
+    // textures and its web fonts are in (capped at 1.3s, so a slow or failed
+    // request never holds the page), then two frames so the first fade is
+    // never lost in a heavy frame. The homepage hero lets its texture fade
+    // most of the way in before the sigil appears.
     var afterSettle = function (fn) {
       assetsReady.then(function () {
         setTimeout(function () {
@@ -556,22 +608,14 @@
     afterSettle(function () {
       T0 = performance.now();
       var seqShown = false;
-      targets.forEach(function (el) {
-        if (el.hasAttribute('data-reveal-img') || !el.hasAttribute('data-seq')) return;   // photos have their own path
+      targets.forEach(function (el) {   // the page opening first
+        if (!el.hasAttribute('data-seq')) return;
         var b = el.getBoundingClientRect();
         if (b.top < window.innerHeight && b.bottom > 0) { reveal(el); seqShown = true; }
       });
-      // Then everything else in view, top to bottom, as the last opening line begins.
+      // then everything else, as the last opening line begins
       setTimeout(observe, seqShown ? SEQ_STEP * Math.max(0, Math.min(seqCount, 5) - 1) : 0);
     });
-    // Safety net: text already scrolled past (e.g. after a jump link) is never
-    // left invisible. Content further down keeps its normal fade.
-    setTimeout(function () {
-      targets.forEach(function (el) {
-        if (el.hasAttribute('data-reveal-img')) return;
-        if (el.getBoundingClientRect().top < window.innerHeight) reveal(el);
-      });
-    }, 4000);
   } else {
     document.querySelectorAll('svg').forEach(function (svg) {
       if (svg.pauseAnimations) svg.pauseAnimations();
