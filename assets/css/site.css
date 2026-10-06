@@ -2006,8 +2006,6 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 .page-home .doorway-list .doorway-list__name { font-weight: 700; font-size: .82rem; letter-spacing: .13em; margin-bottom: 4px; }
 /* Inside each description the highlight takes the other colour: gold areas
    (Body, Emotion, Action) highlight in blue, blue areas (Mind, Breath) in gold. */
-.page-home .doorway-list a:is([href$="#body"], [href$="#emotion"], [href$="#action"]) :is(.gold-accent, .inline-accent) { color: #5DB8F0; }   /* literal: these rows redefine --emphasis-blue as gold */
-.page-home .doorway-list a:is([href$="#mind"], [href$="#breath"]) :is(.gold-accent, .inline-accent) { color: var(--accent-brass); }
 
 /* More air around section openings (≈20%), with the pause after each
    heading group widened to match. */
@@ -2047,3 +2045,10 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 #scope .scope > .marker { font-size: clamp(.88rem, 3.8vw, 1rem); letter-spacing: .14em; }
 /* FACE behind its Read more: the component keeps its own centring. */
 .face-more > .accordion__body { max-width: none; }
+
+/* Homepage Five Areas: plain white labels; each description's highlight in
+   its own set colour (gold-accent = gold, inline-accent = blue), whatever
+   the area. */
+.page-home .doorway-list .doorway-list__name { color: var(--text); }
+.page-home .doorway-list .doorway-list__desc .gold-accent { color: #C8A15A; }
+.page-home .doorway-list .doorway-list__desc .inline-accent { color: #5DB8F0; }
