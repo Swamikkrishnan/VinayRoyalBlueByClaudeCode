@@ -101,17 +101,8 @@
     // Two layers: the hero's styling fades into the header's plain white as it docks.
     tFly.innerHTML = '<span class="tf-a">' + heroTitle.innerHTML + '</span><span class="tf-b">' + heroTitle.innerHTML + '</span>';
     var tfA = tFly.firstChild, tfB = tFly.lastChild;
-    // Dock once enough of the hero has scrolled away; come back once enough of
-    // it is in view again. The gap between the two keeps it from flickering.
-    var heroEl = document.querySelector('.page-home .home-hero');
-    // Phones start earlier (a short, deliberate scroll) and return once the
-    // hero is ~90% back in view; wider screens wait for the hero's midpoint.
-    var narrow = window.matchMedia('(max-width: 768px)');
-    var past = function (current) {
-      var h = heroEl ? heroEl.offsetHeight : window.innerHeight;
-      var on = narrow.matches ? .15 : .5, off = narrow.matches ? .08 : .4;
-      return window.scrollY > h * (current ? off : on);
-    };
+    // Docked as soon as the page leaves the very top; back home at the top.
+    var past = function () { return window.scrollY > 2; };
     document.body.appendChild(sFly); document.body.appendChild(tFly);
     var geo = null, docked = false, anims = [], token = 0, tick = false, handing = false, pendingFly = null;
     var textRect = function (el) { var r = document.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect(); };
@@ -203,7 +194,7 @@
     // Leaving the homepage from the top: the sigil rises into the header and
     // the name steps aside to make room (as every other page shows it), then
     // the next page opens. Arriving from another page: the reverse.
-    var SHIFT = 40, HAND = 480, leaving = false;
+    var SHIFT = 40, HAND = DUR, leaving = false;   // hand-offs glide at the same pace as the scroll flight
     var handOff = function (down, done) {               // down: header -> hero
       var my = ++token;
       heroSig.style.transition = 'none';
@@ -311,8 +302,15 @@
           handOff(true, function () { settleHandOff(false); });
         }
       };
-      if (document.readyState === 'complete') setTimeout(arrive, 60);
-      else window.addEventListener('load', function () { setTimeout(arrive, 60); }, { once: true });
+      // Start only once the page has settled (backgrounds in, two quiet frames),
+      // so the hand-off never shares a frame with the page's own loading work.
+      var whenSettled = function () {
+        (typeof assetsReady !== 'undefined' ? assetsReady : Promise.resolve()).then(function () {
+          window.requestAnimationFrame(function () { window.requestAnimationFrame(arrive); });
+        });
+      };
+      if (document.readyState === 'complete') whenSettled();
+      else window.addEventListener('load', whenSettled, { once: true });
     }
   }
 
