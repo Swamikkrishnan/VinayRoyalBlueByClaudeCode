@@ -2081,3 +2081,13 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 .begin__statements .begin__lead { white-space: nowrap; }
 /* Five Areas intro lines: the same size as the homepage intro ("I'm a healer and facilitator…"). */
 #focus .statement-lead--sans, .statement-lead--sans { font-size: var(--t-lede); line-height: 1.55; max-width: none; }
+
+/* 1:1 Availability: one white line, then the disclosure sitting evenly
+   between its rules; Scope & Suitability opens with the same gap above it
+   as Availability has. */
+#availability { gap: var(--s-2); }
+#availability .availability__line { color: var(--text); text-align: center; }
+#availability > .accordion { border-top: 0; margin-top: calc(5px - var(--s-2)); }
+#alignment.section { padding-bottom: 0; }
+#scope.section { padding-top: 30px; }
+@media (min-width: 769px) { #scope.section { padding-top: calc(var(--section-y) - 10px); } }
