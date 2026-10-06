@@ -251,9 +251,21 @@
          an open accordion is safe. Reduced motion: native instant toggle.
      --------------------------------------------------------------------- */
   // Some disclosures start open on wider screens only (1:1 Availability, Scope).
-  if (window.matchMedia('(min-width: 769px)').matches) {
+  // Some are simply content there (data-static-desktop: 1:1 Scope's "What it
+  // is not"), not a control: open, and the label is not focusable.
+  var wide = window.matchMedia('(min-width: 769px)');
+  if (wide.matches) {
     document.querySelectorAll('details[data-open-desktop]').forEach(function (d) { d.open = true; });
   }
+  var staticSummaries = function () {
+    document.querySelectorAll('details[data-static-desktop]').forEach(function (d) {
+      var sm = d.querySelector(':scope > summary');
+      if (wide.matches) { d.open = true; sm.setAttribute('tabindex', '-1'); sm.setAttribute('aria-disabled', 'true'); }
+      else { sm.removeAttribute('tabindex'); sm.removeAttribute('aria-disabled'); }
+    });
+  };
+  staticSummaries();
+  if (wide.addEventListener) wide.addEventListener('change', staticSummaries);
   var ACC_MS = 444, ACC_EASE = 'cubic-bezier(.3,.7,.3,1)';   // calm, same speed open and close
   // Lists of parallel options (marked data-one-open: the 1:1 sessions and
   // immersions, the Background qualification lists) and the whole Approach
@@ -328,6 +340,7 @@
     };
     summary.addEventListener('click', function (e) {
       e.preventDefault();
+      if (d.hasAttribute('data-static-desktop') && wide.matches) return;   // shown as plain content on wide screens
       var opening = !(d.open && !d.classList.contains('is-closing'));
       if (opening) closeSiblings(d, true);
       d._acc(opening, true);

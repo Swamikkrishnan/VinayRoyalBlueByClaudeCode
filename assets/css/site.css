@@ -2400,3 +2400,18 @@ html.js .watermark:not(.bg-on) > :first-child::before { background-image: none; 
 }
 /* Next-section destinations land just below the header (and section strip). */
 [data-scroll-section] { scroll-margin-top: var(--hdr-offset); }
+
+/* 1:1 Scope & Suitability on wide screens: centred, and "What it is not"
+   shown as plain content (no accordion). Phones keep the accordion. */
+@media (min-width: 769px) {
+  #scope .scope { justify-items: center; text-align: center; }
+  #scope .scope__lead { margin-inline: auto; text-wrap: balance; }
+  #scope .scope > .accordion { border-top: 0; }
+  #scope [data-static-desktop] > summary { display: block; cursor: default; pointer-events: none; text-align: center; border: 0; min-height: 0; padding: 0 0 var(--s-1); }
+  #scope [data-static-desktop] > summary .accordion__label { display: inline; }
+  #scope [data-static-desktop] > summary::after { display: none; }
+  #scope [data-static-desktop] > summary .accordion__label { color: var(--accent-brass); }
+  #scope .accordion > .accordion__body, #scope .accordion__body .muted { margin-inline: auto; text-align: center; justify-items: center; }
+  #scope .accordion__body .prose { margin-inline: auto; }
+  #scope .accordion__body .note { margin-inline: auto; text-align: center; border-left: 0; border-top: 2px solid rgba(200,161,90,.7); border-radius: 0 0 12px 12px; }
+}
