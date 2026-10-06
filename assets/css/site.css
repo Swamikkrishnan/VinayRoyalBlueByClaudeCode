@@ -2052,3 +2052,11 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 /* Hero capacity line: no glow, no bold — just the gold italic words. */
 .home-hero__trio { text-shadow: none; }
 .home-hero__trio .trio-word { font-weight: 400; -webkit-text-stroke: 0; text-shadow: none; }
+
+/* Gillius draws "o" and "e" touching ("dœs"); a hair of space keeps them apart. */
+.oe { margin-left: .07em; }
+/* More room between sections on every page. */
+:root { --section-y: 128px; }
+@media (max-width: 768px) { :root { --section-y: 70px; } }
+/* Story chapters share the site's section spacing. */
+.story-chapters.section, .story-chapters.section:has(+ .vision) { padding-block: max(var(--section-y), calc(var(--th2) + 6px)) !important; }
