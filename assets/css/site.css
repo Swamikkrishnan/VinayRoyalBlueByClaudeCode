@@ -2415,3 +2415,5 @@ html.js .watermark:not(.bg-on) > :first-child::before { background-image: none; 
   #scope .accordion__body .prose { margin-inline: auto; }
   #scope .accordion__body .note { margin-inline: auto; text-align: center; border-left: 0; border-top: 2px solid rgba(200,161,90,.7); border-radius: 0 0 12px 12px; }
 }
+/* Story: "Peaceful. Grounded. Dynamic." on one line on every screen. */
+#path .story__qualities.story-heading { max-width: none; white-space: nowrap; font-size: min(clamp(1.6rem, 2.2vw, 2.15rem), calc((100vw - 2 * var(--gutter)) / 12)); }
