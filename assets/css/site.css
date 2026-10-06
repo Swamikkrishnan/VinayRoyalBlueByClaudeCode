@@ -2052,3 +2052,6 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 .page-home .doorway-list .doorway-list__name { color: var(--text); }
 .page-home .doorway-list .doorway-list__desc .gold-accent { color: #C8A15A; }
 .page-home .doorway-list .doorway-list__desc .inline-accent { color: #5DB8F0; }
+/* Hero capacity line: no glow, no bold — just the gold italic words. */
+.home-hero__trio { text-shadow: none; }
+.home-hero__trio .trio-word { font-weight: 400; -webkit-text-stroke: 0; text-shadow: none; }
