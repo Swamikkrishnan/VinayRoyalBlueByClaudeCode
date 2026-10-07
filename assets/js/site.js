@@ -276,23 +276,29 @@
   var setAcc = function (d, open, animate) {
     if (d._acc) d._acc(open, animate); else d.open = open;
   };
-  var pinWhile = function (el, ms) {        // keep el still while something above it collapses
-    var top = el.getBoundingClientRect().top, end = performance.now() + ms + 60;
-    var step = function () {
-      var dy = el.getBoundingClientRect().top - top;
-      if (Math.abs(dy) > .5) window.scrollBy({ top: dy, behavior: 'instant' });   // never smoothed (html is scroll-behavior: smooth)
-      if (performance.now() < end) window.requestAnimationFrame(step);
-    };
-    window.requestAnimationFrame(step);
-  };
+  // Opening one item closes the others in its group. An open item ABOVE the
+  // tapped one closes at once, and the page is shifted once, in the same
+  // frame, by exactly the height that went: the tapped line never moves.
+  // (Animating that close while correcting the scroll every frame made
+  // phones jerk: their scrolling runs off the main thread, so per-frame
+  // corrections land a frame late and fight the browser's own anchoring.)
+  // Items BELOW the tapped one cannot move it, so they still animate.
   var closeSiblings = function (d, animate) {
     var group = d.parentElement && d.closest('[data-one-open]');
     if (!group) return;
-    var closed = false;
+    var line = d.querySelector(':scope > summary') || d;
+    var before = line.getBoundingClientRect().top, shifted = false;
+    root.style.overflowAnchor = 'none';                  // one correction only: ours
     group.querySelectorAll('details.accordion').forEach(function (o) {
-      if (o !== d && o.open && !o.classList.contains('is-closing') && o.closest('[data-one-open]') === group) { setAcc(o, false, animate); closed = true; }
+      if (o === d || !o.open || o.classList.contains('is-closing') || o.closest('[data-one-open]') !== group) return;
+      if (o.compareDocumentPosition(d) & Node.DOCUMENT_POSITION_FOLLOWING) { setAcc(o, false, false); shifted = true; }
+      else setAcc(o, false, animate);
     });
-    if (closed && animate) pinWhile(d.querySelector(':scope > summary') || d, ACC_MS);
+    if (shifted) {
+      var dy = line.getBoundingClientRect().top - before;
+      if (Math.abs(dy) > .5) window.scrollBy({ top: dy, behavior: 'instant' });
+    }
+    window.requestAnimationFrame(function () { window.requestAnimationFrame(function () { root.style.overflowAnchor = ''; }); });
   };
   document.querySelectorAll('details.accordion').forEach(function (d) {
     var summary = d.querySelector(':scope > summary');
