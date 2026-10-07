@@ -2434,3 +2434,21 @@ html.js .watermark:not(.bg-on) > :first-child::before { background-image: none; 
      a little more room kept below than above. */
   .vision__inner { align-content: center; padding-top: 0; padding-bottom: 82px; }
 }
+
+/* Desktop: everything a little larger to read (the type scale is in rem). */
+@media (min-width: 1100px) { html { font-size: 106.25%; } }
+@media (min-width: 1440px) { html { font-size: 112.5%; } }
+
+/* Approach, two columns: title, line, graphic and Read more share rows
+   across the pair, so both Read mores sit on one line. */
+@media (min-width: 860px) {
+  .pair { grid-template-rows: repeat(4, auto); }
+  .pair > .pair__item { grid-row: span 4; grid-template-rows: subgrid; row-gap: var(--s-1); }
+  .pair > .pair__item > .motion-graphic { align-self: center; }
+}
+
+/* Phone menu: larger links with room to breathe, and a fuller button. */
+.nav-mobile { padding-top: 4px; padding-bottom: 28px; }
+.nav-mobile a:not(.btn) { min-height: 66px; font-family: var(--sans); font-size: 1.38rem; letter-spacing: .01em; color: rgba(247,246,242,.88); }
+.nav-mobile a:not(.btn) span:last-child { width: 24px; height: 10px; }
+.nav-mobile .btn { margin-top: 28px; min-height: 56px; font-size: 1.1rem; border: 1px solid var(--warm); border-radius: 999px; }
