@@ -62,13 +62,28 @@
     // A tap anywhere outside the open panel (and its toggle) closes it, and
     // that tap stops there: it never also follows a link underneath. One
     // listener for the life of the page; it does nothing while closed.
-    var swallowUntil = 0;
-    document.addEventListener('pointerdown', function (e) {
+    // The close waits for the touch to resolve (finger lifted, or the
+    // gesture becoming a scroll), then fades softly: closing on touch-down,
+    // while the phone is still deciding tap-or-scroll, made it snap shut.
+    var swallowUntil = 0, outside = false, softTimer = null;
+    var closeSoftly = function () {
+      outside = false;
       if (!mobileNav.classList.contains('is-open')) return;
-      if (mobileNav.contains(e.target) || toggle.contains(e.target)) return;
+      clearTimeout(softTimer);
+      mobileNav.classList.add('is-soft');
       closeNav(false);
-      swallowUntil = Date.now() + 600;
+      softTimer = setTimeout(function () { mobileNav.classList.remove('is-soft'); }, 480);
+    };
+    document.addEventListener('pointerdown', function (e) {
+      outside = mobileNav.classList.contains('is-open') && !mobileNav.contains(e.target) && !toggle.contains(e.target);
+      if (outside) swallowUntil = Date.now() + 1500;   // this tap never also follows a link underneath
     }, true);
+    document.addEventListener('pointerup', function () {
+      if (!outside) return;
+      swallowUntil = Date.now() + 600;
+      closeSoftly();
+    }, true);
+    document.addEventListener('pointercancel', function () { if (outside) closeSoftly(); }, true);
     document.addEventListener('click', function (e) {
       if (Date.now() < swallowUntil) { swallowUntil = 0; e.preventDefault(); e.stopPropagation(); }
     }, true);
