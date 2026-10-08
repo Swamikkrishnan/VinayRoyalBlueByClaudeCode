@@ -709,8 +709,6 @@ html.js.motion-ready [data-reveal-img]:is(.editorial__media, .story__portrait) i
 
 .nav-toggle[aria-expanded="true"] .nav-toggle__bars i:last-child { transform: translateY(-2.75px) rotate(-45deg); }
 
-.nav-toggle:hover { border-color: rgba(93,184,240,.5); }
-
 .nav-mobile {
   position: absolute; top: 100%; left: 0; right: 0;
   box-shadow: 0 12px 24px rgba(0,0,0,.35); border-top: 1px solid var(--line);
@@ -746,16 +744,27 @@ html:not(.js) .nav-toggle { display: none !important; }
   border-bottom: 1px solid var(--line); text-decoration: none;
 }
 
-.nav-mobile a[aria-current="page"] { color: var(--text); }
-
 .site-head, .site-head.is-scrolled {
   background: rgba(14,20,40,.16); border-bottom: 0;
   -webkit-backdrop-filter: blur(12px) saturate(120%); backdrop-filter: blur(12px) saturate(120%);
 }
 
-.nav-toggle:hover, .nav-toggle:focus-visible { border-color: var(--accent); }
+.nav-toggle:focus-visible { border-color: var(--accent-brass); outline-color: var(--accent-brass); }
 
-.nav-mobile a[aria-current="page"] span:last-child { color: var(--accent); }
+/* Open: the control carries a fuller gold edge (drawn inside, so nothing
+   moves); closed, it returns to rest. Hover colour only where hover is real,
+   so a tap never leaves it lit. */
+.nav-toggle[aria-expanded="true"] { border-color: var(--accent-brass); box-shadow: inset 0 0 0 1px var(--accent-brass); }
+@media (hover: hover) {
+  .nav-toggle:hover { border-color: var(--accent-brass); }
+}
+
+/* The page you are on: the section strip's gold dot and a light gold label. */
+.nav-mobile a:not(.btn)[aria-current="page"] { justify-content: flex-start; color: #E3CB98; }
+.nav-mobile a:not(.btn)[aria-current="page"]::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-brass); margin-right: 12px; flex: none;
+}
+.nav-mobile a:not(.btn)[aria-current="page"] span:last-child { margin-left: auto; }
 
 /* Touch screens keep :hover "stuck" after a tap (and after Back), which
    painted these links blue on Android; hover colour only where hover exists. */
