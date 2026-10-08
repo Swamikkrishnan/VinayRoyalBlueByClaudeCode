@@ -275,6 +275,15 @@
     sFly.setAttribute('aria-hidden', 'true');
     document.body.appendChild(sFly);
     var geo = null, docked = false, anims = [], token = 0, handing = false, leaving = false, pendingFly = null;
+    var flight = null;                                // { home: bool, t0 } while a flight runs
+    // Only the visitor's own scrolling flies the sigil. Scrolls before the
+    // first touch, wheel, key or click are the browser placing the page
+    // (in-app browsers such as Instagram's adjust scroll and viewport while
+    // loading): the header simply settles, nothing flies.
+    var touched = false;
+    ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (ev) {
+      window.addEventListener(ev, function () { touched = true; }, { once: true, passive: true, capture: true });
+    });
     var past = function () { return window.scrollY > 2; };
     var X = function (on) { return on ? 'translateX(' + SHIFT + 'px)' : 'translateX(0px)'; };
     var measure = function () {
@@ -323,20 +332,49 @@
       anims.push(sFly.animate([{ transform: fromT }, { transform: at(!toDock) }], { duration: DUR, easing: EASE, fill: 'forwards' }));
       if (toDock && sO < .99) anims.push(sFly.animate([{ opacity: sO }, { opacity: 1, offset: .45 }, { opacity: 1 }], { duration: DUR, fill: 'forwards' }));
       anims.push(brandName.animate([{ transform: fromN }, { transform: X(toDock) }], { duration: DUR, easing: EASE, fill: 'forwards' }));
-      anims[0].onfinish = function () {
+      flight = { home: !toDock, t0: performance.now(), y0: window.scrollY };
+      var land = function () {
         if (my !== token) return;
+        flight = null;
         cancelAll();
         rest(toDock);                                  // same frame as the clone leaves: no flash
         if (onDone) onDone();
       };
+      anims[0].onfinish = land;
+      flight.land = land;
+    };
+    // A flight home lands where the hero sigil is NOW: if the page moves
+    // under it (a viewport resize, a late image or font, scroll movement),
+    // it continues from where it is to the new spot in the time left, so
+    // it never arrives off target and snaps.
+    var retarget = function () {
+      if (!flight || !flight.home || !anims.length) return;
+      var left = DUR - (performance.now() - flight.t0);
+      if (left < 34) return;
+      var sr = heroSig.getBoundingClientRect();
+      if (!sr.width) return;
+      var y = window.scrollY;
+      if (Math.abs(sr.left - geo.x) < .5 && Math.abs(sr.top + y - geo.y) < .5 && Math.abs(sr.width - parseFloat(sFly.style.width)) < .5) {
+        if (Math.abs(y - flight.y0) < .5) return;     // nothing moved
+      }
+      geo.x = sr.left; geo.y = sr.top + y;
+      sFly.style.width = sr.width + 'px'; sFly.style.height = sr.height + 'px';
+      var from = window.getComputedStyle(sFly).transform;
+      anims[0].onfinish = null; anims[0].cancel();
+      anims[0] = sFly.animate([{ transform: from }, { transform: at(true) }], { duration: left, easing: 'cubic-bezier(.2, 0, .2, 1)', fill: 'forwards' });
+      anims[0].onfinish = flight.land;
+      flight.y0 = y;
     };
     var check = function () {
       if (handing) return;                           // a page hand-off is running; it settles itself
       var want = past();
-      if (want !== docked) { docked = want; fly(want); }
+      if (want === docked) { retarget(); return; }
+      docked = want;
+      if (!touched && !anims.length) { measure(); rest(want); return; }   // the browser placing the page
+      fly(want);
     };
     onScroll(check);
-    var remeasure = function () { measure(); if (!anims.length && !handing) rest(docked); };
+    var remeasure = function () { if (anims.length) { retarget(); return; } measure(); if (!handing) rest(docked); };
     onResize(remeasure);
     window.addEventListener('load', remeasure);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
