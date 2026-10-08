@@ -43,7 +43,8 @@
   --s-4: 2.5rem;
   --s-5: 4rem;
   --gutter: 20px;
-  --section-y: 128px;                /* between sections, every page */
+  --section-y: 96px;                 /* between sections, every page */
+  --opening-y: 128px;                /* above a page's first heading (below the header) */
   --measure: 38rem;
   --header-h: 52px;                  /* fallback; the breakpoints below set it */
   --subnav-h: 0px;
@@ -74,7 +75,7 @@
 @media (max-width: 768px) {
   /* Phones: a little more air in the header (~9px above and below the Menu
      button); a shorter step between sections. */
-  :root { --header-h: 62px; --section-y: 70px; }
+  :root { --header-h: 62px; --section-y: 70px; --opening-y: 70px; }
 }
 @media (max-width: 599px) {
   /* Phones: smaller display steps, a slightly quicker stagger. */
@@ -256,7 +257,7 @@ main > :is(.bg-2, .bg-4).section:last-child, main > .field:is(.bg-2, .bg-4):last
 .marked > :is(.marker, .eyebrow)::after { width: 42px; flex: none; min-width: 0; }
 
 main > .page-hero:first-child,
-main > .field:first-child > .page-hero:first-child { padding-top: calc(var(--section-y) + var(--hdr-offset)); }
+main > .field:first-child > .page-hero:first-child { padding-top: calc(var(--opening-y) + var(--hdr-offset)); }
 
 main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not([class]) { line-height: 1.65; }
 
@@ -287,9 +288,9 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 }
 @media (max-width: 1099px) {
   /* Without JS the small-screen header stays in flow, so no clearance is added. */
-  html:not(.js) main > .page-hero:first-child, html:not(.js) main > .field:first-child > .page-hero:first-child { padding-top: var(--section-y); }
+  html:not(.js) main > .page-hero:first-child, html:not(.js) main > .field:first-child > .page-hero:first-child { padding-top: var(--opening-y); }
   /* Pages without a section strip open on the same line as those with one. */
-  body:not(.has-subnav) main > .page-hero:first-child { padding-top: calc(var(--section-y) + var(--header-h) + 51px); }
+  body:not(.has-subnav) main > .page-hero:first-child { padding-top: calc(var(--opening-y) + var(--header-h) + 51px); }
 }
 @media (max-width: 768px) {
   #matters .editorial--hero > .stack { gap: 12px; }
@@ -2488,7 +2489,7 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
      1280/778), so the rock is cropped and a little of the top too. */
   #path .story__grid {
     display: grid; grid-template-rows: auto minmax(110px, 1fr); align-content: start; gap: 28px;   /* 110px: still whole on the shortest phones */
-    height: calc(100svh - var(--section-y) - var(--hdr-offset) - 18px); min-height: 0;
+    height: calc(100svh - var(--opening-y) - var(--hdr-offset) - 18px); min-height: 0;
   }
   #path .story__portrait { height: 100%; min-height: 0; margin: 0; width: 100%; justify-self: stretch; max-height: calc((100vw - 2 * var(--gutter)) * 1280 / 778 * .52); align-self: start; }
   #path .story__portrait img { width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; object-position: 50% bottom calc((100vw - 2 * var(--gutter)) * 1280 / 778 * -.38); }
@@ -2500,7 +2501,7 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
     /* Background: two columns once its content is 800px wide. */
     #matters .editorial--hero {
       display: grid; grid-template-rows: auto minmax(110px, 1fr); align-content: start; gap: 28px;
-      height: calc(100svh - var(--section-y) - var(--hdr-offset) - 18px); min-height: 0;
+      height: calc(100svh - var(--opening-y) - var(--hdr-offset) - 18px); min-height: 0;
     }
     #matters .editorial--hero .editorial__media--person { position: static; height: 100%; max-height: 380px; min-height: 0; margin: 0; width: 100%; justify-self: stretch; }
     #matters .editorial--hero .editorial__media--person img { position: static; width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; object-position: 50% 0%; }
