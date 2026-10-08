@@ -2474,47 +2474,56 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
   .chapters__bridge.story-heading { margin-top: -12px; }
   /* Vision opens below a V2 transition: copy clears it. */
   .vision.section.t-v2 { padding-top: max(var(--section-y), calc(52px + 6px)); }
-  /* Story and Background on phones: the opening words and the photograph
-     share the first screen, whole, below a heading that starts where every
-     page's does (Group Experiences' line). The opening is two rows exactly
-     as tall as the rest of the screen: the words at their natural size, the
-     photograph in the height that is left (150-380px). Photographs are
-     cropped from the bottom only: the top of each picture always shows. */
-  #path .story__grid,
-  #matters .editorial--hero {
-    display: grid; grid-template-rows: auto minmax(110px, 1fr); align-content: start; gap: 28px;   /* 110px: still whole on the shortest phones */
-    height: calc(100svh - var(--section-y) - var(--hdr-offset) - 18px); min-height: 0;
-  }
 }
 @container (min-width: 800px) {
   /* Background, wide: the words start on every page's line; the photograph
      is tall enough to keep the hands, cropped from the bottom only. */
   #matters .editorial--hero { align-items: start; }
 }
-@media (max-width: 768px) {
-  #path .story__portrait,
-    #matters .editorial--hero .editorial__media--person { height: 100%; max-height: 380px; min-height: 0; margin: 0;
-    /* Both photographs span the column, centred. Story: the frame's foot
-         sits just below the seated figure (62% down the picture, which is
-         width-fitted at 1280/778), so the rock is cropped and a little of the
-         top too; capped so some of the top is always trimmed. */
-    width: 100%; justify-self: stretch;
-  }
-}
+
 @container (min-width: 800px) {
   #matters .editorial--hero .editorial__media--person { min-height: 440px; }
 }
 @media (max-width: 768px) {
-  #path .story__portrait img,
-  #matters .editorial--hero .editorial__media--person img { width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; object-position: 50% 0%; }
-  #path .story__portrait { max-height: calc((100vw - 2 * var(--gutter)) * 1280 / 778 * .52); align-self: start; }
-  #path .story__portrait img { object-position: 50% bottom calc((100vw - 2 * var(--gutter)) * 1280 / 778 * -.38); }
-  /* Tighter opening lines, so the photographs have more room. */
-  #path .story__present { gap: 12px; }
   /* Story Vision on phones: the group sits just above the middle of its
      section (its centre ~43% down): centred within the reserved block, with
      a little more room kept below than above. */
   .vision__inner { align-content: center; padding-top: 0; padding-bottom: 82px; }
+}
+/* Story and Background, single column (phones and portrait tablets, until
+   each page's two-column layout): the opening words and the photograph
+   share the first screen, whole, below a heading that starts where every
+   page's does (Group Experiences' line). The opening is two rows exactly as
+   tall as the rest of the screen: the words at their natural size, the
+   photograph in the height that is left. Photographs are cropped from the
+   bottom only: the top of each picture always shows. */
+@media (max-width: 859px) {
+  /* Story: two columns from 860px. The frame's foot sits just below the
+     seated figure (62% down the picture, which is width-fitted at
+     1280/778), so the rock is cropped and a little of the top too. */
+  #path .story__grid {
+    display: grid; grid-template-rows: auto minmax(110px, 1fr); align-content: start; gap: 28px;   /* 110px: still whole on the shortest phones */
+    height: calc(100svh - var(--section-y) - var(--hdr-offset) - 18px); min-height: 0;
+  }
+  #path .story__portrait { height: 100%; min-height: 0; margin: 0; width: 100%; justify-self: stretch; max-height: calc((100vw - 2 * var(--gutter)) * 1280 / 778 * .52); align-self: start; }
+  #path .story__portrait img { width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; object-position: 50% bottom calc((100vw - 2 * var(--gutter)) * 1280 / 778 * -.38); }
+  /* Tighter opening lines, so the photograph has more room. */
+  #path .story__present { gap: 12px; }
+}
+@media (max-width: 1099px) {
+  @container (max-width: 799px) {
+    /* Background: two columns once its content is 800px wide. */
+    #matters .editorial--hero {
+      display: grid; grid-template-rows: auto minmax(110px, 1fr); align-content: start; gap: 28px;
+      height: calc(100svh - var(--section-y) - var(--hdr-offset) - 18px); min-height: 0;
+    }
+    #matters .editorial--hero .editorial__media--person { position: static; height: 100%; max-height: 380px; min-height: 0; margin: 0; width: 100%; justify-self: stretch; }
+    #matters .editorial--hero .editorial__media--person img { position: static; width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; object-position: 50% 0%; }
+    /* Tablets: the photograph fills the rest of the first screen (phones keep the 380px cap). */
+    @media (min-width: 600px) {
+      #matters .editorial--hero .editorial__media--person { max-height: none; }
+    }
+  }
 }
 @media (max-width: 599px) {
   .story-heading.story-heading { font-size: clamp(2rem, 8vw, 2.5rem); }
