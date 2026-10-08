@@ -802,9 +802,9 @@ html.js .page-home .brand img { opacity: 0; }
 
 /* Header pieces swap with the flying copies in the same frame: no CSS fades
    (a fade here showed as a flash at the end of every flight). */
-.page-home .brand img, .page-home .brand__name, /* The flight clones stay rendered (opacity 0) so their layers are already
-   rasterised when the flight starts: no first-frame hitch. */
-.sigil-flight { visibility: visible; opacity: 0; backface-visibility: hidden; }
+/* The header pieces and the flight clone stay rendered (opacity 0) so their
+   layers are already rasterised when the flight starts: no first-frame hitch. */
+.page-home .brand img, .page-home .brand__name, .sigil-flight { visibility: visible; opacity: 0; backface-visibility: hidden; }
 
 /* Header brand on small screens: the name and the docked title both stay on
    one line, scaling down together with the screen width. */
@@ -909,15 +909,13 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
     background: transparent; transition: background-color var(--motion-fast) var(--ease);
   }
   .subnav a:hover, .subnav a:focus-visible { border: 0; }
-  .subnav a[aria-current="location"] { background: none; border: 0; color: var(--text); }
+  .subnav a[aria-current="location"] { background: none; border: 0; color: var(--accent-brass); }
   .subnav a[aria-current="location"]::before {
-    background: var(--accent); width: 2px;
-    background: var(--accent-brass);
+    width: 2px;
     top: 50%; bottom: auto; height: 18px; transform: translateY(-50%); left: -1px;
+    background: var(--accent-brass);
   }
   .subnav__more { display: none; }
-  .subnav a[aria-current="location"] { color: var(--accent-brass); }
-  .subnav a[aria-current="location"]::before { background: var(--accent-brass); }
 }
 @media (max-width: 1099px) {
   html:not(.js) .subnav { top: 0; position: sticky; }
@@ -1113,16 +1111,11 @@ html.js :is(.bg-1, .bg-2, .bg-3, .bg-4):not(.bgt-on)::after { background-image: 
   /* Mobile fields: each family framed a little differently, and a veil that
      is firmer down the reading column and lighter at the edges, so the
      mineral texture shows around the copy. */
-  .bg-1, .bg-2, .bg-3, .bg-4 { background-size: 100% 100%, cover; }
-  .bg-1, .bg-2, .bg-3, .bg-4 { --tar: .5185; --th: 60px; }   /* 560 / 1080 */
-  .bg-1 { --img: url("../vinay-brand-assets/bg-01-dark-primary-mobile.webp"); }
-  .bg-2 { --img: url("../vinay-brand-assets/bg-light-primary-mobile.webp"); }
-  .bg-3 { --img: url("../vinay-brand-assets/bg-03-dark-secondary-mobile.webp"); }
-  .bg-4 { --img: url("../vinay-brand-assets/bg-light-secondary-mobile.webp"); }
-  .bg-1 { background-position: 0 0, center 42%; --veil: linear-gradient(90deg, rgba(10,16,32,.36), rgba(10,16,32,.66) 24%, rgba(10,16,32,.66) 76%, rgba(10,16,32,.36)); }
-  .bg-3 { background-position: 0 0, center 36%; --veil: linear-gradient(90deg, rgba(10,16,32,.24), rgba(10,16,32,.52) 24%, rgba(10,16,32,.52) 76%, rgba(10,16,32,.24)); }
-  .bg-2 { background-position: 0 0, center 48%; --veil: linear-gradient(90deg, rgba(8,22,44,.42), rgba(8,22,44,.72) 24%, rgba(8,22,44,.72) 76%, rgba(8,22,44,.42)); }
-  .bg-4 { background-position: 0 0, center 44%; --veil: linear-gradient(90deg, rgba(8,22,44,.26), rgba(8,22,44,.52) 24%, rgba(8,22,44,.52) 76%, rgba(8,22,44,.26)); }
+  .bg-1, .bg-2, .bg-3, .bg-4 { background-size: 100% 100%, cover; --tar: .5185; --th: 60px; /* 560 / 1080 */ }
+  .bg-1 { --img: url("../vinay-brand-assets/bg-01-dark-primary-mobile.webp"); background-position: 0 0, center 42%; --veil: linear-gradient(90deg, rgba(10,16,32,.36), rgba(10,16,32,.66) 24%, rgba(10,16,32,.66) 76%, rgba(10,16,32,.36)); }
+  .bg-2 { --img: url("../vinay-brand-assets/bg-light-primary-mobile.webp"); background-position: 0 0, center 48%; --veil: linear-gradient(90deg, rgba(8,22,44,.42), rgba(8,22,44,.72) 24%, rgba(8,22,44,.72) 76%, rgba(8,22,44,.42)); }
+  .bg-3 { --img: url("../vinay-brand-assets/bg-03-dark-secondary-mobile.webp"); background-position: 0 0, center 36%; --veil: linear-gradient(90deg, rgba(10,16,32,.24), rgba(10,16,32,.52) 24%, rgba(10,16,32,.52) 76%, rgba(10,16,32,.24)); }
+  .bg-4 { --img: url("../vinay-brand-assets/bg-light-secondary-mobile.webp"); background-position: 0 0, center 44%; --veil: linear-gradient(90deg, rgba(8,22,44,.26), rgba(8,22,44,.52) 24%, rgba(8,22,44,.52) 76%, rgba(8,22,44,.26)); }
   .bg-1:has(+ .bg-2) { --t-out: url("../vinay-brand-assets/transition-dark-primary-to-light-primary-mobile.webp"); }
   .bg-1 + .bg-2 { --t-in: url("../vinay-brand-assets/transition-dark-primary-to-light-primary-mobile.webp"); }
   .bg-2:has(+ .bg-3) { --t-out: url("../vinay-brand-assets/transition-light-primary-to-dark-secondary-mobile.webp"); }
@@ -1469,6 +1462,7 @@ html.js :is(.bg-1, .bg-2, .bg-3, .bg-4):not(.bgt-on)::after { background-image: 
   max-width: none; text-align: center; justify-items: center; grid-template-rows: auto 1fr;
   align-content: start; gap: 0; padding: 26px 0; border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
+  padding-block: 12px;
 }
 
 .evidence dt { font-family: var(--serif); font-size: clamp(1.7rem, 5vw, 2.1rem); line-height: 1.05; margin: 0; }
@@ -1574,7 +1568,6 @@ html.js :is(.bg-1, .bg-2, .bg-3, .bg-4):not(.bgt-on)::after { background-image: 
 #availability .ruled { border-top: 1px solid var(--line); }
 
 /* Homepage metrics: tighter again against the gold rules. */
-.evidence > div { padding-block: 12px; }
 @media (min-width: 720px) {
   .metrics--row { grid-template-columns: repeat(3, 1fr); }
 }
@@ -1931,6 +1924,7 @@ textarea.finput { min-height: 112px; resize: vertical; }
   display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); max-width: 760px;
   --areas-img: url("../vinay-brand-assets/ethereal-movement-desktop.webp");
   margin-top: calc(52px - var(--s-3)); margin-bottom: calc(36px - var(--s-3));
+  --node: 74px; --icon: 74px;
 }
 
 .areas a {
@@ -2042,9 +2036,8 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
   #meet-vinay .editorial__media--person img { aspect-ratio: 4 / 5; }
 }
 @media (max-width: 768px) {
-  .home-hero.bg-1 { background-position: 0 0, 50% 50%; --veil: linear-gradient(rgba(10,16,32,.64), rgba(10,16,32,.64)); }   /* the hero keeps its own framing */
+  .home-hero.bg-1 { background-position: 0 0, 50% 50%; --veil: linear-gradient(rgba(10,16,32,.64), rgba(10,16,32,.64)); --img: url("../vinay-brand-assets/hero-home-mobile-v2.webp"); }   /* the hero keeps its own framing */
   /* Homepage hero on phones: its own portrait artwork. */
-  .home-hero.bg-1 { --img: url("../vinay-brand-assets/hero-home-mobile-v2.webp"); }
   .areas { --areas-img: url("../vinay-brand-assets/ethereal-movement-mobile.webp"); }
   .areas::before { aspect-ratio: 1080 / 220; opacity: .66; }
   /* Homepage: a little more air between "My name is…" and the portrait. */
@@ -2056,17 +2049,13 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
   .begin__statements--wide p { max-width: none; font-size: clamp(1.6rem, 6.9vw, 2.55rem); }
   .home-hero__inner { transform: translateY(-28px); }
   .hero-sigil-wrap { margin: 24px 0; }
-  /* five across: as large as the column allows, up to 70px */
-  .areas { --icon: var(--node); }
 }
 
 /* Five-area overview (homepage + 1:1 "What is the work?"): icon, label, one
    word, all on one connected movement. */
-.areas { --node: 74px; --icon: 74px; }
 @media (max-width: 599px) {
-  .areas { --node: min(56px, calc((100vw - 2 * var(--gutter, 16px)) / 5 - 4px)); --icon: var(--node); }
+  .areas { --node: min(56px, calc((100vw - 2 * var(--gutter, 16px)) / 5 - 4px)); --icon: var(--node); margin-top: calc(40px - var(--s-3)); margin-bottom: calc(30px - var(--s-3)); }
   .areas__word { font-size: .92rem; }
-  .areas { margin-top: calc(40px - var(--s-3)); margin-bottom: calc(30px - var(--s-3)); }
   /* "My name is Vinay Swaminathan." on one line on any phone. */
   #meet-title { white-space: nowrap; font-size: min(2rem, calc((100vw - 2 * var(--gutter)) / 13)); }
 }
@@ -2252,14 +2241,13 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
   /* phones and small tablets: the left rail, panel to the right */
   .face__hint { text-align: left; }
   .face.is-js .face__layout { grid-template-columns: 64px minmax(0, 1fr); gap: 16px; align-items: stretch; justify-items: stretch; }
-  .face.is-js .face__panels { align-self: center; max-width: none; width: 100%; }
+  .face.is-js .face__panels { align-self: center; width: 100%; max-width: none; }
   .face__rail { display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 14px; padding-block: 4px; }
   .face__rail::before { top: 10px; bottom: 10px; left: 50%; right: auto; width: 1px; height: auto; transform: translateX(-50%); background: linear-gradient(rgba(200,161,90,.45), rgba(93,184,240,.45)); }
   .face__btn { width: 48px; height: 48px; font-size: 1.45rem; }
   .face__tip { display: none; }
   .face.is-js .face__panel { padding: 18px 16px 20px; }
   .face__panel h3 { font-size: clamp(1.2rem, 5vw, 1.4rem); }
-  .face.is-js .face__panels { max-width: none; }
 }
 @media (max-width: 599px) {
   .face-note { max-width: 90%; font-size: .96rem; }
@@ -2281,9 +2269,6 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .quad > div { -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
 }
-
-/* Approach: Where change begins — darker and more see-through. */
-.quad > div { -webkit-backdrop-filter: none; backdrop-filter: none; }
 
 .quad > div { -webkit-backdrop-filter: none; backdrop-filter: none; }
 
@@ -2413,8 +2398,6 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
 
 .story__portrait img { width: 100%; aspect-ratio: 5 / 4; object-fit: cover; object-position: 80% 0%; }
 
-.story-chapters.section { padding-block: 30px; }
-
 /* Story: one heading size for every chapter, the bridge and the vision. */
 .story-heading.story-heading { font-family: var(--serif); font-weight: 400; font-size: clamp(2.15rem, 3.4vw, 3.25rem); line-height: 1.08; max-width: 24ch; }
 
@@ -2430,8 +2413,6 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
 .story__qualities.story-heading { color: var(--text); }
 
 .vision.section { padding-bottom: 96px; }
-
-.story-chapters.section:has(+ .vision) { padding-bottom: 40px !important; }
 
 /* Story: the opening lines at the size of Group Experiences' opening line. */
 #path .story-heading.story-heading { font-size: clamp(1.6rem, 2.2vw, 2.15rem); line-height: 1.25; }
@@ -2449,12 +2430,6 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
   .story__grid { grid-template-columns: minmax(0, 1fr) minmax(260px, 360px); column-gap: var(--s-5); }
   .story__portrait img { aspect-ratio: 778 / 1100; }
 }
-@media (max-width: 768px) {
-  .story-chapters.section { padding-block: 24px 6px !important; }
-}
-
-/* Story chapters share the site's section spacing. */
-.story-chapters.section, .story-chapters.section:has(+ .vision) { padding-block: max(var(--section-y), calc(var(--th2) + 6px)) !important; }
 @media (max-width: 768px) {
   .chapter { gap: 6px; padding-top: 0; border-top: 0; }
   .chapter::before { display: none; }

@@ -75,11 +75,17 @@
     try { return document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (e) { return null; }
   };
   // The line just below the fixed header (and, on narrow screens, the
-  // section strip): where a section counts as reached.
-  var stickyLine = function () {
+  // section strip): where a section counts as reached. It only changes with
+  // the layout, so it is measured then, never per scroll frame.
+  var stickyH = 0;
+  var measureSticky = function () {
     var head = document.getElementById('site-head');
-    return (head ? head.offsetHeight : 0) + (parseFloat(getComputedStyle(document.body).getPropertyValue('--subnav-h')) || 0);
+    stickyH = (head ? head.offsetHeight : 0) + (parseFloat(getComputedStyle(document.body).getPropertyValue('--subnav-h')) || 0);
   };
+  var stickyLine = function () { return stickyH; };
+  measureSticky();
+  onResize(measureSticky);
+  window.addEventListener('load', measureSticky);
 
   /* ---------------------------------------------------------------------
      1. Background textures — this page's only, each loaded as its field
@@ -586,9 +592,12 @@
       if (!el.hasAttribute('data-seq')) el.style.setProperty('--cd', (delay || 0) + 'ms');
       el.dataset.inAt = Date.now() + (delay || 0);
       el.classList.add('is-in');
-      // its section has begun (photos inside it wait for this)
+      // its section has begun: photos waiting on it continue
       var box = el.parentElement && el.parentElement.closest('[data-reveal]');
-      if (box && !box.dataset.inAt) box.dataset.inAt = el.dataset.inAt;
+      if (box && !box.dataset.inAt) {
+        box.dataset.inAt = el.dataset.inAt;
+        if (box._onBegin) { box._onBegin.forEach(function (fn) { fn(); }); box._onBegin = null; }
+      }
     };
     // Several blocks at once: top to bottom, a beat apart. One layout read.
     var revealAll = function (els) {
@@ -614,7 +623,7 @@
         if (seqs.length) {
           wait = OPENING_PHOTO - (performance.now() - T0);
         } else if (host) {
-          if (!host.dataset.inAt) { setTimeout(function () { fig.dataset.pending = ''; showPhoto(fig, extra); }, 150); return; }
+          if (!host.dataset.inAt) { (host._onBegin = host._onBegin || []).push(function () { fig.dataset.pending = ''; showPhoto(fig, extra); }); return; }
           wait = msOf(host) * 0.5 - (Date.now() - Number(host.dataset.inAt));
         }
         wait = Math.max(0, wait) + (extra || 0);
@@ -735,15 +744,15 @@
   var subnavLinks = document.querySelectorAll('.subnav [data-section]');
   if (subnav && subnavLinks.length) {
     var sectionIds = Array.prototype.map.call(subnavLinks, function (a) { return a.getAttribute('data-section'); });
+    var sectionEls = sectionIds.map(function (id) { return document.getElementById(id); });
     var setActive = function () {
       var line = Math.max(stickyLine() + 24, window.innerHeight * 0.3);
       var atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
       var current = sectionIds[0];
-      sectionIds.forEach(function (id) {
-        var el = document.getElementById(id);
+      sectionEls.forEach(function (el, i) {
         if (!el || !el.getClientRects().length) return;   // hidden section
         var top = el.getBoundingClientRect().top;
-        if (top < line || (atBottom && top < window.innerHeight * 0.6)) current = id;
+        if (top < line || (atBottom && top < window.innerHeight * 0.6)) current = sectionIds[i];
       });
       subnavLinks.forEach(function (a) {
         var on = a.getAttribute('data-section') === current;
