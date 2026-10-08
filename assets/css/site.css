@@ -759,12 +759,13 @@ html:not(.js) .nav-toggle { display: none !important; }
   .nav-toggle:hover { border-color: var(--accent-brass); }
 }
 
-/* The page you are on: the section strip's gold dot and a light gold label. */
-.nav-mobile a:not(.btn)[aria-current="page"] { justify-content: flex-start; color: #E3CB98; }
+/* The page you are on: its name in the site's gold, on a very light gold
+   wash that reaches a little past the text (drawn behind; nothing moves). */
+.nav-mobile a:not(.btn)[aria-current="page"] { color: var(--accent-brass); position: relative; }
 .nav-mobile a:not(.btn)[aria-current="page"]::before {
-  content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-brass); margin-right: 12px; flex: none;
+  content: ""; position: absolute; inset: 7px -12px; z-index: -1; pointer-events: none;
+  border-radius: 12px; background: linear-gradient(90deg, rgba(200,161,90,.15), rgba(200,161,90,.03));
 }
-.nav-mobile a:not(.btn)[aria-current="page"] span:last-child { margin-left: auto; }
 
 /* Touch screens keep :hover "stuck" after a tap (and after Back), which
    painted these links blue on Android; hover colour only where hover exists. */
