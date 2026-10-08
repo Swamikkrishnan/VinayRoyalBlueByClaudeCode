@@ -1,11 +1,16 @@
 /* =========================================================================
-   Vinay Swaminathan — behaviour (2026 redesign)
-   Content is visible in plain HTML/CSS by default; this file only adds a
-   one-shot entrance animation, the header/nav toggle, the interior pages'
-   sticky section nav, the Approach FACE selector, the Alignment Call
-   scheduler + submission, the Get in touch chooser, a settle-safe hash
-   landing, and open/close motion for the native <details> accordions
-   (which still work without JS).
+   Vinay Swaminathan — site behaviour
+   Every page reads fully without this file. It adds, in order:
+     0. shared helpers (one scroll and one resize listener, frame timing, hash lookup)
+     1. background textures, loaded as their fields approach (.assets-ready)
+     2. header: phone menu, scrolled glass, the homepage sigil flight
+     3. accordions: animated <details>, one-open groups, desktop-static
+     4. reveal: the one entrance system, photographs, the Approach graphics
+     5. section strip (scroll-spy)
+     6. FACE (Approach)
+     7. forms: field helpers and Web3Forms submission
+     8. the Get in touch chooser, then the next-section button
+     9. hash landing
    ========================================================================= */
 (function () {
   'use strict';
@@ -14,6 +19,9 @@
   root.classList.add('js');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+  /* ---------------------------------------------------------------------
+     0. Shared helpers
+     --------------------------------------------------------------------- */
   // Calls cb once the image is loaded and decoded (immediately if cached).
   // A generous cap means a very slow network still never leaves a photo
   // hidden, without revealing half-loaded photos on ordinary connections.
@@ -32,368 +40,49 @@
     setTimeout(go, cap || 8000);
   }
 
-  /* ---------------------------------------------------------------------
-     1. Header — mobile nav toggle (works with no JS: nav-mobile has no
-        [hidden] until this runs, but on narrow screens it is only reached
-        via the toggle button, so we default it closed once JS confirms).
-     --------------------------------------------------------------------- */
-  // Open/closed is the .is-open class; the CSS fades and unclips the panel
-  // and uses visibility (not display) so closing animates too, while closed
-  // links still leave the tab order and accessibility tree.
-  var toggle = document.getElementById('nav-toggle');
-  var mobileNav = document.getElementById('nav-mobile');
-  if (toggle && mobileNav) {
-    var setNav = function (open) {
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      toggle.querySelector('[data-label]').textContent = open ? 'Close' : 'Menu';
-      mobileNav.classList.toggle('is-open', open);
-      root.classList.toggle('nav-is-open', open);
-    };
-    toggle.addEventListener('click', function () {
-      setNav(toggle.getAttribute('aria-expanded') !== 'true');
+  // One scroll listener for the page: every scroll-driven update runs once
+  // per frame, together (header glass, homepage sigil, section strip, next-
+  // section button, reveal catch-up).
+  var scrollJobs = [], scrollQueued = false;
+  var onScroll = function (fn) { scrollJobs.push(fn); };
+  window.addEventListener('scroll', function () {
+    if (scrollQueued) return;
+    scrollQueued = true;
+    window.requestAnimationFrame(function () {
+      scrollQueued = false;
+      scrollJobs.forEach(function (fn) { fn(); });
     });
-    var closeNav = function (returnFocus) {
-      setNav(false);
-      if (returnFocus) toggle.focus();
-    };
-    mobileNav.addEventListener('click', function (e) {
-      if (e.target.closest('a')) closeNav(false);
+  }, { passive: true });
+  // One resize listener, the same way: every size-driven re-measure runs
+  // once per frame, together.
+  var resizeJobs = [], resizeQueued = false;
+  var onResize = function (fn) { resizeJobs.push(fn); };
+  window.addEventListener('resize', function () {
+    if (resizeQueued) return;
+    resizeQueued = true;
+    window.requestAnimationFrame(function () {
+      resizeQueued = false;
+      resizeJobs.forEach(function (fn) { fn(); });
     });
-    // A tap anywhere outside the open panel (and its toggle) closes it, and
-    // that tap stops there: it never also follows a link underneath. One
-    // listener for the life of the page; it does nothing while closed.
-    // The close waits for the touch to resolve (finger lifted, or the
-    // gesture becoming a scroll), then fades softly: closing on touch-down,
-    // while the phone is still deciding tap-or-scroll, made it snap shut.
-    var swallowUntil = 0, outside = false, softTimer = null;
-    var closeSoftly = function () {
-      outside = false;
-      if (!mobileNav.classList.contains('is-open')) return;
-      clearTimeout(softTimer);
-      mobileNav.classList.add('is-soft');
-      closeNav(false);
-      softTimer = setTimeout(function () { mobileNav.classList.remove('is-soft'); }, 480);
-    };
-    document.addEventListener('pointerdown', function (e) {
-      outside = mobileNav.classList.contains('is-open') && !mobileNav.contains(e.target) && !toggle.contains(e.target);
-      if (outside) swallowUntil = Date.now() + 1500;   // this tap never also follows a link underneath
-    }, true);
-    document.addEventListener('pointerup', function () {
-      if (!outside) return;
-      swallowUntil = Date.now() + 600;
-      closeSoftly();
-    }, true);
-    document.addEventListener('pointercancel', function () { if (outside) closeSoftly(); }, true);
-    document.addEventListener('click', function (e) {
-      if (Date.now() < swallowUntil) { swallowUntil = 0; e.preventDefault(); e.stopPropagation(); }
-    }, true);
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) closeNav(true);
-    });
-  }
-
-  // Header: transparent at the top of the page; the translucent navy glass
-  // arrives once the page has scrolled about 24px (one rAF per frame).
-  var siteHead = document.getElementById('site-head');
-  if (siteHead) {
-    var headTick = false;
-    var markScrolled = function () { headTick = false; siteHead.classList.toggle('is-scrolled', window.scrollY > 12); };
-    window.addEventListener('scroll', function () {
-      if (!headTick) { headTick = true; window.requestAnimationFrame(markScrolled); }
-    }, { passive: true });
-    window.addEventListener('pageshow', markScrolled);   // restored scroll positions
-    markScrolled();
-  }
-
-  // Homepage: the moment the visitor scrolls down from the top, the hero
-  // sigil flies up into the header and "Vinay Swaminathan" slides right to
-  // make room, so the docked header matches every other page:
-  // [sigil] Vinay Swaminathan. Back at the very top it flies home and the
-  // name slides back. One fixed-length animation, identical however fast the
-  // scroll. A fixed-position clone does the flying (transform + opacity
-  // only); geometry is measured on load/resize, never per frame.
-  var heroSig = document.querySelector('.page-home .home-hero__sigil');
-  var brandImg = document.querySelector('.page-home .brand img');
-  var brandName = document.querySelector('.page-home .brand__name');
-  if (heroSig && brandImg && brandName) {
-    var DUR = 650, EASE = 'cubic-bezier(.45, 0, .2, 1)', SHIFT = 40;
-    var sigWrap = heroSig.parentNode;
-    var sFly = heroSig.cloneNode(false);
-    sFly.removeAttribute('fetchpriority');
-    sFly.className = 'home-hero__sigil sigil-flight';
-    sFly.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(sFly);
-    var geo = null, docked = false, anims = [], token = 0, tick = false, handing = false, leaving = false, pendingFly = null;
-    var past = function () { return window.scrollY > 2; };
-    var X = function (on) { return on ? 'translateX(' + SHIFT + 'px)' : 'translateX(0px)'; };
-    var measure = function () {
-      if (anims.length) return;                       // never re-measure mid-flight
-      var y = window.scrollY, sr = heroSig.getBoundingClientRect(), tr = brandImg.getBoundingClientRect();
-      if (!sr.width || !tr.width) return;
-      geo = { x: sr.left, y: sr.top + y, k: tr.width / sr.width, tx: tr.left, ty: tr.top };
-      sFly.style.width = sr.width + 'px'; sFly.style.height = sr.height + 'px';
-      if (pendingFly !== null) { var d = pendingFly; pendingFly = null; fly(d); }
-    };
-    var at = function (home) {
-      return home ? 'translate3d(' + geo.x + 'px,' + (geo.y - window.scrollY) + 'px,0) scale(1)'
-                  : 'translate3d(' + geo.tx + 'px,' + geo.ty + 'px,0) scale(' + geo.k + ')';
-    };
-    var cancelAll = function () {
-      anims.forEach(function (an) { an.cancel(); }); anims = [];
-      [sFly, brandName].forEach(function (el) { if (el.getAnimations) el.getAnimations().forEach(function (an) { an.cancel(); }); });
-    };
-    var rest = function (d) {                       // the settled state, no clone
-      sFly.style.opacity = '0';
-      heroSig.style.opacity = d ? '0' : '';
-      sigWrap.style.setProperty('--glow-o', d ? '0' : '1');
-      brandImg.style.opacity = d ? '1' : '0';
-      brandName.style.opacity = '1';
-      brandName.style.transform = d ? X(true) : '';
-    };
-    var fly = function (toDock, onDone) {
-      if (!geo) measure();
-      if (reduce.matches) { cancelAll(); rest(toDock); if (onDone) onDone(); return; }
-      if (!geo) { pendingFly = toDock; return; }
-      var my = ++token;
-      var mid = anims.length > 0;
-      // Scrolled during the opening: the copy starts at however far the hero
-      // sigil has faded in, and the hero's opening completes underneath.
-      var sO = mid ? 1 : +window.getComputedStyle(sigWrap).opacity;
-      sigWrap.style.transition = 'none'; sigWrap.classList.add('is-in');
-      heroSig.style.transition = 'none';
-      var fromT = mid ? window.getComputedStyle(sFly).transform : at(toDock);
-      var fromN = window.getComputedStyle(brandName).transform;
-      if (!fromN || fromN === 'none') fromN = X(false);
-      cancelAll();
-      heroSig.style.opacity = '0'; brandImg.style.opacity = '0';
-      sigWrap.style.setProperty('--glow-o', toDock ? '0' : '1');
-      sFly.style.transform = fromT;
-      sFly.style.opacity = toDock && sO < .99 ? String(sO) : '1';
-      anims.push(sFly.animate([{ transform: fromT }, { transform: at(!toDock) }], { duration: DUR, easing: EASE, fill: 'forwards' }));
-      if (toDock && sO < .99) anims.push(sFly.animate([{ opacity: sO }, { opacity: 1, offset: .45 }, { opacity: 1 }], { duration: DUR, fill: 'forwards' }));
-      anims.push(brandName.animate([{ transform: fromN }, { transform: X(toDock) }], { duration: DUR, easing: EASE, fill: 'forwards' }));
-      anims[0].onfinish = function () {
-        if (my !== token) return;
-        cancelAll();
-        rest(toDock);                                  // same frame as the clone leaves: no flash
-        if (onDone) onDone();
-      };
-    };
-    var check = function () {
-      tick = false;
-      if (handing) return;                           // a page hand-off is running; it settles itself
-      var want = past();
-      if (want !== docked) { docked = want; fly(want); }
-    };
-    window.addEventListener('scroll', function () {
-      if (!tick) { tick = true; window.requestAnimationFrame(check); }
-    }, { passive: true });
-    var remeasure = function () { measure(); if (!anims.length && !handing) rest(docked); };
-    window.addEventListener('resize', remeasure);
-    window.addEventListener('orientationchange', function () { setTimeout(remeasure, 120); });
-    window.addEventListener('load', function () { remeasure(); setTimeout(remeasure, 1600); setTimeout(remeasure, 3200); });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
-
-    // Page switches. The docked header already matches other pages, so only
-    // leaving from the top needs a hand-off (the sigil rises, the name steps
-    // aside); arriving at the top plays it in reverse.
-    var isHome = function (path) { return /(^|\/)(index\.html)?$/.test(path); };
-    document.addEventListener('click', function (e) {
-      var link = e.target.closest && e.target.closest('a[href]');
-      if (!link || leaving || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      if (link.target === '_blank' || link.hasAttribute('download') || link.hasAttribute('data-contact-open')) return;
-      var url = new URL(link.href, location.href);
-      if (url.origin !== location.origin || !/\.html$|\/$/.test(url.pathname)) return;
-      if (isHome(url.pathname)) {                        // Home / the name, from the homepage itself
-        if (url.hash || window.scrollY < 3) return;
-        e.preventDefault();
-        window.scrollTo({ top: 0, behavior: reduce.matches ? 'auto' : 'smooth' });
-        return;
-      }
-      if (docked && !anims.length) return;              // header already matches the next page
-      if (reduce.matches || !geo) return;               // plain navigation
-      e.preventDefault(); leaving = true; handing = true;
-      fly(true, function () { location.href = url.href; });
-    });
-    var settle = function () {
-      cancelAll();
-      handing = false;
-      docked = past();
-      rest(docked);
-    };
-    window.addEventListener('pageshow', function (e) {   // back to a cached homepage: settle cleanly
-      if (!e.persisted) return;
-      leaving = false; token++; settle();
-    });
-    var cameFromPage = false;
-    try {
-      var ref = document.referrer ? new URL(document.referrer) : null;
-      cameFromPage = !!ref && ref.origin === location.origin && !isHome(ref.pathname);
-      // Only a real link click from another page counts: a refresh or Back /
-      // Forward keeps the old referrer, but should open like a fresh visit.
-      var nav = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || {};
-      if (nav.type && nav.type !== 'navigate') cameFromPage = false;
-    } catch (err) { cameFromPage = false; }
-    docked = past();
-    rest(docked); measure();
-    if (cameFromPage && !reduce.matches && !docked && !location.hash) {
-      // Start as the previous page ended — [sigil] Vinay Swaminathan — then,
-      // once the page has settled, the sigil drops into the hero.
-      handing = true;
-      rest(true);
-      sigWrap.style.transition = 'none'; sigWrap.style.opacity = '1'; sigWrap.style.transform = 'none';
-      var arrive = function () {
-        measure();
-        if (!geo || past()) return settle();
-        docked = true;
-        fly(false, function () { handing = false; docked = past(); if (docked) fly(true); });
-      };
-      var whenSettled = function () {
-        (typeof assetsReady !== 'undefined' ? assetsReady : Promise.resolve()).then(function () {
-          window.requestAnimationFrame(function () { window.requestAnimationFrame(arrive); });
-        });
-      };
-      if (document.readyState === 'complete') whenSettled();
-      else window.addEventListener('load', whenSettled, { once: true });
-    }
-  }
-
-
-  /* ---------------------------------------------------------------------
-     1b. Accordions — animate native <details> open and close (height,
-         opacity and a 4px settle). Rapid clicks reverse from the current
-         height; nothing is left with a fixed height afterwards, so resizing
-         an open accordion is safe. Reduced motion: native instant toggle.
-     --------------------------------------------------------------------- */
-  // Some disclosures start open on wider screens only (1:1 Availability, Scope).
-  // Some are simply content there (data-static-desktop: 1:1 Scope's "What it
-  // is not"), not a control: open, and the label is not focusable.
-  var wide = window.matchMedia('(min-width: 769px)');
-  if (wide.matches) {
-    document.querySelectorAll('details[data-open-desktop]').forEach(function (d) { d.open = true; });
-  }
-  // Crossing the breakpoint (a resize, a rotation) switches state at once,
-  // without animating: open as content on wide screens, folded on phones.
-  var staticSummaries = function (e) {
-    document.querySelectorAll('details[data-static-desktop]').forEach(function (d) {
-      var sm = d.querySelector(':scope > summary');
-      if (wide.matches) { sm.setAttribute('tabindex', '-1'); sm.setAttribute('aria-disabled', 'true'); }
-      else { sm.removeAttribute('tabindex'); sm.removeAttribute('aria-disabled'); }
-      if (!e && !wide.matches) return;                   // first load on a phone: as authored (folded)
-      if (d._acc) d._acc(wide.matches, false); else d.open = wide.matches;
-    });
+  }, { passive: true });
+  // Two frames later: after the browser has laid out and painted a change.
+  var afterTwoFrames = function (fn) {
+    window.requestAnimationFrame(function () { window.requestAnimationFrame(fn); });
   };
-  var ACC_MS = 444, ACC_EASE = 'cubic-bezier(.3,.7,.3,1)';   // calm, same speed open and close
-  // Lists of parallel options (marked data-one-open: the 1:1 sessions and
-  // immersions, the Background qualification lists) and the whole Approach
-  // page keep one item open at a time. Story's "Read more" sections and the
-  // reference panels stay independent on purpose.
-  var setAcc = function (d, open, animate) {
-    if (d._acc) d._acc(open, animate); else d.open = open;
-  };
-  // Opening one item closes the others in its group. An open item ABOVE the
-  // tapped one closes at once, and the page is shifted once, in the same
-  // frame, by exactly the height that went: the tapped line never moves.
-  // (Animating that close while correcting the scroll every frame made
-  // phones jerk: their scrolling runs off the main thread, so per-frame
-  // corrections land a frame late and fight the browser's own anchoring.)
-  // Items BELOW the tapped one cannot move it, so they still animate.
-  var closeSiblings = function (d, animate) {
-    var group = d.parentElement && d.closest('[data-one-open]');
-    if (!group) return;
-    var line = d.querySelector(':scope > summary') || d;
-    var before = line.getBoundingClientRect().top, shifted = false;
-    root.style.overflowAnchor = 'none';                  // one correction only: ours
-    group.querySelectorAll('details.accordion').forEach(function (o) {
-      if (o === d || !o.open || o.classList.contains('is-closing') || o.closest('[data-one-open]') !== group) return;
-      if (o.compareDocumentPosition(d) & Node.DOCUMENT_POSITION_FOLLOWING) { setAcc(o, false, false); shifted = true; }
-      else setAcc(o, false, animate);
-    });
-    if (shifted) {
-      var dy = line.getBoundingClientRect().top - before;
-      if (Math.abs(dy) > .5) window.scrollBy({ top: dy, behavior: 'instant' });
-    }
-    window.requestAnimationFrame(function () { window.requestAnimationFrame(function () { root.style.overflowAnchor = ''; }); });
-  };
-  document.querySelectorAll('details.accordion').forEach(function (d) {
-    var summary = d.querySelector(':scope > summary');
-    var body = d.querySelector(':scope > .accordion__body');
-    if (!summary || !body || !body.animate) return;
-    var anim = null;
-    var finish = function (open) {
-      anim = null;
-      d.open = open;
-      d.classList.remove('is-animating', 'is-closing');
-      body.style.height = body.style.opacity = body.style.transform = body.style.paddingBottom = '';
-    };
-    d._acc = function (open, animate) {
-      var isOpen = d.open && !d.classList.contains('is-closing');
-      if (open === isOpen) return;
-      if (!animate || reduce.matches) {
-        if (anim) anim.cancel();
-        finish(open);
-        return;
-      }
-      var closing = !open;
-      // A closed <details> may still report its content's box (Chrome keeps
-      // layout for hidden details content), so a closed one starts at 0.
-      var from = d.open ? body.getBoundingClientRect().height : 0;
-      var pad = anim ? getComputedStyle(body).paddingBottom : null;
-      if (anim) anim.cancel();
-      var padFull = getComputedStyle(body).paddingBottom;   // resting padding
-      if (pad === null) pad = d.open ? padFull : '0px';
-      d.classList.add('is-animating');
-      if (closing) {
-        d.classList.add('is-closing');
-        anim = body.animate(
-          [{ height: from + 'px', paddingBottom: pad, opacity: 1, transform: 'none' },
-           { height: '0px', paddingBottom: '0px', opacity: 0, transform: 'translateY(-4px)' }],
-          { duration: ACC_MS, easing: ACC_EASE });
-        anim.onfinish = function () { finish(false); };
-      } else {
-        d.classList.remove('is-closing');
-        d.open = true;
-        var to = body.scrollHeight;
-        anim = body.animate(
-          [{ height: (from || 0) + 'px', paddingBottom: pad, opacity: from ? 1 : 0, transform: from ? 'none' : 'translateY(-4px)' },
-           { height: to + 'px', paddingBottom: padFull, opacity: 1, transform: 'none' }],
-          { duration: ACC_MS, easing: ACC_EASE });
-        anim.onfinish = function () { finish(true); };
-      }
-    };
-    summary.addEventListener('click', function (e) {
-      e.preventDefault();
-      if (d.hasAttribute('data-static-desktop') && wide.matches) return;   // shown as plain content on wide screens
-      var opening = !(d.open && !d.classList.contains('is-closing'));
-      if (opening) closeSiblings(d, true);
-      d._acc(opening, true);
-    });
-  });
-  staticSummaries();
-  if (wide.addEventListener) wide.addEventListener('change', staticSummaries);
-  // A link to a session (#body … on the 1:1 page, from the homepage or from
-  // within the page) opens that session's details and closes any other.
-  var openForTarget = function (t, animate) {
-    if (!t || !t.closest('[data-one-open]')) return;
-    var d = t.matches('details.accordion') ? t : t.querySelector('details.accordion');
-    if (!d || d.closest('[data-one-open]') !== t.closest('[data-one-open]')) return;
-    closeSiblings(d, animate);
-    setAcc(d, true, animate);
-  };
-  var hashEl = function () {
+  // The element the URL's #hash names, if any.
+  var hashTarget = function () {
     if (!location.hash) return null;
     try { return document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (e) { return null; }
   };
-  openForTarget(hashEl(), false);
-  window.addEventListener('pageshow', function (e) { if (e.persisted) openForTarget(hashEl(), false); });
-  window.addEventListener('hashchange', function () { openForTarget(hashEl(), true); });
-  document.addEventListener('click', function (e) {           // same hash clicked again: no hashchange fires
-    var a = e.target.closest && e.target.closest('a[href^="#"]');
-    if (a && a.getAttribute('href') === location.hash) openForTarget(hashEl(), true);
-  });
+  // The line just below the fixed header (and, on narrow screens, the
+  // section strip): where a section counts as reached.
+  var stickyLine = function () {
+    var head = document.getElementById('site-head');
+    return (head ? head.offsetHeight : 0) + (parseFloat(getComputedStyle(document.body).getPropertyValue('--subnav-h')) || 0);
+  };
 
   /* ---------------------------------------------------------------------
-     1b. Background textures — this page's only, each loaded as its field
+     1. Background textures — this page's only, each loaded as its field
          comes within about a screen of view (the fields on the first screen
          at once), at most two at a time, nearest first, and fully decoded
          before it is shown. Until then a field shows its own calm base tone
@@ -494,30 +183,357 @@
     }
   }
 
-  // Photographs keep their space and fade in once decoded (CSS holds them at 0).
-  Array.prototype.forEach.call(document.querySelectorAll('.editorial__media img, .story__portrait img'), function (img) {
-    whenReady(img, function () { img.classList.add('is-loaded'); });
-  });
-
-  // Approach graphics run only while on screen (CSS animations pause; the
-  // Movement field's SMIL morph pauses too). Reduced motion: they rest.
-  var graphics = document.querySelectorAll('.motion-graphic');
-  if (graphics.length) {
-    var setLive = function (svg, live) {
-      svg.classList.toggle('is-paused', !live);
-      if (svg.pauseAnimations) { if (live) svg.unpauseAnimations(); else svg.pauseAnimations(); }
+  /* ---------------------------------------------------------------------
+     2. Header — the phone menu (open, close, outside tap, Escape), the
+        glass that arrives once the page scrolls, and the homepage sigil's
+        flight into the header.
+     --------------------------------------------------------------------- */
+  var toggle = document.getElementById('nav-toggle');
+  var mobileNav = document.getElementById('nav-mobile');
+  if (toggle && mobileNav) {
+    var setNav = function (open) {
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.querySelector('[data-label]').textContent = open ? 'Close' : 'Menu';
+      mobileNav.classList.toggle('is-open', open);
+      root.classList.toggle('nav-is-open', open);
     };
-    graphics.forEach(function (svg) { setLive(svg, false); });
-    if (!reduce.matches && 'IntersectionObserver' in window) {
-      var gio = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) { setLive(e.target, e.isIntersecting); });
-      }, { rootMargin: '10% 0px' });
-      graphics.forEach(function (svg) { gio.observe(svg); });
+    toggle.addEventListener('click', function () {
+      setNav(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+    var closeNav = function (returnFocus) {
+      setNav(false);
+      if (returnFocus) toggle.focus();
+    };
+    mobileNav.addEventListener('click', function (e) {
+      if (e.target.closest('a')) closeNav(false);
+    });
+    // A tap anywhere outside the open panel (and its toggle) closes it, and
+    // that tap stops there: it never also follows a link underneath. One
+    // listener for the life of the page; it does nothing while closed.
+    // The close waits for the touch to resolve (finger lifted, or the
+    // gesture becoming a scroll), then fades softly: closing on touch-down,
+    // while the phone is still deciding tap-or-scroll, made it snap shut.
+    var swallowUntil = 0, outside = false, softTimer = null;
+    var closeSoftly = function () {
+      outside = false;
+      if (!mobileNav.classList.contains('is-open')) return;
+      clearTimeout(softTimer);
+      mobileNav.classList.add('is-soft');
+      closeNav(false);
+      softTimer = setTimeout(function () { mobileNav.classList.remove('is-soft'); }, 480);
+    };
+    document.addEventListener('pointerdown', function (e) {
+      outside = mobileNav.classList.contains('is-open') && !mobileNav.contains(e.target) && !toggle.contains(e.target);
+      if (outside) swallowUntil = Date.now() + 1500;   // this tap never also follows a link underneath
+    }, true);
+    document.addEventListener('pointerup', function () {
+      if (!outside) return;
+      swallowUntil = Date.now() + 600;
+      closeSoftly();
+    }, true);
+    document.addEventListener('pointercancel', function () { if (outside) closeSoftly(); }, true);
+    document.addEventListener('click', function (e) {
+      if (Date.now() < swallowUntil) { swallowUntil = 0; e.preventDefault(); e.stopPropagation(); }
+    }, true);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) closeNav(true);
+    });
+  }
+
+  // Header: transparent at the top of the page; the translucent navy glass
+  // arrives once the page has scrolled a few pixels.
+  var siteHead = document.getElementById('site-head');
+  if (siteHead) {
+    var markScrolled = function () { siteHead.classList.toggle('is-scrolled', window.scrollY > 12); };
+    onScroll(markScrolled);
+    window.addEventListener('pageshow', markScrolled);   // restored scroll positions
+    markScrolled();
+  }
+
+  // Homepage: the moment the visitor scrolls down from the top, the hero
+  // sigil flies up into the header and "Vinay Swaminathan" slides right to
+  // make room, so the docked header matches every other page:
+  // [sigil] Vinay Swaminathan. Back at the very top it flies home and the
+  // name slides back. One fixed-length animation, identical however fast the
+  // scroll. A fixed-position clone does the flying (transform + opacity
+  // only); geometry is measured on load/resize, never per frame.
+  var heroSig = document.querySelector('.page-home .home-hero__sigil');
+  var brandImg = document.querySelector('.page-home .brand img');
+  var brandName = document.querySelector('.page-home .brand__name');
+  if (heroSig && brandImg && brandName) {
+    var DUR = 650, EASE = 'cubic-bezier(.45, 0, .2, 1)', SHIFT = 40;
+    var sigWrap = heroSig.parentNode;
+    var sFly = heroSig.cloneNode(false);
+    sFly.removeAttribute('fetchpriority');
+    sFly.className = 'home-hero__sigil sigil-flight';
+    sFly.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(sFly);
+    var geo = null, docked = false, anims = [], token = 0, handing = false, leaving = false, pendingFly = null;
+    var past = function () { return window.scrollY > 2; };
+    var X = function (on) { return on ? 'translateX(' + SHIFT + 'px)' : 'translateX(0px)'; };
+    var measure = function () {
+      if (anims.length) return;                       // never re-measure mid-flight
+      var y = window.scrollY, sr = heroSig.getBoundingClientRect(), tr = brandImg.getBoundingClientRect();
+      if (!sr.width || !tr.width) return;
+      geo = { x: sr.left, y: sr.top + y, k: tr.width / sr.width, tx: tr.left, ty: tr.top };
+      sFly.style.width = sr.width + 'px'; sFly.style.height = sr.height + 'px';
+      if (pendingFly !== null) { var d = pendingFly; pendingFly = null; fly(d); }
+    };
+    var at = function (home) {
+      return home ? 'translate3d(' + geo.x + 'px,' + (geo.y - window.scrollY) + 'px,0) scale(1)'
+                  : 'translate3d(' + geo.tx + 'px,' + geo.ty + 'px,0) scale(' + geo.k + ')';
+    };
+    var cancelAll = function () {
+      anims.forEach(function (an) { an.cancel(); }); anims = [];
+      [sFly, brandName].forEach(function (el) { if (el.getAnimations) el.getAnimations().forEach(function (an) { an.cancel(); }); });
+    };
+    var rest = function (d) {                       // the settled state, no clone
+      sFly.style.opacity = '0';
+      heroSig.style.opacity = d ? '0' : '';
+      sigWrap.style.setProperty('--glow-o', d ? '0' : '1');
+      brandImg.style.opacity = d ? '1' : '0';
+      brandName.style.opacity = '1';
+      brandName.style.transform = d ? X(true) : '';
+    };
+    var fly = function (toDock, onDone) {
+      if (!geo) measure();
+      if (reduce.matches) { cancelAll(); rest(toDock); if (onDone) onDone(); return; }
+      if (!geo) { pendingFly = toDock; return; }
+      var my = ++token;
+      var mid = anims.length > 0;
+      // Scrolled during the opening: the copy starts at however far the hero
+      // sigil has faded in, and the hero's opening completes underneath.
+      var sO = mid ? 1 : +window.getComputedStyle(sigWrap).opacity;
+      sigWrap.style.transition = 'none'; sigWrap.classList.add('is-in');
+      heroSig.style.transition = 'none';
+      var fromT = mid ? window.getComputedStyle(sFly).transform : at(toDock);
+      var fromN = window.getComputedStyle(brandName).transform;
+      if (!fromN || fromN === 'none') fromN = X(false);
+      cancelAll();
+      heroSig.style.opacity = '0'; brandImg.style.opacity = '0';
+      sigWrap.style.setProperty('--glow-o', toDock ? '0' : '1');
+      sFly.style.transform = fromT;
+      sFly.style.opacity = toDock && sO < .99 ? String(sO) : '1';
+      anims.push(sFly.animate([{ transform: fromT }, { transform: at(!toDock) }], { duration: DUR, easing: EASE, fill: 'forwards' }));
+      if (toDock && sO < .99) anims.push(sFly.animate([{ opacity: sO }, { opacity: 1, offset: .45 }, { opacity: 1 }], { duration: DUR, fill: 'forwards' }));
+      anims.push(brandName.animate([{ transform: fromN }, { transform: X(toDock) }], { duration: DUR, easing: EASE, fill: 'forwards' }));
+      anims[0].onfinish = function () {
+        if (my !== token) return;
+        cancelAll();
+        rest(toDock);                                  // same frame as the clone leaves: no flash
+        if (onDone) onDone();
+      };
+    };
+    var check = function () {
+      if (handing) return;                           // a page hand-off is running; it settles itself
+      var want = past();
+      if (want !== docked) { docked = want; fly(want); }
+    };
+    onScroll(check);
+    var remeasure = function () { measure(); if (!anims.length && !handing) rest(docked); };
+    onResize(remeasure);
+    window.addEventListener('load', remeasure);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
+    // Late fonts and images change these boxes; re-measure exactly then.
+    if ('ResizeObserver' in window) {
+      var ro = new ResizeObserver(function () { window.requestAnimationFrame(remeasure); });
+      [heroSig, brandImg, brandName, siteHead].forEach(function (el) { if (el) ro.observe(el); });
+    }
+
+    // Page switches. The docked header already matches other pages, so only
+    // leaving from the top needs a hand-off (the sigil rises, the name steps
+    // aside); arriving at the top plays it in reverse.
+    var isHome = function (path) { return /(^|\/)(index\.html)?$/.test(path); };
+    document.addEventListener('click', function (e) {
+      var link = e.target.closest && e.target.closest('a[href]');
+      if (!link || leaving || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      if (link.target === '_blank' || link.hasAttribute('download') || link.hasAttribute('data-contact-open')) return;
+      var url = new URL(link.href, location.href);
+      if (url.origin !== location.origin || !/\.html$|\/$/.test(url.pathname)) return;
+      if (isHome(url.pathname)) {                        // Home / the name, from the homepage itself
+        if (url.hash || window.scrollY < 3) return;
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: reduce.matches ? 'auto' : 'smooth' });
+        return;
+      }
+      if (docked && !anims.length) return;              // header already matches the next page
+      if (reduce.matches || !geo) return;               // plain navigation
+      e.preventDefault(); leaving = true; handing = true;
+      fly(true, function () { location.href = url.href; });
+    });
+    var settle = function () {
+      cancelAll();
+      handing = false;
+      docked = past();
+      rest(docked);
+    };
+    window.addEventListener('pageshow', function (e) {   // back to a cached homepage: settle cleanly
+      if (!e.persisted) return;
+      leaving = false; token++; settle();
+    });
+    var cameFromPage = false;
+    try {
+      var ref = document.referrer ? new URL(document.referrer) : null;
+      cameFromPage = !!ref && ref.origin === location.origin && !isHome(ref.pathname);
+      // Only a real link click from another page counts: a refresh or Back /
+      // Forward keeps the old referrer, but should open like a fresh visit.
+      var nav = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || {};
+      if (nav.type && nav.type !== 'navigate') cameFromPage = false;
+    } catch (err) { cameFromPage = false; }
+    docked = past();
+    rest(docked); measure();
+    if (cameFromPage && !reduce.matches && !docked && !location.hash) {
+      // Start as the previous page ended — [sigil] Vinay Swaminathan — then,
+      // once the page has settled, the sigil drops into the hero.
+      handing = true;
+      rest(true);
+      sigWrap.style.transition = 'none'; sigWrap.style.opacity = '1'; sigWrap.style.transform = 'none';
+      var arrive = function () {
+        measure();
+        if (!geo || past()) return settle();
+        docked = true;
+        fly(false, function () { handing = false; docked = past(); if (docked) fly(true); });
+      };
+      var whenSettled = function () {
+        assetsReady.then(function () { afterTwoFrames(arrive); });
+      };
+      if (document.readyState === 'complete') whenSettled();
+      else window.addEventListener('load', whenSettled, { once: true });
     }
   }
 
+
   /* ---------------------------------------------------------------------
-     2. Reveal engine — one mechanism for the whole site. The unit is the
+     3. Accordions — animate native <details> open and close (height,
+         opacity and a 4px settle). Rapid clicks reverse from the current
+         height; nothing is left with a fixed height afterwards, so resizing
+         an open accordion is safe. Reduced motion: native instant toggle.
+     --------------------------------------------------------------------- */
+  // Some disclosures start open on wider screens only (1:1 Availability, Scope).
+  // Some are simply content there (data-static-desktop: 1:1 Scope's "What it
+  // is not"), not a control: open, and the label is not focusable.
+  var wide = window.matchMedia('(min-width: 769px)');
+  if (wide.matches) {
+    document.querySelectorAll('details[data-open-desktop]').forEach(function (d) { d.open = true; });
+  }
+  // Crossing the breakpoint (a resize, a rotation) switches state at once,
+  // without animating: open as content on wide screens, folded on phones.
+  var staticSummaries = function (e) {
+    document.querySelectorAll('details[data-static-desktop]').forEach(function (d) {
+      var sm = d.querySelector(':scope > summary');
+      if (wide.matches) { sm.setAttribute('tabindex', '-1'); sm.setAttribute('aria-disabled', 'true'); }
+      else { sm.removeAttribute('tabindex'); sm.removeAttribute('aria-disabled'); }
+      if (!e && !wide.matches) return;                   // first load on a phone: as authored (folded)
+      if (d._acc) d._acc(wide.matches, false); else d.open = wide.matches;
+    });
+  };
+  var ACC_MS = 444, ACC_EASE = 'cubic-bezier(.3,.7,.3,1)';   // calm, same speed open and close
+  // Lists of parallel options (marked data-one-open: the 1:1 sessions and
+  // immersions, the Background qualification lists) and the whole Approach
+  // page keep one item open at a time. Story's "Read more" sections and the
+  // reference panels stay independent on purpose.
+  var setAcc = function (d, open, animate) {
+    if (d._acc) d._acc(open, animate); else d.open = open;
+  };
+  // Opening one item closes the others in its group. An open item ABOVE the
+  // tapped one closes at once, and the page is shifted once, in the same
+  // frame, by exactly the height that went: the tapped line never moves.
+  // (Animating that close while correcting the scroll every frame made
+  // phones jerk: their scrolling runs off the main thread, so per-frame
+  // corrections land a frame late and fight the browser's own anchoring.)
+  // Items BELOW the tapped one cannot move it, so they still animate.
+  var closeSiblings = function (d, animate) {
+    var group = d.parentElement && d.closest('[data-one-open]');
+    if (!group) return;
+    var line = d.querySelector(':scope > summary') || d;
+    var before = line.getBoundingClientRect().top, shifted = false;
+    root.style.overflowAnchor = 'none';                  // one correction only: ours
+    group.querySelectorAll('details.accordion').forEach(function (o) {
+      if (o === d || !o.open || o.classList.contains('is-closing') || o.closest('[data-one-open]') !== group) return;
+      if (o.compareDocumentPosition(d) & Node.DOCUMENT_POSITION_FOLLOWING) { setAcc(o, false, false); shifted = true; }
+      else setAcc(o, false, animate);
+    });
+    if (shifted) {
+      var dy = line.getBoundingClientRect().top - before;
+      if (Math.abs(dy) > .5) window.scrollBy({ top: dy, behavior: 'instant' });
+    }
+    afterTwoFrames(function () { root.style.overflowAnchor = ''; });
+  };
+  document.querySelectorAll('details.accordion').forEach(function (d) {
+    var summary = d.querySelector(':scope > summary');
+    var body = d.querySelector(':scope > .accordion__body');
+    if (!summary || !body || !body.animate) return;
+    var anim = null;
+    var finish = function (open) {
+      anim = null;
+      d.open = open;
+      d.classList.remove('is-animating', 'is-closing');
+      body.style.height = body.style.opacity = body.style.transform = body.style.paddingBottom = '';
+    };
+    d._acc = function (open, animate) {
+      var isOpen = d.open && !d.classList.contains('is-closing');
+      if (open === isOpen) return;
+      if (!animate || reduce.matches) {
+        if (anim) anim.cancel();
+        finish(open);
+        return;
+      }
+      var closing = !open;
+      // A closed <details> may still report its content's box (Chrome keeps
+      // layout for hidden details content), so a closed one starts at 0.
+      var from = d.open ? body.getBoundingClientRect().height : 0;
+      var pad = anim ? getComputedStyle(body).paddingBottom : null;
+      if (anim) anim.cancel();
+      var padFull = getComputedStyle(body).paddingBottom;   // resting padding
+      if (pad === null) pad = d.open ? padFull : '0px';
+      d.classList.add('is-animating');
+      if (closing) {
+        d.classList.add('is-closing');
+        anim = body.animate(
+          [{ height: from + 'px', paddingBottom: pad, opacity: 1, transform: 'none' },
+           { height: '0px', paddingBottom: '0px', opacity: 0, transform: 'translateY(-4px)' }],
+          { duration: ACC_MS, easing: ACC_EASE });
+        anim.onfinish = function () { finish(false); };
+      } else {
+        d.classList.remove('is-closing');
+        d.open = true;
+        var to = body.scrollHeight;
+        anim = body.animate(
+          [{ height: (from || 0) + 'px', paddingBottom: pad, opacity: from ? 1 : 0, transform: from ? 'none' : 'translateY(-4px)' },
+           { height: to + 'px', paddingBottom: padFull, opacity: 1, transform: 'none' }],
+          { duration: ACC_MS, easing: ACC_EASE });
+        anim.onfinish = function () { finish(true); };
+      }
+    };
+    summary.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (d.hasAttribute('data-static-desktop') && wide.matches) return;   // shown as plain content on wide screens
+      var opening = !(d.open && !d.classList.contains('is-closing'));
+      if (opening) closeSiblings(d, true);
+      d._acc(opening, true);
+    });
+  });
+  staticSummaries();
+  if (wide.addEventListener) wide.addEventListener('change', staticSummaries);
+  // A link to a session (#body … on the 1:1 page, from the homepage or from
+  // within the page) opens that session's details and closes any other.
+  var openForTarget = function (t, animate) {
+    if (!t || !t.closest('[data-one-open]')) return;
+    var d = t.matches('details.accordion') ? t : t.querySelector('details.accordion');
+    if (!d || d.closest('[data-one-open]') !== t.closest('[data-one-open]')) return;
+    closeSiblings(d, animate);
+    setAcc(d, true, animate);
+  };
+  openForTarget(hashTarget(), false);
+  window.addEventListener('pageshow', function (e) { if (e.persisted) openForTarget(hashTarget(), false); });
+  window.addEventListener('hashchange', function () { openForTarget(hashTarget(), true); });
+  document.addEventListener('click', function (e) {           // same hash clicked again: no hashchange fires
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (a && a.getAttribute('href') === location.hash) openForTarget(hashTarget(), true);
+  });
+
+  /* ---------------------------------------------------------------------
+     4. Reveal engine — one mechanism for the whole site. The unit is the
         readable block (a heading, a paragraph, a list, a row of buttons,
         a dropdown), not the section: each block reveals as its own top
         enters the view, so copy arrives with the scroll instead of after
@@ -646,23 +662,19 @@
       // link, a long fling) settles the same way. Any scroll before the
       // visitor has touched, wheeled, pressed a key or clicked is the
       // browser placing the page. Only still-pending blocks are read.
-      var queued = false, lastY = window.pageYOffset, touched = false;
+      var lastY = window.pageYOffset, touched = false;
       ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (ev) {
         window.addEventListener(ev, function () { touched = true; }, { once: true, passive: true });
       });
-      window.addEventListener('scroll', function () {
-        if (queued || !pending.length) return;
-        queued = true;
-        window.requestAnimationFrame(function () {
-          queued = false;
-          var y = window.pageYOffset, jump = !touched || Math.abs(y - lastY) > window.innerHeight * 0.5;
-          lastY = y;
-          if (jump) settleAll(pending.slice());
-          else pending.slice().forEach(function (el) {
-            if (el.getBoundingClientRect().bottom <= 0) { reveal(el); io.unobserve(el); done(el); }
-          });
+      onScroll(function () {
+        if (!pending.length) return;
+        var y = window.pageYOffset, jump = !touched || Math.abs(y - lastY) > window.innerHeight * 0.5;
+        lastY = y;
+        if (jump) settleAll(pending.slice());
+        else pending.slice().forEach(function (el) {
+          if (el.getBoundingClientRect().bottom <= 0) { reveal(el); io.unobserve(el); done(el); }
         });
-      }, { passive: true });
+      });
     };
     // The opening starts from one state, .assets-ready (the first screen's
     // textures and the web fonts, capped at 1.3s), then two frames so the
@@ -670,7 +682,7 @@
     // texture fade most of the way in before the sigil appears.
     assetsReady.then(function () {
       setTimeout(function () {
-        window.requestAnimationFrame(function () { window.requestAnimationFrame(function () {
+        afterTwoFrames(function () {
           T0 = performance.now();
           var seqShown = false;
           units.forEach(function (el) {   // the page opening first
@@ -680,7 +692,7 @@
           });
           // then everything else, as the last opening line begins
           setTimeout(observe, seqShown ? SEQ_STEP * Math.max(0, Math.min(seqCount, 5) - 1) : 0);
-        }); });
+        });
       }, document.querySelector('.page-home') ? 420 : 180);
     });
   } else {
@@ -689,8 +701,31 @@
     });
   }
 
+
+  // Photographs keep their space and fade in once decoded (CSS holds them at 0).
+  Array.prototype.forEach.call(document.querySelectorAll('.editorial__media img, .story__portrait img'), function (img) {
+    whenReady(img, function () { img.classList.add('is-loaded'); });
+  });
+
+  // Approach graphics run only while on screen (CSS animations pause; the
+  // Movement field's SMIL morph pauses too). Reduced motion: they rest.
+  var graphics = document.querySelectorAll('.motion-graphic');
+  if (graphics.length) {
+    var setLive = function (svg, live) {
+      svg.classList.toggle('is-paused', !live);
+      if (svg.pauseAnimations) { if (live) svg.unpauseAnimations(); else svg.pauseAnimations(); }
+    };
+    graphics.forEach(function (svg) { setLive(svg, false); });
+    if (!reduce.matches && 'IntersectionObserver' in window) {
+      var gio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { setLive(e.target, e.isIntersecting); });
+      }, { rootMargin: '10% 0px' });
+      graphics.forEach(function (svg) { gio.observe(svg); });
+    }
+  }
+
   /* ---------------------------------------------------------------------
-     3. Interior pages — sticky section nav scroll-spy (no-op without one).
+     5. Interior pages — sticky section nav scroll-spy (no-op without one).
         From 1100px the nav is a slim fixed index in the left gutter; below
         that it is a horizontal bar under the header (its height is
         --subnav-h). A section is current once its top passes the bottom of
@@ -699,11 +734,9 @@
   var subnav = document.querySelector('.subnav');
   var subnavLinks = document.querySelectorAll('.subnav [data-section]');
   if (subnav && subnavLinks.length) {
-    var head = document.getElementById('site-head');
     var sectionIds = Array.prototype.map.call(subnavLinks, function (a) { return a.getAttribute('data-section'); });
     var setActive = function () {
-      var barH = parseFloat(getComputedStyle(document.body).getPropertyValue('--subnav-h')) || 0;
-      var line = Math.max((head ? head.offsetHeight : 0) + barH + 24, window.innerHeight * 0.3);
+      var line = Math.max(stickyLine() + 24, window.innerHeight * 0.3);
       var atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
       var current = sectionIds[0];
       sectionIds.forEach(function (id) {
@@ -732,8 +765,8 @@
         a.setAttribute('aria-current', on ? 'location' : 'false');
       });
     };
-    window.addEventListener('scroll', function () { window.requestAnimationFrame(setActive); }, { passive: true });
-    window.addEventListener('resize', setActive);
+    onScroll(setActive);
+    onResize(setActive);
     setActive();
 
     // Phones / tablets: show when more sections sit off-screen (edge fade and
@@ -760,12 +793,12 @@
       bar.scrollBy({ left: Math.round(bar.clientWidth * 0.7), behavior: reduce.matches ? 'auto' : 'smooth' });
     });
     bar.addEventListener('scroll', function () { window.requestAnimationFrame(markBar); }, { passive: true });
-    window.addEventListener('resize', markBar);
+    onResize(markBar);
     markBar();
   }
 
   /* ---------------------------------------------------------------------
-     3b. FACE (Approach) — desktop: a centred F A C E row with the chosen
+     6. FACE (Approach) — desktop: a centred F A C E row with the chosen
          letter's panel below; phones: a letter rail on the left, the panel
          on the right. Real disclosure buttons (aria-expanded); nothing
          is open until the visitor chooses a letter, and choosing the open
@@ -805,7 +838,7 @@
   }
 
   /* ---------------------------------------------------------------------
-     4. Form helpers. A fieldset[data-require-one] needs at least one box
+     7. Form helpers. A fieldset[data-require-one] needs at least one box
         ticked (native validation message on the first box).
      --------------------------------------------------------------------- */
   document.querySelectorAll('fieldset[data-require-one]').forEach(function (set) {
@@ -860,7 +893,7 @@
   }
 
   /* ---------------------------------------------------------------------
-     4b. Web3Forms — one submission handler for every form[data-web3]
+     7b. Web3Forms — one submission handler for every form[data-web3]
          (Alignment Call, Group interest, Collaboration). Each form names its
          own success panel (data-sent) and error box (data-errors); its
          subject and metadata are hidden fields in the markup. Success is
@@ -931,12 +964,11 @@
   });
 
   /* ---------------------------------------------------------------------
-     4d. Get in touch — no floating button. Contact lives where people
+     8. Get in touch — no floating button. Contact lives where people
          already look: the header (a quiet last item on wide screens, the
          last line of the menu on phones) and one understated invitation
          where a page naturally ends. Any [data-contact-open] link opens a
-         short chooser: a modal
-         <dialog> (popover on wide screens, bottom sheet on phones). Escape,
+         short chooser: a modal <dialog> (popover on wide screens, bottom sheet on phones). Escape,
          the close button or the backdrop close it; focus returns to the
          control that opened it. Without JS the links simply go to the
          Alignment Call form.
@@ -962,7 +994,7 @@
       sheet.showModal();
       // Focus the question (not a choice), so no option looks preselected.
       var q = sheet.querySelector('#contact-q'); q.setAttribute('tabindex', '-1'); q.focus({ preventScroll: true });
-      window.requestAnimationFrame(function () { window.requestAnimationFrame(function () { sheet.classList.add('is-shown'); }); });
+      afterTwoFrames(function () { sheet.classList.add('is-shown'); });
     };
     var closeSheet = function () {
       if (!sheet.open) return;
@@ -1008,7 +1040,7 @@
   }
 
   /* ---------------------------------------------------------------------
-     4e. Next section — one quiet floating button (lower right) on the
+     8b. Next section — one quiet floating button (lower right) on the
          longer pages, that takes the visitor to the next major section
          ([data-scroll-section]) on a click: native scrollIntoView, smooth
          (immediate with reduced motion); scrolling itself is never touched.
@@ -1025,7 +1057,7 @@
     nextBtn.setAttribute('aria-label', 'Go to next section');
     nextBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     document.body.appendChild(nextBtn);
-    var tops = [], foot = document.querySelector('.site-foot'), footTop = Infinity, docH = 0, viewH = 0, line = 0, target = null, nsTick = false;
+    var tops = [], foot = document.querySelector('.site-foot'), footTop = Infinity, docH = 0, viewH = 0, line = 0, target = null;
     var measureMarks = function () {
       var y = window.pageYOffset;
       tops = marks.filter(function (el) { return el.getClientRects().length; })
@@ -1033,12 +1065,10 @@
       footTop = foot ? foot.getBoundingClientRect().top + y : Infinity;
       docH = document.documentElement.scrollHeight;
       viewH = window.innerHeight;
-      var head = document.getElementById('site-head');
-      line = (head ? head.offsetHeight : 0) + (parseFloat(getComputedStyle(document.body).getPropertyValue('--subnav-h')) || 0) + 12;
+      line = stickyLine() + 12;
       updateNext();
     };
     var updateNext = function () {
-      nsTick = false;
       var y = window.pageYOffset, at = y + line;
       target = null;
       for (var i = 0; i < tops.length; i++) { if (tops[i][0] > at + 4) { target = tops[i][1]; break; } }
@@ -1049,10 +1079,8 @@
       if (!target) return;
       target.scrollIntoView({ behavior: reduce.matches ? 'instant' : 'smooth', block: 'start' });
     });
-    window.addEventListener('scroll', function () {
-      if (!nsTick) { nsTick = true; window.requestAnimationFrame(updateNext); }
-    }, { passive: true });
-    window.addEventListener('resize', measureMarks);
+    onScroll(updateNext);
+    onResize(measureMarks);
     window.addEventListener('load', measureMarks);
     document.addEventListener('toggle', function () { window.requestAnimationFrame(measureMarks); }, true);   // accordions change the page's length
     if ('ResizeObserver' in window) new ResizeObserver(function () { window.requestAnimationFrame(measureMarks); }).observe(document.querySelector('main') || document.body);
@@ -1060,16 +1088,12 @@
   }
 
   /* ---------------------------------------------------------------------
-     5. Hash landing. The browser's own jump happens before web fonts and
+     9. Hash landing. The browser's own jump happens before web fonts and
         images have settled, so the target can drift. Re-land once now and
         again after fonts/load, unless the visitor has scrolled meanwhile.
         `scroll-margin-top` (site.css) keeps it clear of the sticky header.
         A target inside a closed <details> opens it first.
      --------------------------------------------------------------------- */
-  function hashTarget() {
-    if (!location.hash) return null;
-    try { return document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (e) { return null; }
-  }
   function revealTarget(t) {
     for (var el = t; el; el = el.parentElement) {
       if (el.tagName === 'DETAILS') el.open = true;
