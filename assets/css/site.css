@@ -1896,7 +1896,7 @@ textarea.finput { min-height: 112px; resize: vertical; }
   transform: translateY(-42px);
 }
 
-.hero-sigil-wrap { position: relative; isolation: isolate; display: block; margin: 30px 0; }
+.hero-sigil-wrap { position: relative; isolation: isolate; display: block; margin: 42px 0; }
 
 .hero-sigil-wrap::before {   /* a glow that needs no blend mode: a soft radial pool behind the sigil */
   content: ""; position: absolute; inset: 12%; z-index: -1; border-radius: 50%;
@@ -1905,7 +1905,7 @@ textarea.finput { min-height: 112px; resize: vertical; }
   opacity: var(--glow-o, 1);
 }
 
-.home-hero__sigil { display: block; width: clamp(192px, min(59vw, 36vh), 360px); filter: drop-shadow(0 0 7px rgba(93,184,240,.40)) drop-shadow(0 0 18px rgba(42,145,220,.20)); }
+.home-hero__sigil { display: block; width: clamp(208px, min(64vw, 39vh), 395px); filter: drop-shadow(0 0 7px rgba(93,184,240,.40)) drop-shadow(0 0 18px rgba(42,145,220,.20)); }
 
 .sigil-flight { filter: none; }   /* plain while flying: the glow filter cost a frame on Safari */
 /* The four closing lines read as one thought: one family (Gillius), close leading. */
@@ -2108,7 +2108,7 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
   .areas__label { font-size: .68rem; letter-spacing: .1em; margin-top: 4px; }
   .begin__statements--wide p { max-width: none; font-size: clamp(1.6rem, 6.9vw, 2.55rem); }
   .home-hero__inner { transform: translateY(-28px); }
-  .hero-sigil-wrap { margin: 24px 0; }
+  .hero-sigil-wrap { margin: 34px 0; }
 }
 
 /* Five-area overview (homepage + 1:1 "What is the work?"): icon, label, one
