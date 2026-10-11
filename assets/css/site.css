@@ -62,7 +62,7 @@
   /* Reveal: site.js marks the readable blocks of each section (.rv-item,
      numbered --ci in reading order); they cascade top to bottom with one
      duration, curve and rise. site.js reads --rv-time. */
-  --rv-time: 650ms; --rv-rise: 8px; --rv-ease: cubic-bezier(.22, .61, .36, 1);
+  --rv-time: 555ms; --rv-rise: 8px; --rv-ease: cubic-bezier(.22, .61, .36, 1);
 }
 @media (min-width: 769px) {
   :root { --header-h: 58px; }
@@ -487,7 +487,7 @@ dd > .word-list { margin-top: 10px; color: var(--text); }
    data-seq, lists and grids data-stagger, photos data-reveal-img. Each
    reveals once, through .is-in (a block as its own top enters the view),
    after .assets-ready. Every copy reveal is
-   the same 650ms soft fade with an 8px rise (data-stagger="soft": fade only). */
+   the same 555ms soft fade with an 8px rise (data-stagger="soft": fade only). */
 [data-reveal], [data-seq] { opacity: 1; }
 
 .js.motion-ready [data-reveal] { --rv-dur: var(--rv-time); }

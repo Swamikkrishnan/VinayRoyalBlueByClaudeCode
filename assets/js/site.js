@@ -645,7 +645,7 @@
     };
     var msOf = function (el) {
       var v = getComputedStyle(el).getPropertyValue('--rv-time').trim();
-      return v ? parseFloat(v) * (/ms$/.test(v) ? 1 : 1000) : 650;
+      return v ? parseFloat(v) * (/ms$/.test(v) ? 1 : 1000) : 555;
     };
     // A photo inside a revealing section waits for that section's first
     // words; a standalone photo (page openings) follows its text a beat later.
