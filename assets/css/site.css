@@ -2035,6 +2035,13 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
 /* Hero capacity line in gold. */
 .home-hero__trio .trio-word--gold { color: var(--accent-brass); }
 
+/* The three practices on one line, parted by small brass diamonds. */
+.home-hero__practices { white-space: nowrap; font-size: min(var(--t-lede), 4.3vw); }
+.home-hero__sep {
+  display: inline-block; width: .3em; height: .3em; margin: 0 .75em; vertical-align: .2em;
+  background: var(--accent-brass); opacity: .75; transform: rotate(45deg);
+}
+
 /* "A challenge may need attention through" and the "Sometimes…" lines in full white. */
 .begin__intro, .begin__close { color: var(--text); }
 
