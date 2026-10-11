@@ -473,7 +473,7 @@
   };
   var ACC_MS = 444, ACC_EASE = 'cubic-bezier(.3,.7,.3,1)';   // calm, same speed open and close
   // Lists of parallel options (marked data-one-open: the 1:1 sessions and
-  // immersions, the Background qualification lists) and the whole Approach
+  // immersions, the Path qualification lists) and the whole Approach
   // page keep one item open at a time. Story's "Read more" sections and the
   // reference panels stay independent on purpose.
   var setAcc = function (d, open, animate) {
