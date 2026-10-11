@@ -334,6 +334,10 @@ main :is(p, li, dd):not([class]), .prose p:not([class]), .accordion__body p:not(
 
 .insight--sm { font-size: clamp(1.2rem, 4.2vw, 1.4rem); line-height: 1.35; max-width: 44ch; }
 
+/* "Why welcome life?" sits on a brighter patch of texture on wide screens:
+   a soft navy halo keeps the small gold label at full reading contrast. */
+#why-title { text-shadow: 0 0 2px rgba(6,13,26,.9), 0 0 8px rgba(6,13,26,.9), 0 0 18px rgba(6,13,26,.8); }
+
 .home-hero .display-title {
   text-shadow: 0 0 10px rgba(247,246,242,.10), 0 0 24px rgba(93,184,240,.12);
   /* Homepage hero title: "Welcoming" and "life." in EB Garamond 600; "all of
@@ -2044,8 +2048,9 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
 .home-hero__trio .trio-word--gold { color: var(--accent-brass); }
 
 /* The three practices on one line, parted by small diamonds in the sigil's
-   glowing blue. */
-.home-hero__practices { white-space: nowrap; font-size: min(var(--t-lede), 4.3vw); }
+   glowing blue. Sized to fit one line; it wraps only if a reader enlarges
+   letter or word spacing, so nothing is cut off. */
+.home-hero__practices { text-wrap: balance; font-size: min(var(--t-lede), 4.3vw); }
 .home-hero__sep {
   display: inline-block; width: .3em; height: .3em; margin: 0 .75em; vertical-align: .2em;
   background: var(--emphasis-blue); transform: rotate(45deg);
@@ -2057,7 +2062,7 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
 
 /* The Work: "Where life is stuck," in the body face on its own line, then
    "we create movement." in the display face with the verb in bold. */
-.begin__statements .begin__lead { display: block; font-family: var(--serif); line-height: 1.15; margin-bottom: .04em; color: var(--text); white-space: nowrap; }
+.begin__statements .begin__lead { display: block; font-family: var(--serif); line-height: 1.15; margin-bottom: .04em; color: var(--text); text-wrap: balance; }
 
 .begin__statements .begin__lead em { font-style: italic; color: inherit; }
 
@@ -2116,8 +2121,9 @@ html.js :is(.editorial__media, .story__portrait) img:not(.is-loaded) { opacity: 
 @media (max-width: 599px) {
   .areas { --node: min(56px, calc((100vw - 2 * var(--gutter, 16px)) / 5 - 4px)); --icon: var(--node); margin-top: calc(40px - var(--s-3)); margin-bottom: calc(30px - var(--s-3)); }
   .areas__word { font-size: .92rem; }
-  /* "My name is Vinay Swaminathan." on one line on any phone. */
-  #meet-title { white-space: nowrap; font-size: min(2rem, calc((100vw - 2 * var(--gutter)) / 13)); }
+  /* "My name is Vinay Swaminathan." sized for one line on any phone; it
+     wraps only if a reader enlarges text spacing. */
+  #meet-title { text-wrap: balance; font-size: min(2rem, calc((100vw - 2 * var(--gutter)) / 13)); }
 }
 @media (max-width: 339px) {
   /* Very narrow screens: three over two, without the connector. */

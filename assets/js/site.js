@@ -1020,7 +1020,7 @@
          control that opened it. Without JS the links simply go to the
          Alignment Call form.
      --------------------------------------------------------------------- */
-  var CHOICES = [['1:1 work', 'alignment.html'], ['Group experiences', 'group-interest.html'], ['Collaboration', 'collaborate.html']];
+  var CHOICES = [['1:1 work', 'alignment.html'], ['Group experiences', 'group-interest.html'], ['Collaboration', 'collaborate.html'], ['Something else', 'connect.html']];
   var sheet = document.createElement('dialog');
   if (typeof sheet.showModal === 'function') {
     sheet.className = 'contact-sheet';
