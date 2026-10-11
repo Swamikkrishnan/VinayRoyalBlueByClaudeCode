@@ -961,7 +961,7 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
   .text-cta:hover:not(:focus-visible), .quiet-links a:hover:not(:focus-visible) { color: var(--text); }
 }
 
-.nav-mobile a:not(.btn) { min-height: 66px; font-family: var(--sans); font-size: 1.38rem; letter-spacing: .01em; color: rgba(247,246,242,.88); }
+.nav-mobile a:not(.btn) { min-height: 66px; font-family: var(--sans); font-size: min(1.18rem, 4.7vw); letter-spacing: .01em; color: rgba(247,246,242,.88); }   /* level with the header name, scaling with it */
 
 .subnav a:is(:hover, :focus-visible) { border-color: var(--line-strong); }
 @media (max-width: 1099px) {
@@ -1033,6 +1033,13 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
 .bg-3 { --base: #04101A; --veil: linear-gradient(90deg, rgba(10,16,32,.06), rgba(10,16,32,.36) calc(50% - 620px), rgba(10,16,32,.36) calc(50% + 620px), rgba(10,16,32,.06)); --img: url("../vinay-brand-assets/bg-03-dark-secondary-desktop.webp"); --cover-rgb: 7, 16, 29; }
 
 .bg-4 { --base: #04182F; --veil: linear-gradient(90deg, rgba(8,22,44,.08), rgba(8,22,44,.46) calc(50% - 620px), rgba(8,22,44,.46) calc(50% + 620px), rgba(8,22,44,.08)); --img: url("../vinay-brand-assets/bg-light-secondary-desktop.webp"); --accent: #7FCBF6; --cover-rgb: 6, 23, 45; }
+
+/* Each family's repeating tile: its texture with a vertical mirror beneath,
+   so copies meet seamlessly (used by .bg-tile, below). */
+.bg-1 { --tile: url("../vinay-brand-assets/bg-01-dark-primary-desktop-tile.webp"); }
+.bg-2 { --tile: url("../vinay-brand-assets/bg-light-primary-desktop-tile.webp"); }
+.bg-3 { --tile: url("../vinay-brand-assets/bg-03-dark-secondary-desktop-tile.webp"); }
+.bg-4 { --tile: url("../vinay-brand-assets/bg-light-secondary-desktop-tile.webp"); }
 
 :is(.bg-1, .bg-2, .bg-3, .bg-4)::after,
 :is(.bg-1, .bg-2, .bg-3, .bg-4) + :is(.bg-1, .bg-2, .bg-3, .bg-4)::before {
@@ -1127,6 +1134,10 @@ html.js :is(.bg-1, .bg-2, .bg-3, .bg-4):not(.bgt-on)::after { background-image: 
   .bg-2 { --img: url("../vinay-brand-assets/bg-light-primary-mobile.webp"); background-position: 0 0, center 48%; --veil: linear-gradient(90deg, rgba(8,22,44,.42), rgba(8,22,44,.72) 24%, rgba(8,22,44,.72) 76%, rgba(8,22,44,.42)); }
   .bg-3 { --img: url("../vinay-brand-assets/bg-03-dark-secondary-mobile.webp"); background-position: 0 0, center 36%; --veil: linear-gradient(90deg, rgba(10,16,32,.24), rgba(10,16,32,.52) 24%, rgba(10,16,32,.52) 76%, rgba(10,16,32,.24)); }
   .bg-4 { --img: url("../vinay-brand-assets/bg-light-secondary-mobile.webp"); background-position: 0 0, center 44%; --veil: linear-gradient(90deg, rgba(8,22,44,.26), rgba(8,22,44,.52) 24%, rgba(8,22,44,.52) 76%, rgba(8,22,44,.26)); }
+  .bg-1 { --tile: url("../vinay-brand-assets/bg-01-dark-primary-mobile-tile.webp"); }
+  .bg-2 { --tile: url("../vinay-brand-assets/bg-light-primary-mobile-tile.webp"); }
+  .bg-3 { --tile: url("../vinay-brand-assets/bg-03-dark-secondary-mobile-tile.webp"); }
+  .bg-4 { --tile: url("../vinay-brand-assets/bg-light-secondary-mobile-tile.webp"); }
   .bg-1:has(+ .bg-2) { --t-out: url("../vinay-brand-assets/transition-dark-primary-to-light-primary-mobile.webp"); }
   .bg-1 + .bg-2 { --t-in: url("../vinay-brand-assets/transition-dark-primary-to-light-primary-mobile.webp"); }
   .bg-2:has(+ .bg-3) { --t-out: url("../vinay-brand-assets/transition-light-primary-to-dark-secondary-mobile.webp"); }
@@ -1144,6 +1155,7 @@ html.js :is(.bg-1, .bg-2, .bg-3, .bg-4):not(.bgt-on)::after { background-image: 
     --t-out: url("../vinay-brand-assets/transition-light-secondary-to-dark-primary-mobile.webp");
     --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-light-secondary-to-01-dark-primary-mobile-compact.webp?v=2");
   }
+  .m-d2 { --tile: url("../vinay-brand-assets/bg-02-dark-secondary-mobile-tile.webp"); }
   .m-d2 { --img: url("../vinay-brand-assets/bg-02-dark-secondary-mobile.webp"); --veil: linear-gradient(rgba(10,16,32,.5), rgba(10,16,32,.5)); }
   /* A field whose texture sits low (calm above, texture toward the foot). */
   .bg-pos-lower { background-position: 0 0, 50% 88%; }
@@ -1213,6 +1225,7 @@ html.js :is(.bg-1, .bg-2, .bg-3, .bg-4):not(.bgt-on)::after { background-image: 
   main > :is(.bg-2, .bg-4):last-child::after { --tar: .5926; }   /* full height: 640 / 1080 */
   /* A light-secondary field that wears light primary on phones (.m-lp: Story's
      Vision). Its transitions are the light-primary ones for each neighbour. */
+  .bg-4.m-lp { --tile: url("../vinay-brand-assets/bg-light-primary-mobile-tile.webp"); }
   .bg-4.m-lp { --cover-rgb: 10, 32, 65; --base: #0B3A60; --img: url("../vinay-brand-assets/bg-light-primary-mobile.webp");
   --veil: linear-gradient(90deg, rgba(8,22,44,.42), rgba(8,22,44,.72) 24%, rgba(8,22,44,.72) 76%, rgba(8,22,44,.42)); }
   .bg-1:not(.m-d2):has(+ .bg-4.m-lp) { --t-out: url("../vinay-brand-assets/mobile-transitions-compact/transition-01-dark-primary-to-light-primary-mobile-compact.webp?v=2"); }
@@ -1255,6 +1268,16 @@ html.js :is(.bg-1, .bg-2, .bg-3, .bg-4):not(.bgt-on)::after { background-image: 
   :is(.bg-1, .bg-2, .bg-3, .bg-4) { transition-duration: 1ms; }
 }
 
+/* Tall fields (long pages, open Read mores): the texture repeats at its own
+   resolution down the section, each copy meeting its mirror image, instead of
+   one copy stretched to the section's full height (which blurred it). */
+:is(.bg-1, .bg-2, .bg-3, .bg-4).bg-tile {
+  --img: var(--tile);
+  background-size: 100% 100%, 100% auto;
+  background-position: 0 0, 50% 0;
+  background-repeat: no-repeat, repeat-y;
+}
+
 /* ==========================================================================
    Disclosures: animated accordions, desktop-static rows
    ========================================================================== */
@@ -1268,6 +1291,12 @@ html.js :is(.bg-1, .bg-2, .bg-3, .bg-4):not(.bgt-on)::after { background-image: 
 }
 
 .accordion > summary::-webkit-details-marker { display: none; }
+
+/* One rule per edge: a list that ends a Read more gives up its last rule to
+   the disclosure's own bottom border, and a word list that ends a ruled row
+   gives up its lower rule to the row's (kept transparent: nothing moves). */
+.accordion__body > :is(.ruled, .flow-list, .accordion-group):last-child > :last-child,
+.ruled > * > dd > .word-list:last-child { border-bottom-color: transparent; }
 
 .accordion > summary::after {
   content: ""; grid-column: 2; grid-row: 1 / span 2; justify-self: end;
@@ -1965,6 +1994,9 @@ textarea.finput { min-height: 112px; resize: vertical; }
 
 /* 1:1 opening: wide enough that phrases do not break early. */
 .begin__statements--wide p { max-width: min(100%, 980px); }
+
+/* A quieter line between two statements: the subtitle step, same voice. */
+.begin__statements .begin__aside { font-size: var(--t-subtitle); line-height: 1.25; }
 
 /* Gillius has no bold-italic file, so the bold is synthesised from the
    italic and given a fine stroke to read clearly as bold. */
