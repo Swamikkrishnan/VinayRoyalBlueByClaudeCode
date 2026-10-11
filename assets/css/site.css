@@ -961,7 +961,7 @@ body:not(:has(.sessions li)) .subnav__upcoming { display: none; }
   .text-cta:hover:not(:focus-visible), .quiet-links a:hover:not(:focus-visible) { color: var(--text); }
 }
 
-.nav-mobile a:not(.btn) { min-height: 66px; font-family: var(--sans); font-size: min(1.18rem, 4.7vw); letter-spacing: .01em; color: rgba(247,246,242,.88); }   /* level with the header name, scaling with it */
+.nav-mobile a:not(.btn) { min-height: 66px; font-family: var(--sans); font-size: min(1.3rem, 5.25vw); letter-spacing: .01em; color: rgba(247,246,242,.88); }   /* a step above the header name, scaling with it */
 
 .subnav a:is(:hover, :focus-visible) { border-color: var(--line-strong); }
 @media (max-width: 1099px) {
