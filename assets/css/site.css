@@ -1159,9 +1159,13 @@ html.js :is(.bg-1, .bg-2, .bg-3, .bg-4):not(.bgt-on)::after { background-image: 
   .m-d2 { --img: url("../vinay-brand-assets/bg-02-dark-secondary-mobile.webp"); --veil: linear-gradient(rgba(10,16,32,.5), rgba(10,16,32,.5)); }
   /* A field whose texture sits low (calm above, texture toward the foot). */
   .bg-pos-lower { background-position: 0 0, 50% 88%; }
+  :is(.bg-1, .bg-2, .bg-3, .bg-4) { --band-compact: 30px; --band-v2: 52px; }
   :is(.bg-1, .bg-2, .bg-3, .bg-4)::after,
-  :is(.bg-1, .bg-2, .bg-3, .bg-4) + :is(.bg-1, .bg-2, .bg-3, .bg-4)::before { --tar: .2963; --th2: 30px; }   /* compact, centre band: 320 / 1080 */
-  :is(.bg-1, .bg-2, .bg-3, .bg-4):has(+ .t-v2)::after, :is(.bg-1, .bg-2, .bg-3, .bg-4) + .t-v2::before { --tar: .4444; --th2: 52px; }   /* V2, centre band: 480 / 1080 */
+  :is(.bg-1, .bg-2, .bg-3, .bg-4) + :is(.bg-1, .bg-2, .bg-3, .bg-4)::before { --tar: .2963; --th2: var(--band-compact); }   /* compact, centre band: 320 / 1080 */
+  :is(.bg-1, .bg-2, .bg-3, .bg-4):has(+ .t-v2)::after, :is(.bg-1, .bg-2, .bg-3, .bg-4) + .t-v2::before { --tar: .4444; --th2: var(--band-v2); }   /* V2, centre band: 480 / 1080 */
+  /* The hero's own band, for the first screen (below). */
+  .home-hero { --band: var(--band-compact); }
+  .home-hero:has(+ .t-v2) { --band: var(--band-v2); }
   /* Each half eases in across its whole height, so the field's own texture
      dissolves into the transition rather than meeting it at an edge. */
   .bg-1:has(+ .bg-2)::after, .bg-2:has(+ .bg-3)::after, .bg-3:has(+ .bg-4)::after, .bg-4:has(+ .bg-1)::after {
@@ -1872,14 +1876,18 @@ textarea.finput { min-height: 112px; resize: vertical; }
 .home-hero {
   overflow: hidden;
   box-sizing: border-box;
-  min-height: 100vh; min-height: 100svh; min-height: 100dvh;
+  /* The first screen is the hero alone: the hero is one screen plus its
+     transition band, so the band begins at the fold and only arrives with
+     the scroll (the extra height goes to the bottom padding, so the content
+     keeps its place). The small-viewport height, fixed for the visit: a
+     dynamic (dvh) height grew the hero the moment Android Chrome retracted
+     its address bar on the first scroll, pushing the page down as the sigil
+     docked. */
+  --band: var(--th2);
+  min-height: calc(100vh + var(--band)); min-height: calc(100svh + var(--band));
   display: flex; align-items: center;
-  padding: clamp(2.5rem, 7vw, 4rem) var(--gutter) clamp(4rem, 12vw, 6rem);
+  padding: clamp(2.5rem, 7vw, 4rem) var(--gutter) calc(clamp(4rem, 12vw, 6rem) + var(--band));
   text-align: center;
-  /* Homepage hero: the small-viewport height, fixed for the visit. A dynamic
-     (dvh) height grew the hero the moment Android Chrome retracted its address
-     bar on the first scroll, pushing the page down as the sigil docked. */
-
 }
 
 .home-hero__inner {
