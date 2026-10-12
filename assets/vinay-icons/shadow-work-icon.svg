@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<title>Shadow Work: sun and moon in a classical yin-yang</title>
+<defs>
+ <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7"/><feMerge><feMergeNode/><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <path id="s" d="M512 162 A175 175 0 0 1 512 512 A175 175 0 0 0 512 862"/>
+ <clipPath id="goldSide"><path d="M512 162 A350 350 0 0 0 512 862 A175 175 0 0 1 512 512 A175 175 0 0 0 512 162Z"/></clipPath>
+ <clipPath id="blueSide"><path d="M512 162 A350 350 0 0 1 512 862 A175 175 0 0 1 512 512 A175 175 0 0 0 512 162Z"/></clipPath>
+</defs>
+<g filter="url(#glow)" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M512 162 A350 350 0 0 0 512 862" fill="none" stroke="#FFCB51" stroke-width="8"/>
+ <path d="M512 162 A350 350 0 0 1 512 862 A270 350 0 0 0 512 162Z" fill="#55DDFF" stroke="#55DDFF" stroke-width="8"/>
+ <use href="#s" fill="none" stroke="#FFCB51" stroke-width="12" clip-path="url(#goldSide)"/>
+ <use href="#s" fill="none" stroke="#55DDFF" stroke-width="12" clip-path="url(#blueSide)"/>
+ <circle cx="512" cy="337" r="26" fill="#55DDFF"/>
+ <circle cx="512" cy="687" r="26" fill="#FFCB51"/>
+ <!-- Traced minimal face contours, with eyes facing inward. -->
+ <g transform="rotate(45 512 512) translate(-20 0) translate(280 500) scale(1.18) translate(-280 -500) translate(0 128) scale(.75)"><g fill="none" stroke="#FFCB51" stroke-width="7">
+ <path d="M385 360 C415 386 427 404 416 429 C410 446 409 458 423 479 L438 501 Q446 510 432 515 L421 519 Q409 522 419 535 Q428 545 410 549 L403 550 Q426 557 410 566 Q399 570 405 586 C417 623 389 630 361 622 C330 613 308 623 307 653 C305 701 348 750 378 768"/>
+ <path d="M303 441 C345 443 382 402 408 417 M359 453 Q385 451 398 435 M367 462 Q388 480 403 471 M370 460 Q390 453 403 471"/>
+ </g>
+ <ellipse cx="395" cy="464" rx="4.5" ry="10" fill="#FFCB51"/></g>
+ <g transform="rotate(45 512 512) translate(12 0) translate(680 510) scale(1.18) translate(-680 -510) translate(230 153.6) scale(.70)"><g fill="none" stroke="#55DDFF" stroke-width="7">
+ <path d="M696 315 C653 338 612 378 607 409 C603 432 623 447 611 470 L590 501 Q581 512 596 516 L607 521 Q618 528 606 541 Q599 549 615 553 L622 554 Q603 562 617 570 Q629 573 626 589 C620 621 640 630 668 623 C699 614 714 632 706 666 C701 701 679 736 653 765"/>
+ <path d="M622 420 C650 411 680 449 726 443 M635 441 Q651 455 685 454 M624 471 Q640 480 656 459 M624 471 Q638 453 656 459"/>
+ </g>
+ <ellipse cx="630" cy="464" rx="4.5" ry="10" fill="#55DDFF"/></g>
+</g>
+<g id="rays" fill="none" stroke="#FFCB51" stroke-width="8" stroke-linecap="round" filter="url(#glow)">
+<path d="M512.000 145.000 L512.000 104.000"/>
+<path d="M398.591 162.962 L385.921 123.969"/>
+<path d="M296.283 215.091 L272.184 181.921"/>
+<path d="M215.091 296.283 L181.921 272.184"/>
+<path d="M162.962 398.591 L123.969 385.921"/>
+<path d="M145.000 512.000 L104.000 512.000"/>
+<path d="M162.962 625.409 L123.969 638.079"/>
+<path d="M215.091 727.717 L181.921 751.816"/>
+<path d="M296.283 808.909 L272.184 842.079"/>
+<path d="M398.591 861.038 L385.921 900.031"/>
+<path d="M512.000 879.000 L512.000 920.000"/>
+</g></svg>

@@ -571,6 +571,34 @@
   openForTarget(hashTarget(), false);
   window.addEventListener('pageshow', function (e) { if (e.persisted) openForTarget(hashTarget(), false); });
   window.addEventListener('hashchange', function () { openForTarget(hashTarget(), true); });
+  // 3c. The Work (1:1): each pathway card opens its longer description in
+  // the panel area below the row, one at a time; tapping the open card
+  // closes it. A link to #bodywork, #breathwork or #shadow-work (the
+  // homepage cards) opens that one. Without JS every panel stays visible.
+  Array.prototype.forEach.call(document.querySelectorAll('[data-pathways]'), function (group) {
+    var cards = Array.prototype.slice.call(group.querySelectorAll('[data-pathway]'));
+    var show = function (card) {
+      cards.forEach(function (c) {
+        var on = c === card;
+        c.setAttribute('aria-expanded', on ? 'true' : 'false');
+        document.getElementById(c.getAttribute('aria-controls')).hidden = !on;
+      });
+    };
+    var fromHash = function () {
+      var t = hashTarget();
+      var card = t && t.querySelector && t.querySelector('[data-pathway]');
+      if (card && cards.indexOf(card) > -1) show(card);
+    };
+    show(null);
+    fromHash();
+    group.classList.add('is-ready');
+    cards.forEach(function (c) {
+      c.addEventListener('click', function () { show(c.getAttribute('aria-expanded') === 'true' ? null : c); });
+    });
+    window.addEventListener('hashchange', fromHash);
+    window.addEventListener('pageshow', function (e) { if (e.persisted) fromHash(); });
+  });
+
   document.addEventListener('click', function (e) {           // same hash clicked again: no hashchange fires
     var a = e.target.closest && e.target.closest('a[href^="#"]');
     if (a && a.getAttribute('href') === location.hash) openForTarget(hashTarget(), true);
