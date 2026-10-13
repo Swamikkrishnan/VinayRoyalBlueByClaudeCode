@@ -1657,7 +1657,6 @@ button.pathways__item { width: 100%; font: inherit; cursor: pointer; }
 .pathway-panel__title { font-family: var(--serif); font-size: var(--t-heading); line-height: 1.1; }
 .pathway__lead { color: var(--text); }
 .pathway__body { color: var(--muted); }
-.pathway-bridge { color: var(--muted); font-size: var(--t-lede); line-height: 1.5; margin-top: var(--s-2); }
 @media (max-width: 344px) {
   .pathways__arrow--down,
   .pathways__item:is(:hover, :focus-visible) .pathways__arrow--down { transform: translateY(-50%) rotate(90deg); }
