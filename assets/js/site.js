@@ -492,7 +492,16 @@
       };
 
       // The overlay, built once on first use.
-      var box = null, art, img, veil, bloom, closeBtn, volWrap, range, audio, state = 'closed', closeAsked = false, pushed = false, scrollY0 = 0, opener = null, live = [];
+      var box = null, art, img, veil, bloom, closeBtn, volWrap, range, audio, state = 'closed', closeAsked = false, pushed = false, scrollY0 = 0, opener = null, live = [], prevRestore = null;
+      // The Back-button entry must never move the page: browsers restore the scroll they
+      // last saved for an entry, which can lag behind a recent scroll back to the top.
+      var holdScroll = function () { if (window.scrollY !== scrollY0) window.scrollTo(0, scrollY0); };
+      var manualRestore = function (on) {
+        try {
+          if (on) { if (prevRestore === null) prevRestore = history.scrollRestoration; history.scrollRestoration = 'manual'; }
+          else if (prevRestore !== null) { history.scrollRestoration = prevRestore; prevRestore = null; }
+        } catch (err) {}
+      };
       var portrait = function () { return window.matchMedia('(max-aspect-ratio: 1/1)').matches; };
       var artSrc = function () { return portrait() ? ART + 'kauyumari-portrait-940.jpg' : ART + (window.innerWidth * (window.devicePixelRatio || 1) > 2000 ? 'kauyumari-landscape-2880.jpg' : 'kauyumari-landscape-1920.jpg'); };
       var preloaded = {};
@@ -611,6 +620,7 @@
           range.value = 0; range.style.setProperty('--fill', '0%'); level(0, 10);
           box.classList.remove('is-open'); box.hidden = false;
           root.classList.add('kauyumari-open'); setInert(true);
+          manualRestore(true);
           try { history.pushState({ kauyumari: 1 }, ''); pushed = true; } catch (err) { pushed = false; }
           box.focus({ preventScroll: true });
           var done = function () {
@@ -661,7 +671,8 @@
           stop();
           box.hidden = true; clearInline();
           setInert(false); root.classList.remove('kauyumari-open');
-          if (window.scrollY !== scrollY0) window.scrollTo(0, scrollY0);
+          holdScroll();
+          requestAnimationFrame(function () { holdScroll(); setTimeout(function () { holdScroll(); if (state === 'closed') manualRestore(false); }, 120); });
           sigWrap.classList.remove('is-entering', 'is-awake');
           if (opener) opener.focus({ preventScroll: true });
           state = 'closed';
@@ -689,6 +700,7 @@
       };
       var skipPop = false;
       window.addEventListener('popstate', function () {
+        if (state !== 'closed') { holdScroll(); requestAnimationFrame(holdScroll); }
         if (skipPop) { skipPop = false; return; }
         if (state === 'open' || state === 'opening') { pushed = false; if (state === 'opening') closeAsked = true; else close(true); }
       });
