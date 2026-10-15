@@ -444,6 +444,291 @@
       if (document.readyState === 'complete') whenSettled();
       else window.addEventListener('load', whenSettled, { once: true });
     }
+
+    /* [kauyumari] A hidden doorway. While the sigil rests in the hero, its
+       drawn shape (not the box around it: an alpha map of the image) wakes on
+       hover and opens a full-screen artwork of Kauyumari on click or tap.
+       Opening blooms the sigil's glow over the page and lets the artwork
+       surface through it; closing gathers it back into the sigil and leaves
+       the page exactly as it was. Music starts silent: only the visitor's
+       own move of the volume control lets it be heard. */
+    (function () {
+      var ART = 'assets/kauyumari/';
+      // Music: put the licensed track at assets/audio/ and set its path here,
+      // e.g. 'assets/audio/kauyumari.mp3'. While empty, no volume control shows.
+      var AUDIO_SRC = '';
+      var mapW = 180, mapH = 0, alpha = null;
+      (function () {                                   // alpha map of the sigil, for an exact hit area
+        var im = new Image();
+        im.onload = function () {
+          try {
+            mapH = Math.round(mapW * im.naturalHeight / im.naturalWidth);
+            var c = document.createElement('canvas'); c.width = mapW; c.height = mapH;
+            var x = c.getContext('2d'); x.drawImage(im, 0, 0, mapW, mapH);
+            var d = x.getImageData(0, 0, mapW, mapH).data; alpha = new Uint8Array(mapW * mapH);
+            for (var i = 0; i < alpha.length; i++) alpha[i] = d[i * 4 + 3];
+          } catch (err) { alpha = null; }
+        };
+        im.src = 'assets/images/sigil-720.png';
+      })();
+      var onSigil = function (cx, cy, touch) {
+        var r = heroSig.getBoundingClientRect();
+        var fx = (cx - r.left) / r.width, fy = (cy - r.top) / r.height;
+        if (fx < 0 || fy < 0 || fx > 1 || fy > 1) return false;
+        if (!alpha) return Math.pow(fx - .5, 2) + Math.pow(fy - .5, 2) < .1;   // map not ready: the core of the sigil
+        var px = Math.round(fx * (mapW - 1)), py = Math.round(fy * (mapH - 1)), rad = touch ? 6 : 2;
+        for (var dy = -rad; dy <= rad; dy++) for (var dx = -rad; dx <= rad; dx++) {
+          if (dx * dx + dy * dy > rad * rad) continue;
+          var X = px + dx, Y = py + dy;
+          if (X >= 0 && Y >= 0 && X < mapW && Y < mapH && alpha[Y * mapW + X] > 40) return true;
+        }
+        return false;
+      };
+      var navToggle = document.getElementById('nav-toggle');
+      var resting = function () {                      // the sigil is in the hero, settled and visible
+        return !docked && !anims.length && !handing && !leaving && window.scrollY <= 2 &&
+          +window.getComputedStyle(sigWrap).opacity > .9 && heroSig.style.opacity !== '0' &&
+          !root.classList.contains('contact-open') && !(navToggle && navToggle.getAttribute('aria-expanded') === 'true');
+      };
+
+      // The overlay, built once on first use.
+      var box = null, art, img, veil, bloom, closeBtn, volWrap, range, audio, state = 'closed', closeAsked = false, pushed = false, scrollY0 = 0, opener = null, live = [];
+      var portrait = function () { return window.matchMedia('(max-aspect-ratio: 1/1)').matches; };
+      var artSrc = function () { return portrait() ? ART + 'kauyumari-portrait-940.jpg' : ART + (window.innerWidth * (window.devicePixelRatio || 1) > 2000 ? 'kauyumari-landscape-2880.jpg' : 'kauyumari-landscape-1920.jpg'); };
+      var preloaded = {};
+      var preload = function () { var u = artSrc(); if (preloaded[u]) return preloaded[u]; var im = new Image(); im.decoding = 'async'; im.src = u; preloaded[u] = im.decode ? im.decode().catch(function () {}) : new Promise(function (ok) { im.onload = im.onerror = ok; }); return preloaded[u]; };
+      var build = function () {
+        if (box) return;
+        box = document.createElement('div');
+        box.className = 'kauyumari'; box.id = 'kauyumari'; box.hidden = true; box.tabIndex = -1;
+        box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-label', 'Kauyumari');
+        box.innerHTML =
+          '<div class="kauyumari__veil" aria-hidden="true"></div>' +
+          '<div class="kauyumari__art"><picture>' +
+            '<source media="(max-aspect-ratio: 1/1)" srcset="' + ART + 'kauyumari-portrait-940.jpg">' +
+            '<img class="kauyumari__img" src="' + ART + 'kauyumari-landscape-1920.jpg" srcset="' + ART + 'kauyumari-landscape-1920.jpg 1920w, ' + ART + 'kauyumari-landscape-2880.jpg 2880w" sizes="100vw" alt="Kauyumari, the spirit stag, glowing blue and gold on a moonlit desert ridge beside a small fire." decoding="async" draggable="false">' +
+          '</picture></div>' +
+          '<div class="kauyumari__bloom" aria-hidden="true"></div>' +
+          '<label class="kauyumari__volume" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.6 7.6 0 0 1 0 11" opacity=".6"/></svg><span class="visually-hidden">Music volume</span><input class="kauyumari__range" type="range" min="0" max="100" step="1" value="0"></label>' +
+          '<button type="button" class="kauyumari__close" aria-label="Close"><svg viewBox="0 0 14 14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg></button>' +
+          '<audio preload="none" loop></audio>';
+        document.body.appendChild(box);
+        veil = box.querySelector('.kauyumari__veil'); art = box.querySelector('.kauyumari__art'); img = box.querySelector('.kauyumari__img');
+        bloom = box.querySelector('.kauyumari__bloom'); closeBtn = box.querySelector('.kauyumari__close');
+        volWrap = box.querySelector('.kauyumari__volume'); range = box.querySelector('.kauyumari__range'); audio = box.querySelector('audio');
+        // Any tap on the artwork returns; the controls never do.
+        box.addEventListener('click', function (e) { if (e.target.closest('.kauyumari__volume')) return; close(); });
+        box.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+          if (e.key !== 'Tab') return;
+          var f = [range, closeBtn].filter(function (el) { return el && !(el === range && volWrap.hidden); });
+          var i = f.indexOf(document.activeElement);
+          e.preventDefault();
+          f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
+        });
+        box.addEventListener('touchmove', function (e) { if (!e.target.closest('.kauyumari__volume')) e.preventDefault(); }, { passive: false });
+        box.addEventListener('wheel', function (e) { e.preventDefault(); }, { passive: false });
+        wireAudio();
+      };
+
+      // Audio: native <audio> through a Web Audio gain (iOS ignores element volume),
+      // silent until the visitor raises the control.
+      var ctx = null, gain = null, wired = false, audioChecked = false, pauseTimer = null;
+      var wireAudio = function () {
+        var unlock = function () {
+          if (!wired) {
+            wired = true;
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if (AC) { try { ctx = new AC(); gain = ctx.createGain(); gain.gain.value = 0; ctx.createMediaElementSource(audio).connect(gain); gain.connect(ctx.destination); } catch (err) { ctx = null; gain = null; } }
+            if (!gain) audio.volume = 0;
+          }
+          if (ctx && ctx.state === 'suspended') ctx.resume();
+        };
+        ['pointerdown', 'touchstart', 'keydown'].forEach(function (ev) { range.addEventListener(ev, unlock, { passive: true }); });
+        range.addEventListener('input', function () {
+          var v = range.value / 100;
+          range.style.setProperty('--fill', range.value + '%');
+          unlock();
+          if (v > 0) { clearTimeout(pauseTimer); if (audio.paused) { var p = audio.play(); if (p && p.catch) p.catch(function () {}); } }
+          level(v * v, 260);                         // a gentle curve: low settings stay quiet
+          if (v === 0) { clearTimeout(pauseTimer); pauseTimer = setTimeout(function () { if (+range.value === 0) audio.pause(); }, 320); }
+        });
+      };
+      var fadeRaf = 0;
+      var level = function (to, ms) {
+        if (gain && ctx) {
+          var t = ctx.currentTime; gain.gain.cancelScheduledValues(t);
+          gain.gain.setValueAtTime(gain.gain.value, t); gain.gain.linearRampToValueAtTime(to, t + ms / 1000);
+          return;
+        }
+        cancelAnimationFrame(fadeRaf);
+        var from = audio.volume, t0 = performance.now();
+        var step = function (now) { var k = Math.max(0, Math.min(1, (now - t0) / ms)); audio.volume = from + (to - from) * k; if (k < 1) fadeRaf = requestAnimationFrame(step); };
+        fadeRaf = requestAnimationFrame(step);
+      };
+      var checkAudio = function () {
+        if (audioChecked || !AUDIO_SRC || !window.fetch) return; audioChecked = true;
+        fetch(AUDIO_SRC, { method: 'HEAD' }).then(function (r) {
+          if (!r.ok) return;
+          audio.src = AUDIO_SRC; volWrap.hidden = false;
+        }).catch(function () {});
+      };
+
+      var origin = function () {
+        var r = heroSig.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height * .52, size: r.width };
+      };
+      var reach = function (o) {                        // scale that lets the bloom cover the farthest corner
+        var w = window.innerWidth, h = window.innerHeight;
+        var far = Math.max(Math.hypot(o.x, o.y), Math.hypot(w - o.x, o.y), Math.hypot(o.x, h - o.y), Math.hypot(w - o.x, h - o.y));
+        return far * 2.6 / 240;
+      };
+      var stop = function () { live.forEach(function (a) { a.cancel(); }); live = []; };
+      var hold = function () {                         // keep what is on screen while animations are swapped
+        [art, veil, bloom].forEach(function (el) { var cs = window.getComputedStyle(el); el.style.opacity = cs.opacity; el.style.transform = cs.transform === 'none' ? '' : cs.transform; });
+        stop();
+      };
+      var clearInline = function () { [art, veil, bloom, box].forEach(function (el) { el.style.opacity = ''; el.style.transform = ''; }); };
+      var setInert = function (on) {
+        Array.prototype.forEach.call(document.body.children, function (el) {
+          if (el === box || el.tagName === 'SCRIPT') return;
+          if (on) { if (!el.hasAttribute('inert')) { el.setAttribute('inert', ''); el.setAttribute('data-k-inert', ''); } }
+          else if (el.hasAttribute('data-k-inert')) { el.removeAttribute('inert'); el.removeAttribute('data-k-inert'); }
+        });
+      };
+
+      var open = function () {
+        if (state !== 'closed' || !resting()) return;
+        state = 'opening'; closeAsked = false;
+        build(); checkAudio();
+        opener = document.activeElement === heroSig ? heroSig : null;
+        scrollY0 = window.scrollY;
+        if (heroSig.style.transition) heroSig.style.transition = '';
+        sigWrap.classList.add('is-entering');
+        var go = function () {
+          var o = origin();
+          box.style.setProperty('--ox', o.x + 'px'); box.style.setProperty('--oy', o.y + 'px');
+          range.value = 0; range.style.setProperty('--fill', '0%'); level(0, 10);
+          box.classList.remove('is-open'); box.hidden = false;
+          root.classList.add('kauyumari-open'); setInert(true);
+          try { history.pushState({ kauyumari: 1 }, ''); pushed = true; } catch (err) { pushed = false; }
+          box.focus({ preventScroll: true });
+          var done = function () {
+            if (state !== 'opening') return;
+            state = 'open'; box.classList.add('is-open'); sigWrap.classList.remove('is-entering');
+            if (closeAsked) close();
+          };
+          clearInline();
+          if (reduce.matches) {
+            veil.style.opacity = '1';
+            live.push(art.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 260, easing: 'ease-out', fill: 'forwards' }));
+            live[0].onfinish = done; return;
+          }
+          var s0 = o.size / 240 * .7, s1 = reach(o);
+          live.push(bloom.animate([
+            { transform: 'scale(' + s0 + ')', opacity: 0 },
+            { transform: 'scale(' + (s1 * .55) + ')', opacity: .88, offset: .3 },
+            { transform: 'scale(' + s1 + ')', opacity: .7, offset: .55 },
+            { transform: 'scale(' + s1 + ')', opacity: 0 }
+          ], { duration: 1500, easing: 'cubic-bezier(.33, 0, .2, 1)', fill: 'forwards' }));
+          live.push(veil.animate([{ opacity: 0 }, { opacity: 0, offset: .12 }, { opacity: 1, offset: .5 }, { opacity: 1 }], { duration: 1500, fill: 'forwards' }));
+          var a = art.animate([
+            { opacity: 0, transform: 'scale(1.06)' },
+            { opacity: 0, transform: 'scale(1.06)', offset: .3 },
+            { opacity: 1, transform: 'scale(1)' }
+          ], { duration: 1500, easing: 'cubic-bezier(.25, .46, .45, .94)', fill: 'forwards' });
+          live.push(a); a.onfinish = done;
+        };
+        // The artwork is decoded before it is shown; never wait more than a beat.
+        Promise.race([preload(), new Promise(function (ok) { setTimeout(ok, 1400); })]).then(function () {
+          if (state === 'opening') go();
+        });
+      };
+
+      var close = function (fromHistory) {
+        if (state === 'opening') { closeAsked = true; return; }
+        if (state !== 'open') return;
+        state = 'closing';
+        box.classList.remove('is-open');
+        if (pushed && !fromHistory) { pushed = false; skipPop = true; try { history.back(); } catch (err) {} }
+        pushed = false;
+        clearTimeout(pauseTimer); level(0, 700);
+        setTimeout(function () { if (state !== 'open') audio.pause(); }, 760);
+        var o = origin();
+        box.style.setProperty('--ox', o.x + 'px'); box.style.setProperty('--oy', o.y + 'px');
+        sigWrap.classList.add('is-entering');
+        var finish = function () {
+          stop();
+          box.hidden = true; clearInline();
+          setInert(false); root.classList.remove('kauyumari-open');
+          if (window.scrollY !== scrollY0) window.scrollTo(0, scrollY0);
+          sigWrap.classList.remove('is-entering', 'is-awake');
+          if (opener) opener.focus({ preventScroll: true });
+          state = 'closed';
+        };
+        hold();
+        if (reduce.matches) {
+          var r = box.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 240, easing: 'ease-in', fill: 'forwards' });
+          live.push(r); r.onfinish = function () { finish(); };
+          return;
+        }
+        var s0 = o.size / 240 * .7, s1 = reach(o);
+        live.push(art.animate([                        // a dissolve: no shrinking edge
+          { opacity: 1 }, { opacity: 0, offset: .6 }, { opacity: 0 }
+        ], { duration: 1300, easing: 'cubic-bezier(.4, 0, .6, 1)', fill: 'forwards' }));
+        live.push(bloom.animate([
+          { transform: 'scale(' + (s1 * .6) + ')', opacity: 0 },
+          { transform: 'scale(' + (s1 * .32) + ')', opacity: .5, offset: .35 },
+          { transform: 'scale(' + s0 + ')', opacity: .55, offset: .8 },
+          { transform: 'scale(' + (s0 * .8) + ')', opacity: 0 }
+        ], { duration: 1300, easing: 'cubic-bezier(.4, 0, .2, 1)', fill: 'forwards' }));
+        var v = veil.animate([{ opacity: 1 }, { opacity: 1, offset: .3 }, { opacity: 0, offset: .85 }, { opacity: 0 }], { duration: 1300, fill: 'forwards' });
+        live.push(v);
+        setTimeout(function () { sigWrap.classList.remove('is-entering'); }, 900);   // the sigil settles as the light returns to it
+        v.onfinish = finish;
+      };
+      var skipPop = false;
+      window.addEventListener('popstate', function () {
+        if (skipPop) { skipPop = false; return; }
+        if (state === 'open' || state === 'opening') { pushed = false; if (state === 'opening') closeAsked = true; else close(true); }
+      });
+
+      // The sigil itself: hover wakes it, a click or tap on its drawn shape opens.
+      var lastType = 'mouse';
+      var setAwake = function (on) {
+        if (on && heroSig.style.transition) heroSig.style.transition = '';   // the flight leaves 'none' behind; the glow eases again at rest
+        sigWrap.classList.toggle('is-awake', !!on);
+      };
+      heroSig.addEventListener('pointermove', function (e) {
+        if (e.pointerType !== 'mouse') return;
+        var on = state === 'closed' && resting() && onSigil(e.clientX, e.clientY, false);
+        setAwake(on); if (on) preload();
+      });
+      heroSig.addEventListener('pointerleave', function () { if (document.activeElement !== heroSig) setAwake(false); });
+      heroSig.addEventListener('pointerdown', function (e) { lastType = e.pointerType || 'mouse'; if (lastType !== 'mouse' && onSigil(e.clientX, e.clientY, true)) preload(); }, { passive: true });
+      heroSig.addEventListener('click', function (e) {
+        var type = e.pointerType || lastType;
+        if (!onSigil(e.clientX, e.clientY, type !== 'mouse')) return;
+        open();
+      });
+      // Keyboard: the sigil is a quiet button.
+      heroSig.setAttribute('tabindex', '0');
+      heroSig.setAttribute('role', 'button');
+      heroSig.setAttribute('aria-label', 'Kauyumari');
+      heroSig.setAttribute('aria-haspopup', 'dialog');
+      heroSig.removeAttribute('alt');
+      heroSig.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+      });
+      heroSig.addEventListener('focus', function () { if (resting()) { setAwake(true); preload(); } });
+      heroSig.addEventListener('blur', function () { setAwake(false); });
+      onScroll(function () { if (sigWrap.classList.contains('is-awake') && !resting()) setAwake(false); });
+      window.addEventListener('pageshow', function (e) {
+        if (!e.persisted || !box || state === 'closed') return;
+        stop(); clearInline(); box.hidden = true; setInert(false); root.classList.remove('kauyumari-open'); sigWrap.classList.remove('is-entering', 'is-awake'); state = 'closed';
+        if (audio) audio.pause();
+      });
+    })();
   }
 
 

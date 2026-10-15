@@ -1985,6 +1985,70 @@ textarea.finput { min-height: 112px; resize: vertical; }
 .home-hero__sigil { display: block; width: clamp(208px, min(64vw, 39vh), 395px); filter: drop-shadow(0 0 7px rgba(93,184,240,.40)) drop-shadow(0 0 18px rgba(42,145,220,.20)); }
 
 .sigil-flight { filter: none; }   /* plain while flying: the glow filter cost a frame on Safari */
+
+/* ==========================================================================
+   Kauyumari (site.js, [kauyumari]): a hidden doorway in the hero sigil.
+   Only the drawn sigil responds; hovering wakes its glow a little.
+   ========================================================================== */
+.home-hero__sigil { transition: filter var(--motion-text) var(--ease); }
+.hero-sigil-wrap.is-awake .home-hero__sigil {
+  filter: brightness(1.12) drop-shadow(0 0 9px rgba(93,184,240,.56)) drop-shadow(0 0 24px rgba(42,145,220,.30));
+}
+.hero-sigil-wrap.is-entering .home-hero__sigil {
+  filter: brightness(1.32) drop-shadow(0 0 12px rgba(140,205,250,.72)) drop-shadow(0 0 34px rgba(42,145,220,.42));
+}
+.hero-sigil-wrap.is-awake { cursor: pointer; }
+.home-hero__sigil:focus { outline: none; }
+.home-hero__sigil:focus-visible { outline: 1px solid rgba(200,161,90,.7); outline-offset: 10px; border-radius: 50%; }
+
+html.kauyumari-open, html.kauyumari-open body { overflow: hidden; }
+
+.kauyumari { position: fixed; inset: 0; z-index: 200; overflow: hidden; overscroll-behavior: contain; -webkit-tap-highlight-color: transparent; }
+.kauyumari[hidden] { display: none; }
+.kauyumari:focus { outline: none; }
+.kauyumari__veil { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, #0a1430 0%, #050a1a 60%, #02040c 100%); opacity: 0; }
+.kauyumari__art { position: absolute; inset: 0; opacity: 0; transform-origin: var(--ox, 50%) var(--oy, 50%); will-change: transform, opacity; cursor: pointer; }
+.kauyumari__art picture, .kauyumari__img { display: block; width: 100%; height: 100%; }
+/* The artwork is never stretched: cover where the screen's shape is close to
+   the image's (cropping away from the stag), contain where it is not. */
+.kauyumari__img { object-fit: cover; object-position: 72% 35%; user-select: none; -webkit-user-drag: none; }
+@media (max-aspect-ratio: 1/1) { .kauyumari__img { object-position: 80% 25%; } }
+@media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 3/2) { .kauyumari__img { object-fit: contain; } }
+.kauyumari__bloom {
+  position: absolute; left: var(--ox, 50%); top: var(--oy, 50%); width: 240px; height: 240px; margin: -120px 0 0 -120px;
+  border-radius: 50%; pointer-events: none; opacity: 0; will-change: transform, opacity;
+  background: radial-gradient(circle, rgba(196,228,255,.92) 0%, rgba(110,188,242,.62) 20%, rgba(42,113,190,.34) 44%, rgba(10,24,60,0) 70%);
+}
+/* Controls: small, quiet, inside the safe area; brighter on hover or focus. */
+.kauyumari__close, .kauyumari__volume {
+  position: absolute; display: flex; align-items: center; color: var(--muted);
+  background: rgba(14,20,40,.34); border: 1px solid rgba(200,161,90,.22);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  opacity: 0; transition: opacity var(--motion-text) var(--ease), color var(--motion-fast) var(--ease), border-color var(--motion-fast) var(--ease);
+}
+.kauyumari.is-open .kauyumari__close, .kauyumari.is-open .kauyumari__volume { opacity: .62; }
+.kauyumari.is-open :is(.kauyumari__close, .kauyumari__volume):is(:hover, :focus-within, :focus-visible) { opacity: 1; color: var(--text); border-color: rgba(200,161,90,.5); }
+.kauyumari__close {
+  top: max(16px, calc(env(safe-area-inset-top, 0px) + 12px)); right: max(16px, calc(env(safe-area-inset-right, 0px) + 12px));
+  width: 40px; height: 40px; justify-content: center; border-radius: 50%; cursor: pointer; padding: 0;
+}
+.kauyumari__close svg { width: 14px; height: 14px; }
+.kauyumari__volume {
+  right: max(16px, calc(env(safe-area-inset-right, 0px) + 12px)); bottom: max(16px, calc(env(safe-area-inset-bottom, 0px) + 12px));
+  gap: 10px; height: 40px; padding: 0 14px 0 12px; border-radius: 999px;
+}
+.kauyumari__volume[hidden] { display: none; }
+.kauyumari__volume svg { width: 16px; height: 16px; flex: none; }
+.kauyumari__range { -webkit-appearance: none; appearance: none; width: 104px; height: 24px; margin: 0; background: transparent; cursor: pointer; }
+.kauyumari__range:focus { outline: none; }
+.kauyumari__range::-webkit-slider-runnable-track { height: 2px; border-radius: 2px; background: linear-gradient(90deg, var(--accent-brass) var(--fill, 0%), rgba(186,195,216,.35) var(--fill, 0%)); }
+.kauyumari__range::-moz-range-track { height: 2px; border-radius: 2px; background: rgba(186,195,216,.35); }
+.kauyumari__range::-moz-range-progress { height: 2px; border-radius: 2px; background: var(--accent-brass); }
+.kauyumari__range::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; margin-top: -5px; border-radius: 50%; background: var(--accent-brass); border: 0; box-shadow: 0 0 8px rgba(200,161,90,.45); }
+.kauyumari__range::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: var(--accent-brass); border: 0; box-shadow: 0 0 8px rgba(200,161,90,.45); }
+.kauyumari__range:focus-visible::-webkit-slider-thumb { outline: 1px solid var(--text); outline-offset: 3px; }
+.kauyumari__range:focus-visible::-moz-range-thumb { outline: 1px solid var(--text); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .home-hero__sigil, .kauyumari__close, .kauyumari__volume { transition-duration: 1ms; } }
 /* The four closing lines read as one thought: one family (Gillius), close leading. */
 .home-hero__lead { color: #CDD4E6; max-width: 34ch; text-wrap: balance; }
 
