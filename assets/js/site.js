@@ -453,6 +453,8 @@
        the page exactly as it was. Music starts silent: only the visitor's
        own move of the volume control lets it be heard. */
     (function () {
+      var ENABLED = false;                             // paused by Vinay 2026-10-15; set true to bring the doorway back
+      if (!ENABLED) return;
       var ART = 'assets/kauyumari/';
       // Music: put the licensed track at assets/audio/ and set its path here,
       // e.g. 'assets/audio/kauyumari.mp3'. While empty, no volume control shows.
