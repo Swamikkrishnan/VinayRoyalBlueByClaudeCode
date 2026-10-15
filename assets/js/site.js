@@ -502,10 +502,33 @@
           else if (prevRestore !== null) { history.scrollRestoration = prevRestore; prevRestore = null; }
         } catch (err) {}
       };
+      // One artwork file per visitor: portrait or landscape by the screen's shape;
+      // WebP where the browser decodes it (JPEG otherwise); a smaller 'lite' WebP
+      // on slow connections or with data saver on; the 2880px landscape only for
+      // wide high-density screens. The artwork loads only on intent (hover, focus,
+      // touch on the sigil), never with the page.
       var portrait = function () { return window.matchMedia('(max-aspect-ratio: 1/1)').matches; };
-      var artSrc = function () { return portrait() ? ART + 'kauyumari-portrait-940.jpg' : ART + (window.innerWidth * (window.devicePixelRatio || 1) > 2000 ? 'kauyumari-landscape-2880.jpg' : 'kauyumari-landscape-1920.jpg'); };
+      var webp = false;
+      (function () { var t = new Image(); t.onload = function () { webp = t.width > 0; }; t.src = 'data:image/webp;base64,UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA'; })();
+      var lowData = function () {
+        var c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        return !!c && (c.saveData || /(^|-)(2g|3g)$/.test(c.effectiveType || '') || (c.downlink > 0 && c.downlink < 1.5));
+      };
+      var artSrc = function () {
+        var lite = webp && lowData(), ext = webp ? '.webp' : '.jpg';
+        if (portrait()) return ART + (lite ? 'kauyumari-portrait-720-lite.webp' : 'kauyumari-portrait-940' + ext);
+        if (lite) return ART + 'kauyumari-landscape-1280-lite.webp';
+        return ART + 'kauyumari-landscape-' + (window.innerWidth * Math.min(window.devicePixelRatio || 1, 2) > 2000 ? '2880' : '1920') + ext;
+      };
       var preloaded = {};
       var preload = function () { var u = artSrc(); if (preloaded[u]) return preloaded[u]; var im = new Image(); im.decoding = 'async'; im.src = u; preloaded[u] = im.decode ? im.decode().catch(function () {}) : new Promise(function (ok) { im.onload = im.onerror = ok; }); return preloaded[u]; };
+      var showArt = function () {
+        var u = artSrc(); if (img.getAttribute('src') === u) return;
+        img.classList.add('is-waiting');                 // a late artwork fades in rather than popping
+        img.onload = img.onerror = function () { img.classList.remove('is-waiting'); };
+        img.src = u;
+        if (img.complete && img.naturalWidth) img.classList.remove('is-waiting');
+      };
       var build = function () {
         if (box) return;
         box = document.createElement('div');
@@ -513,10 +536,7 @@
         box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-label', 'Kauyumari');
         box.innerHTML =
           '<div class="kauyumari__veil" aria-hidden="true"></div>' +
-          '<div class="kauyumari__art"><picture>' +
-            '<source media="(max-aspect-ratio: 1/1)" srcset="' + ART + 'kauyumari-portrait-940.jpg">' +
-            '<img class="kauyumari__img" src="' + ART + 'kauyumari-landscape-1920.jpg" srcset="' + ART + 'kauyumari-landscape-1920.jpg 1920w, ' + ART + 'kauyumari-landscape-2880.jpg 2880w" sizes="100vw" alt="Kauyumari, the spirit stag, glowing blue and gold on a moonlit desert ridge beside a small fire." decoding="async" draggable="false">' +
-          '</picture></div>' +
+          '<div class="kauyumari__art"><img class="kauyumari__img" alt="Kauyumari, the spirit stag, glowing blue and gold on a moonlit desert ridge beside a small fire." decoding="async" draggable="false"></div>' +
           '<div class="kauyumari__bloom" aria-hidden="true"></div>' +
           '<label class="kauyumari__volume" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.6 7.6 0 0 1 0 11" opacity=".6"/></svg><span class="visually-hidden">Music volume</span><input class="kauyumari__range" type="range" min="0" max="100" step="1" value="0"></label>' +
           '<button type="button" class="kauyumari__close" aria-label="Close"><svg viewBox="0 0 14 14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg></button>' +
@@ -537,6 +557,8 @@
         });
         box.addEventListener('touchmove', function (e) { if (!e.target.closest('.kauyumari__volume')) e.preventDefault(); }, { passive: false });
         box.addEventListener('wheel', function (e) { e.preventDefault(); }, { passive: false });
+        // Turning a phone or resizing across portrait/landscape swaps to the matching artwork.
+        onResize(function () { if (state !== 'closed') showArt(); });
         wireAudio();
       };
 
@@ -618,6 +640,7 @@
           var o = origin();
           box.style.setProperty('--ox', o.x + 'px'); box.style.setProperty('--oy', o.y + 'px');
           range.value = 0; range.style.setProperty('--fill', '0%'); level(0, 10);
+          showArt();
           box.classList.remove('is-open'); box.hidden = false;
           root.classList.add('kauyumari-open'); setInert(true);
           manualRestore(true);

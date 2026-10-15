@@ -2008,10 +2008,12 @@ html.kauyumari-open, html.kauyumari-open body { overflow: hidden; }
 .kauyumari:focus { outline: none; }
 .kauyumari__veil { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, #0a1430 0%, #050a1a 60%, #02040c 100%); opacity: 0; }
 .kauyumari__art { position: absolute; inset: 0; opacity: 0; transform-origin: var(--ox, 50%) var(--oy, 50%); will-change: transform, opacity; cursor: pointer; }
-.kauyumari__art picture, .kauyumari__img { display: block; width: 100%; height: 100%; }
+.kauyumari__img { display: block; width: 100%; height: 100%; }
 /* The artwork is never stretched: cover where the screen's shape is close to
    the image's (cropping away from the stag), contain where it is not. */
 .kauyumari__img { object-fit: cover; object-position: 72% 35%; user-select: none; -webkit-user-drag: none; }
+.kauyumari__img { transition: opacity var(--motion-image) var(--ease-image); }
+.kauyumari__img.is-waiting { opacity: 0; }
 @media (max-aspect-ratio: 1/1) { .kauyumari__img { object-position: 80% 25%; } }
 @media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 3/2) { .kauyumari__img { object-fit: contain; } }
 .kauyumari__bloom {
